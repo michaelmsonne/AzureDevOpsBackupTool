@@ -5,7 +5,7 @@ using System.Runtime.InteropServices;
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
 [assembly: AssemblyTitle("AzureDevOpsBackup")]
-[assembly: AssemblyDescription("")]
+[assembly: AssemblyDescription("Azure DevOps Backup - For Git Projects and is using the API for Azure DevOps")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("AzureDevOpsBackup")]
