@@ -97,6 +97,13 @@
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>powershell -command $(SolutionDir)\RenameOutput.ps1</PostBuildEvent>
+    <PostBuildEvent>if $(ConfigurationName) == Release (
+  echo "Release build - rename output file!".
+  powershell -command $(SolutionDir)\RenameOutput.ps1
+) ELSE (
+  echo "Not Release build - no rename of output file!".
+)
+
+</PostBuildEvent>
   </PropertyGroup>
 </Project>
