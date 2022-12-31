@@ -21,7 +21,6 @@ namespace AzureDevOpsBackup
 
         public static string GetLogPath(string df)
         {
-            //return $"{Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData)}\\{AppName}\\{df}.log";
             return Files.LogFilePath + @"\" + AppName + " Log " + df + ".log";
         }
 
