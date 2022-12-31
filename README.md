@@ -37,5 +37,5 @@ This is not an exhaustive method to retrieve every artifact on Azure DevOps. The
 
 There is send an email report to the specified email address when the backup is done with a status.
 
-![Screenshot](docs\email-report.png)
+![Screenshot](docs/email-report.png)
 
