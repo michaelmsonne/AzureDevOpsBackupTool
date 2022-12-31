@@ -132,28 +132,5 @@ namespace AzureDevOpsBackup
                 }
             }
         }
-
-        public static void ClearLogFile()
-        {
-            var now = DateTime.Now;
-            var date = GetDate(now);
-            var dateTime = GetDateTime(now);
-            var logPath = GetLogPath(date);
-            try
-            {
-                if (!File.Exists(logPath))
-                    return;
-                using (var text = File.CreateText(logPath))
-                    text.WriteLine("");
-            }
-            catch (Exception ex)
-            {
-                if (!WriteToEventLog)
-                    return;
-                AddMessageToEventLog($"Error writing to log file, {ex.Message}", EventType.Error, dateTime, logPath, 0);
-                AddMessageToEventLog("Writing log file have been disabled.", EventType.Information, dateTime, logPath, 0);
-                WriteToFile = false;
-            }
-        }
     }
 }
