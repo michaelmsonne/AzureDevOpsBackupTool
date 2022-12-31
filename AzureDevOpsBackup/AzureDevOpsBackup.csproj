@@ -96,4 +96,7 @@
     <Content Include="Azure Dev Ops.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <PropertyGroup>
+    <PostBuildEvent>powershell -command $(SolutionDir)\RenameOutput.ps1</PostBuildEvent>
+  </PropertyGroup>
 </Project>
