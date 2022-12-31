@@ -70,6 +70,9 @@ artifacts/
 *.svclog
 *.scc
 
+# Pipelines
+*.yml
+
 # Chutzpah Test files
 _Chutzpah*
 
