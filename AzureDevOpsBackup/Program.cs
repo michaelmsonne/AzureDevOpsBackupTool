@@ -1162,9 +1162,9 @@ namespace AzureDevOpsBackup
             catch (Exception ex)
             {
                 // Log
-                Message("Sorry, we are unable to send email notification of your presence. Please try again. Error: " + ex, EventType.Error, 1001);
+                Message("Sorry, we are unable to send email notification of your presence. Please try again! Error: " + ex, EventType.Error, 1001);
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Sorry, we are unable to send email notification of your presence. Please try again. Error: " + ex);
+                Console.WriteLine("Sorry, we are unable to send email notification of your presence. Please try again! Error: " + ex);
                 Console.ResetColor();
             }
         }
