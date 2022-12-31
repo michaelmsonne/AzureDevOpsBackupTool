@@ -12,7 +12,6 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using static AzureDevOpsBackup.FileLogger;
-
 // ReSharper disable RedundantAssignment
 // ReSharper disable NotAccessedVariable
 
