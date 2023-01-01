@@ -84,16 +84,15 @@ namespace AzureDevOpsBackup
             string elapsedTime = null;
             string daysToKeepBackups = null;
             var emailStatusMessage = "";
-
             string repoCountStatusText;
             string repoItemsCountStatusText = "";
             string totalFilesIsBackupUnZippedStatusText;
             string totalBlobFilesIsBackupStatusText;
             string totalTreeFilesIsBackupStatusText;
-            string daysToKeepBackupsStatusText;
             string totalFilesIsDeletedAfterUnZippedStatusText;
             string letOverZipFilesStatusText;
             string letOverJsonFilesStatusText;
+            string totalBackupsIsDeletedStatusText;
 
             // Set Global Logfile properties
             AppName = "Azure DevOps Backup";
@@ -817,7 +816,7 @@ namespace AzureDevOpsBackup
                 {
                     if (isBackupOk)
                     {
-                        repoCountStatusText = "Is OK!";
+                        repoCountStatusText = "Good!";
                     }
                     else
                     {
@@ -834,25 +833,24 @@ namespace AzureDevOpsBackup
                 {
                     if (isBackupOk)
                     {
-                        repoItemsCountStatusText = "Is OK!";
+                        repoItemsCountStatusText = "Good!";
                     }
                     else
                     {
                         repoItemsCountStatusText = "Warning!";
                     }
                 }
-
-
+                
                 // Processed files to backup from Git repos (total unzipped if specified):
                 if (totalFilesIsBackupUnZipped == 0)
                 {
-                    totalFilesIsBackupUnZippedStatusText = "Nothing to unzip!";
+                    totalFilesIsBackupUnZippedStatusText = "Good - nothing to unzip!";
                 }
                 else
                 {
                     if (isBackupOkAndUnZip)
                     {
-                        totalFilesIsBackupUnZippedStatusText = "Unzip is OK!";
+                        totalFilesIsBackupUnZippedStatusText = "Good - unzip is OK!";
                     }
                     else
                     {
@@ -869,7 +867,7 @@ namespace AzureDevOpsBackup
                 {
                     if (isBackupOk)
                     {
-                        totalBlobFilesIsBackupStatusText = "Is OK!";
+                        totalBlobFilesIsBackupStatusText = "Good!";
                     }
                     else
                     {
@@ -886,7 +884,7 @@ namespace AzureDevOpsBackup
                 {
                     if (isBackupOk)
                     {
-                        totalTreeFilesIsBackupStatusText = "Is OK!";
+                        totalTreeFilesIsBackupStatusText = "Good!";
                     }
                     else
                     {
@@ -895,8 +893,8 @@ namespace AzureDevOpsBackup
                 }
 
                 // Deleted original downloaded .zip and .json files in backup folder:
-                int TotalFilesThereShouldBeDeleted = totalBlobFilesIsBackup + totalTreeFilesIsBackup;
-                if (_totalFilesIsDeletedAfterUnZipped != TotalFilesThereShouldBeDeleted)
+                int totalFilesThereShouldBeDeleted = totalBlobFilesIsBackup + totalTreeFilesIsBackup;
+                if (_totalFilesIsDeletedAfterUnZipped != totalFilesThereShouldBeDeleted)
                 {
                     if (_totalFilesIsDeletedAfterUnZipped != 0)
                     {
@@ -912,7 +910,7 @@ namespace AzureDevOpsBackup
                 {
                     if (isBackupOkAndUnZip)
                     {
-                        totalFilesIsDeletedAfterUnZippedStatusText = "Is OK - match total files downloaded!";
+                        totalFilesIsDeletedAfterUnZippedStatusText = "Good - matched total files downloaded!";
                     }
                     else
                     {
@@ -929,11 +927,11 @@ namespace AzureDevOpsBackup
                 {
                     if (isBackupOk)
                     {
-                        letOverZipFilesStatusText = "Is OK - no leftover .zip files!";
+                        letOverZipFilesStatusText = "Good - no leftover .zip files!";
                     }
                     else
                     {
-                        letOverZipFilesStatusText = "Warning!";
+                        letOverZipFilesStatusText = "Warning - backup not OK!";
                     }
                 }
 
@@ -946,7 +944,7 @@ namespace AzureDevOpsBackup
                 {
                     if (isBackupOk)
                     {
-                        letOverJsonFilesStatusText = "Is OK - no leftover .json files!";
+                        letOverJsonFilesStatusText = "Good - no leftover .json files!";
                     }
                     else
                     {
@@ -954,13 +952,29 @@ namespace AzureDevOpsBackup
                     }
                 }
 
-
+                // Backup folder:
+                if (_totalBackupsIsDeleted != 0)
+                {
+                    totalBackupsIsDeletedStatusText = "Good - deleted " + _totalBackupsIsDeleted + " old backup(s) from backup folder";
+                }
+                else
+                {
+                    if (isBackupOk)
+                    {
+                        totalBackupsIsDeletedStatusText = "Good - no old backup(s) to delete from backup folder";
+                    }
+                    else
+                    {
+                        totalBackupsIsDeletedStatusText = "Warning!";
+                    }
+                }
+                
                 // Send status email and parse data to function
                 SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements, repoitemscountelements,
                     repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup, totalTreeFilesIsBackup,
                     outDir, elapsedTime, copyrightdata, vData, _errors, _totalFilesIsDeletedAfterUnZipped, _totalBackupsIsDeleted, daysToKeepBackups,
                     repoCountStatusText, repoItemsCountStatusText, totalFilesIsBackupUnZippedStatusText, totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
-                    totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText);
+                    totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText);
             }
             // Not do work
             else
@@ -1222,7 +1236,7 @@ namespace AzureDevOpsBackup
             int totalBlobFilesIsBackup, int totalTreeFilesIsBackup, string outDir, string elapsedTime, string copyrightData, string vData, int errors,
             int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep, string repoCountStatusText, string repoItemsCountStatusText,
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
-            string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText)
+            string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText)
         {
             string serverPortStr = serverPort;
 
@@ -1285,7 +1299,8 @@ namespace AzureDevOpsBackup
                 $"<td style=\"width: 33.3333%; height: 18px;\"><strong>Status:</strong></td>" +
                 $"</tr><tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Processed Git repos in Azure DevOps (total):</td>" +
                 $"<td style=\"width: 10%; height: 18px;\"><b>{repoCount}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{repoCountStatusText}</td></tr><tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Processed Git repos a backup is made of from Azure DevOps:</td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{repoCountStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33%; height: 18px;\">Processed Git repos a backup is made of from Azure DevOps:</td>" +
                 $"<td style=\"width: 10%; height: 18px;\"><b>{repoItemsCount}</b></td><td style=\"width: 33.3333%; height: 18px;\">{repoItemsCountStatusText}</td>" +
                 $"</tr><tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Processed files to backup from Git repos (total unzipped if specified):</td>" +
                 $"<td style=\"width: 10%; height: 18px;\"><b>{totalFilesIsBackupUnZipped}</b></td>" +
@@ -1311,12 +1326,12 @@ namespace AzureDevOpsBackup
                 $"<td style=\"width: 22%; height: 18px;\"><strong>Info:</strong></td>" +
                 $"<td style=\"width: 33%; height: 18px;\"><strong>Status:</strong></td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Backup folder:</td><td style=\"width: 22%; height: 18px;\"><strong><b>\"{outDir}\"</b></b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">&nbsp;</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Backup server:</td><td style=\"width: 22%; height: 18px;\"><b>{Environment.MachineName}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">&nbsp;</td></tr><tr style=\"height: 18px;\"><td style=\"width: 21%; height: 18px;\">Old backup(s) set to keep in backup folder (days):</td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr><tr style=\"height: 18px;\"><td style=\"width: 21%; height: 18px;\">Old backup(s) set to keep in backup folder (days):</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><b>{daysToKeep}</b></td><td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr>" +
                 $"<tr style=\"height: 18px;\"><td style=\"width: 21%; height: 18px;\">Old backup(s) deleted in backup folder:</td>" +
-                $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td><td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr></table>" +
+                $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td><td style=\"width: 33.3333%; height: 18px;\">{totalBackupsIsDeletedStatusText}</td></tr></table>" +
                 $"<p>See the attached logfile for the backup(s) today: <b>{AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log</b>.<o:p></o:p></p>" +
                 $"<p>Total Backup Run Time is: \"{elapsedTime}\".</p><hr/>" +
                 listrepocountelements + "<br>" +

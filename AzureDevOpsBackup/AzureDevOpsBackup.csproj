@@ -99,7 +99,7 @@
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release (
   echo "Release build - rename output file!".
-  powershell -command $(SolutionDir)\RenameOutput.ps1
+  powershell -command $(SolutionDir)\RenameOutputRelease.ps1
 ) ELSE (
   echo "Debug build - rename output file!".
   powershell -command $(SolutionDir)\RenameOutputDebug .ps1
