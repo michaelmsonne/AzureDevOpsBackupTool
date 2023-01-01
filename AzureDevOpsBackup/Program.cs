@@ -85,6 +85,16 @@ namespace AzureDevOpsBackup
             string daysToKeepBackups = null;
             var emailStatusMessage = "";
 
+            string repoCountStatusText;
+            string repoItemsCountStatusText = "";
+            string totalFilesIsBackupUnZippedStatusText;
+            string totalBlobFilesIsBackupStatusText;
+            string totalTreeFilesIsBackupStatusText;
+            string daysToKeepBackupsStatusText;
+            string totalFilesIsDeletedAfterUnZippedStatusText;
+            string letOverZipFilesStatusText;
+            string letOverJsonFilesStatusText;
+
             // Set Global Logfile properties
             AppName = "Azure DevOps Backup";
             FileLogger.DateFormat = "dd-MM-yyyy";
@@ -797,10 +807,160 @@ namespace AzureDevOpsBackup
                     }
                 }
 
+                // Get status email text for Status:
+                // Processed Git repos in Azure DevOps (total):
+                if (repoCount == 0)
+                {
+                    repoCountStatusText = "Warning - nothing to backup!";
+                }
+                else
+                {
+                    if (isBackupOk)
+                    {
+                        repoCountStatusText = "Is OK!";
+                    }
+                    else
+                    {
+                        repoCountStatusText = "Warning!";
+                    }
+                }
+
+                // Processed Git repos a backup is made of from Azure DevOps:
+                if (repoItemsCount == 0)
+                {
+                    repoItemsCountStatusText = "Warning - nothing to backup!";
+                }
+                else
+                {
+                    if (isBackupOk)
+                    {
+                        repoItemsCountStatusText = "Is OK!";
+                    }
+                    else
+                    {
+                        repoItemsCountStatusText = "Warning!";
+                    }
+                }
+
+
+                // Processed files to backup from Git repos (total unzipped if specified):
+                if (totalFilesIsBackupUnZipped == 0)
+                {
+                    totalFilesIsBackupUnZippedStatusText = "Nothing to unzip!";
+                }
+                else
+                {
+                    if (isBackupOkAndUnZip)
+                    {
+                        totalFilesIsBackupUnZippedStatusText = "Unzip is OK!";
+                    }
+                    else
+                    {
+                        totalFilesIsBackupUnZippedStatusText = "Warning on unzip!";
+                    }
+                }
+
+                // Processed files to backup from Git repos (blob files (.zip files)):
+                if (totalBlobFilesIsBackup == 0)
+                {
+                    totalBlobFilesIsBackupStatusText = "Warning - nothing to backup!";
+                }
+                else
+                {
+                    if (isBackupOk)
+                    {
+                        totalBlobFilesIsBackupStatusText = "Is OK!";
+                    }
+                    else
+                    {
+                        totalBlobFilesIsBackupStatusText = "Warning!";
+                    }
+                }
+
+                // Processed files to backup from Git repos (tree files (.json files)):
+                if (totalTreeFilesIsBackup == 0)
+                {
+                    totalTreeFilesIsBackupStatusText = "Warning - nothing to backup!";
+                }
+                else
+                {
+                    if (isBackupOk)
+                    {
+                        totalTreeFilesIsBackupStatusText = "Is OK!";
+                    }
+                    else
+                    {
+                        totalTreeFilesIsBackupStatusText = "Warning!";
+                    }
+                }
+
+                // Deleted original downloaded .zip and .json files in backup folder:
+                int TotalFilesThereShouldBeDeleted = totalBlobFilesIsBackup + totalTreeFilesIsBackup;
+                if (_totalFilesIsDeletedAfterUnZipped != TotalFilesThereShouldBeDeleted)
+                {
+                    if (_totalFilesIsDeletedAfterUnZipped != 0)
+                    {
+                        totalFilesIsDeletedAfterUnZippedStatusText =
+                            "Warning - not all files is deleted and backup is not OK!";
+                    }
+                    else
+                    {
+                        totalFilesIsDeletedAfterUnZippedStatusText = "Warning - nothing to backup!";
+                    }
+                }
+                else
+                {
+                    if (isBackupOkAndUnZip)
+                    {
+                        totalFilesIsDeletedAfterUnZippedStatusText = "Is OK - match total files downloaded!";
+                    }
+                    else
+                    {
+                        totalFilesIsDeletedAfterUnZippedStatusText = "Warning - not all files is deleted!";
+                    }
+                }
+
+                // Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete):
+                if (_numZip != 0)
+                {
+                    letOverZipFilesStatusText = "Warning - leftover .zip files!";
+                }
+                else
+                {
+                    if (isBackupOk)
+                    {
+                        letOverZipFilesStatusText = "Is OK - no leftover .zip files!";
+                    }
+                    else
+                    {
+                        letOverZipFilesStatusText = "Warning!";
+                    }
+                }
+
+                // Leftovers for original downloaded .json files in backup folder (error(s) when try to delete):
+                if (_numJson != 0)
+                {
+                    letOverJsonFilesStatusText = "Warning - leftover .json files!";
+                }
+                else
+                {
+                    if (isBackupOk)
+                    {
+                        letOverJsonFilesStatusText = "Is OK - no leftover .json files!";
+                    }
+                    else
+                    {
+                        letOverJsonFilesStatusText = "Warning!";
+                    }
+                }
+
+
                 // Send status email and parse data to function
                 SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements, repoitemscountelements,
                     repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup, totalTreeFilesIsBackup,
-                    outDir, elapsedTime, copyrightdata, vData, _errors, _totalFilesIsDeletedAfterUnZipped, _totalBackupsIsDeleted, daysToKeepBackups);
+                    outDir, elapsedTime, copyrightdata, vData, _errors, _totalFilesIsDeletedAfterUnZipped, _totalBackupsIsDeleted, daysToKeepBackups,
+                    repoCountStatusText, repoItemsCountStatusText, totalFilesIsBackupUnZippedStatusText, totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
+                    totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText);
             }
             // Not do work
             else
@@ -1060,13 +1220,15 @@ namespace AzureDevOpsBackup
         public static void SendEmail(string serveraddress, string serverPort, string emailFrom, string emailTo, string emailStatusMessage,
             List<string> repoCountElements, List<string> repoItemsCountElements, int repoCount, int repoItemsCount, int totalFilesIsBackupUnZipped,
             int totalBlobFilesIsBackup, int totalTreeFilesIsBackup, string outDir, string elapsedTime, string copyrightData, string vData, int errors,
-            int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep)
+            int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep, string repoCountStatusText, string repoItemsCountStatusText,
+            string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
+            string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText)
         {
             string serverPortStr = serverPort;
 
             //Parse data to list from list of repo.name
-            var listrepocountelements = "<h3>List of Git repositories in Azure DevOps:</h3>∘ " + String.Join("<br>∘ ", repoCountElements);
-            var listitemscountelements = "<h3>List of Git repositories in Azure DevOps a backup is performed (Default branch):</h3>∘ " + String.Join("<br>∘ ", repoItemsCountElements);
+            var listrepocountelements = "<h3>List of Git repositories in Azure DevOps:</h3>∘ " + string.Join("<br>∘ ", repoCountElements);
+            var listitemscountelements = "<h3>List of Git repositories in Azure DevOps a backup is performed (Default branch):</h3>∘ " + string.Join("<br>∘ ", repoItemsCountElements);
             int letOverJsonFiles = 0;
             int letOverZipFiles = 0;
 
@@ -1090,8 +1252,9 @@ namespace AzureDevOpsBackup
             }
 
             // Make email body data
+            /*
             var mailbody =
-                $"\r\n<hr><h2>Your {AppName} is: {emailStatusMessage}</h2><hr><p><h3>Details:</h3><p>" +
+                $"<hr><h2>Your {AppName} is: {emailStatusMessage}</h2><hr><p><h3>Details:</h3><p>" +
                 $"<p>Processed Git repos in Azure DevOps (total): <b>{repoCount}</b><br>" +
                 $"Processed Git repos a backup is made of from Azure DevOps: <b>{repoItemsCount}</b><p>" +
                 $"Processed files to backup from Git repos (total unzipped if specified): <b>{totalFilesIsBackupUnZipped}</b><br>" +
@@ -1110,12 +1273,62 @@ namespace AzureDevOpsBackup
                 listitemscountelements + "</p><hr>" +
                 $"<h3>From Your {AppName} tool!</h3></b><br>" +
                 copyrightData + ", v." + vData;
-            
+            */
+
+            // Make email body data
+            var mailbody =
+                $"<hr/><h2>Your {AppName} is: {emailStatusMessage}</h2><hr />" +
+                $"<br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\">" +
+                $"<tbody><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33%; height: 18px;\"><strong>Backup task(s):</strong></td>" +
+                $"<td style=\"width: 10%; height: 18px;\"><strong>File(s):</strong></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\"><strong>Status:</strong></td>" +
+                $"</tr><tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Processed Git repos in Azure DevOps (total):</td>" +
+                $"<td style=\"width: 10%; height: 18px;\"><b>{repoCount}</b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{repoCountStatusText}</td></tr><tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Processed Git repos a backup is made of from Azure DevOps:</td>" +
+                $"<td style=\"width: 10%; height: 18px;\"><b>{repoItemsCount}</b></td><td style=\"width: 33.3333%; height: 18px;\">{repoItemsCountStatusText}</td>" +
+                $"</tr><tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Processed files to backup from Git repos (total unzipped if specified):</td>" +
+                $"<td style=\"width: 10%; height: 18px;\"><b>{totalFilesIsBackupUnZipped}</b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{totalFilesIsBackupUnZippedStatusText}</td></tr>" +
+                $"<tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Processed files to backup from Git repos (blob files (.zip files)):</td>" +
+                $"<td style=\"width: 10%; height: 18px;\"><b>{totalBlobFilesIsBackup}</b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{totalBlobFilesIsBackupStatusText}</td></tr><tr>" +
+                $"<td style=\"width: 33%;\">Processed files to backup from Git repos (tree files (.json files)):</td>" +
+                $"<td style=\"width: 10%;\"><b>{totalTreeFilesIsBackup}</b></td>" +
+                $"<td style=\"width: 33.3333%;\">{totalTreeFilesIsBackupStatusText}</td></tr></tbody></table><br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\"><tbody><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33%; height: 18px;\"><strong>Download cleanup (if specified):</strong></td>" +
+                $"<td style=\"width: 10%; height: 18px;\"><strong>File(s):</strong></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\"><strong>Status:</strong></td></tr>" +
+                $"<tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Deleted original downloaded .zip and .json files in backup folder:</td>" +
+                $"<td style=\"width: 10%; height: 18px;\"><b>{totalFilesIsDeletedAfterUnZipped}</b></td><td style=\"width: 33.3333%; height: 18px;\">{totalFilesIsDeletedAfterUnZippedStatusText}</td></tr>" +
+                $"<tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete):</td>" +
+                $"<td style=\"width: 10%; height: 18px;\"><b>{letOverZipFiles}</b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{letOverZipFilesStatusText}</td></tr>" +
+                $"<tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Leftovers for original downloaded .json files in backup folder (error(s) when try to delete):</td>" +
+                $"<td style=\"width: 10%; height: 18px;\"><b>{letOverJsonFiles}</b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{letOverJsonFilesStatusText}</td></tr></tbody></table><br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\"><tr>" +
+                $"<td style=\"width: 21%; height: 18px;\"><strong>Backup:</strong></td>" +
+                $"<td style=\"width: 22%; height: 18px;\"><strong>Info:</strong></td>" +
+                $"<td style=\"width: 33%; height: 18px;\"><strong>Status:</strong></td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 21%; height: 18px;\">Backup folder:</td><td style=\"width: 22%; height: 18px;\"><strong><b>\"{outDir}\"</b></b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">&nbsp;</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 21%; height: 18px;\">Backup server:</td><td style=\"width: 22%; height: 18px;\"><b>{Environment.MachineName}</b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">&nbsp;</td></tr><tr style=\"height: 18px;\"><td style=\"width: 21%; height: 18px;\">Old backup(s) set to keep in backup folder (days):</td>" +
+                $"<td style=\"width: 22%; height: 18px;\"><b>{daysToKeep}</b></td><td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr>" +
+                $"<tr style=\"height: 18px;\"><td style=\"width: 21%; height: 18px;\">Old backup(s) deleted in backup folder:</td>" +
+                $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td><td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr></table>" +
+                $"<p>See the attached logfile for the backup(s) today: <b>{AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log</b>.<o:p></o:p></p>" +
+                $"<p>Total Backup Run Time is: \"{elapsedTime}\".</p><hr/>" +
+                listrepocountelements + "<br>" +
+                listitemscountelements + "</p><br><hr>" +
+                $"<h3>From Your {AppName} tool!<o:p></o:p></h3>" + copyrightData + ", v." + vData;
+
             // Create mail
             MailMessage message = new MailMessage(emailFrom, emailTo);
             message.Subject = "[" + emailStatusMessage + $"] - {AppName} status - (" + totalBlobFilesIsBackup +
                               " Git projects backed up), " + errors + " issues(s) - (backups to keep (days): " + daysToKeep +
                               ", backup(s) deleted: " + totalBackupsIsDeleted + ")";
+            
             message.Body = mailbody;
             message.BodyEncoding = Encoding.UTF8;
             message.IsBodyHtml = true;

@@ -101,9 +101,8 @@
   echo "Release build - rename output file!".
   powershell -command $(SolutionDir)\RenameOutput.ps1
 ) ELSE (
-  echo "Not Release build - no rename of output file!".
-)
-
-</PostBuildEvent>
+  echo "Debug build - rename output file!".
+  powershell -command $(SolutionDir)\RenameOutputDebug .ps1
+)</PostBuildEvent>
   </PropertyGroup>
 </Project>
