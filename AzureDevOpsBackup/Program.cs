@@ -56,19 +56,17 @@ namespace AzureDevOpsBackup
         static int _numZip;
         static int _numJson;
         static int _totalBackupsIsDeleted;
-
         static bool _checkForLeftoverFilesAfterCleanup;
         static bool _deletedFilesAfterUnzip;
+
+        public static string _fileAttathedIneMailreport;
 
         static void Main(string[] args)
         {
             //How to use:
             // --unzip, --deletezipandjson and --daystokeepbackup xx not needed
             //.\AzureDevOpsBackup.exe --token "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" --organization "xxxxxxxxxxxxxxxxxx" --outdir "D:\Microsoft\Azure DevOps\Backup" --server "domain.mail.protection.outlook.com" --serverport "25" --from "azure-devops-backup@domain.com" --to "recipient@domain.com" --unzip --deletezipandjson --daystokeepbackup 50
-
-            Stopwatch stopWatch = new Stopwatch();
-            stopWatch.Start();
-
+            
             // Global variabels
             int projectCount = 0;
             int totalFilesIsBackupUnZipped = 0;
@@ -77,13 +75,13 @@ namespace AzureDevOpsBackup
             int repoItemsCount = 0;
             int repoCount = 0;
             int oldLogFilesToDeleteCount = 0;
+            var emailStatusMessage = "";
             string server = null;
             string serverPort = null;
             string emailFrom = null;
             string emailTo = null;
             string elapsedTime = null;
             string daysToKeepBackups = null;
-            var emailStatusMessage = "";
             string repoCountStatusText;
             string repoItemsCountStatusText = "";
             string totalFilesIsBackupUnZippedStatusText;
@@ -94,15 +92,6 @@ namespace AzureDevOpsBackup
             string letOverJsonFilesStatusText;
             string totalBackupsIsDeletedStatusText;
 
-            // Set Global Logfile properties
-            AppName = "Azure DevOps Backup";
-            FileLogger.DateFormat = "dd-MM-yyyy";
-            DateTimeFormat = "dd-MM-yyyy HH:mm:ss";
-            WriteOnlyErrorsToEventLog = false;
-            WriteToEventLog = false;
-            WriteToFile = true;
-            Message("Loaded log configuration into the program: " + AppName, EventType.Information, 1000);
-
             // Set default status for backup job
             bool isBackupOk = false;
             bool isBackupOkAndUnZip = false;
@@ -110,21 +99,40 @@ namespace AzureDevOpsBackup
             bool noProjectsToBackup = false;
 
             // Get application data to later use in tool
-            AssemblyCopyrightAttribute copyright =
-                Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false)
-                    [0] as AssemblyCopyrightAttribute;
-
+            AssemblyCopyrightAttribute copyright = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false)[0] as AssemblyCopyrightAttribute;
             // ReSharper disable once PossibleNullReferenceException
             var copyrightdata = copyright.Copyright;
             var vData = Assembly.GetEntryAssembly()?.GetName().Version.ToString();
+            var attributes = typeof(Program).GetTypeInfo().Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute));
+            var assemblyTitleAttribute = attributes.SingleOrDefault() as AssemblyTitleAttribute;
 
+            // Start timer for runtime
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
+
+            // Set application name in code
+            //AppName = "Azure DevOps Backup";
+            AppName = assemblyTitleAttribute?.Title;
+
+            // Start of program
+            Message($"Start of application - {AppName}, v." + vData, EventType.Information, 1000);
+            Console.WriteLine($"\nStart of application - {AppName}, v. {vData}");
+            
+            // Set Global Logfile properties
+            FileLogger.DateFormat = "dd-MM-yyyy";
+            DateTimeFormat = "dd-MM-yyyy HH:mm:ss";
+            WriteOnlyErrorsToEventLog = false;
+            WriteToEventLog = false;
+            WriteToFile = true;
+            Message("Loaded log configuration into the program: " + AppName, EventType.Information, 1000);
+            
             // Check for required Args for application will work
             string[] requiredArgs = { "--token", "--organization", "--outdir", "--server", "--serverport", "--from", "--to" };
 
             // Log
             Message("Checking if there is 7 required arguments (--token, --organization, --outdir, --server, --serverport, --from, --to)", EventType.Information, 1000);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("\nChecking if there is 7 required arguments (--token, --organization, --outdir, --server, --serverport, --from, --to)");
+            Console.WriteLine("Checking if there is 7 required arguments (--token, --organization, --outdir, --server, --serverport, --from, --to)");
             Console.ResetColor();
 
             // If okay do some work
@@ -146,8 +154,8 @@ namespace AzureDevOpsBackup
                 string baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--organization") + 1] + "/";
 
                 // URL parse to API access done
-                Message("Base URL is: " + baseUrl, EventType.Information, 1000);
-                Console.WriteLine("Base URL is: " + baseUrl);
+                Message("Base URL is for Organization is: " + baseUrl, EventType.Information, 1000);
+                Console.WriteLine("Base URL is for Organization is: " + baseUrl);
 
                 // Get output folder to backup (not with date stamp for backup folder name)
                 string outBackupDir = args[Array.IndexOf(args, "--outdir") + 1] + "\\";
@@ -806,21 +814,45 @@ namespace AzureDevOpsBackup
                     }
                 }
 
-                // Get status email text for Status:
+                // Get status email text for Status colums in email report
+                // Log
+                Message($"Getting status for tasks for email report", EventType.Information, 1000);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"Getting status for tasks for email report");
+                Console.ResetColor();
+
                 // Processed Git repos in Azure DevOps (total):
                 if (repoCount == 0)
                 {
                     repoCountStatusText = "Warning - nothing to backup!";
+
+                    // Log
+                    Message($"Processed Git repos in Azure DevOps (total) status:" + repoCountStatusText, EventType.Warning, 1001);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText);
+                    Console.ResetColor();
                 }
                 else
                 {
                     if (isBackupOk)
                     {
                         repoCountStatusText = "Good!";
+
+                        // Log
+                        Message($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText, EventType.Information, 1000);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText);
+                        Console.ResetColor();
                     }
                     else
                     {
                         repoCountStatusText = "Warning!";
+
+                        // Log
+                        Message($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText, EventType.Warning, 1001);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText);
+                        Console.ResetColor();
                     }
                 }
 
@@ -828,16 +860,34 @@ namespace AzureDevOpsBackup
                 if (repoItemsCount == 0)
                 {
                     repoItemsCountStatusText = "Warning - nothing to backup!";
+
+                    // Log
+                    Message($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Warning, 1001);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
+                    Console.ResetColor();
                 }
                 else
                 {
                     if (isBackupOk)
                     {
                         repoItemsCountStatusText = "Good!";
+
+                        // Log
+                        Message($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Information, 1000);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
+                        Console.ResetColor();
                     }
                     else
                     {
                         repoItemsCountStatusText = "Warning!";
+
+                        // Log
+                        Message($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Warning, 1001);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
+                        Console.ResetColor();
                     }
                 }
                 
@@ -845,16 +895,34 @@ namespace AzureDevOpsBackup
                 if (totalFilesIsBackupUnZipped == 0)
                 {
                     totalFilesIsBackupUnZippedStatusText = "Good - nothing to unzip!";
+
+                    // Log
+                    Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Warning, 1001);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText);
+                    Console.ResetColor();
                 }
                 else
                 {
                     if (isBackupOkAndUnZip)
                     {
-                        totalFilesIsBackupUnZippedStatusText = "Good - unzip is OK!";
+                        totalFilesIsBackupUnZippedStatusText = "Good - and unzip is OK!";
+
+                        // Log
+                        Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Information, 1000);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText);
+                        Console.ResetColor();
                     }
                     else
                     {
                         totalFilesIsBackupUnZippedStatusText = "Warning on unzip!";
+
+                        // Log
+                        Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Warning, 1001);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText);
+                        Console.ResetColor();
                     }
                 }
 
@@ -862,16 +930,34 @@ namespace AzureDevOpsBackup
                 if (totalBlobFilesIsBackup == 0)
                 {
                     totalBlobFilesIsBackupStatusText = "Warning - nothing to backup!";
+
+                    // Log
+                    Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText, EventType.Warning, 1001);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText);
+                    Console.ResetColor();
                 }
                 else
                 {
                     if (isBackupOk)
                     {
                         totalBlobFilesIsBackupStatusText = "Good!";
+
+                        // Log
+                        Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText, EventType.Information, 1000);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText);
+                        Console.ResetColor();
                     }
                     else
                     {
                         totalBlobFilesIsBackupStatusText = "Warning!";
+
+                        // Log
+                        Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText, EventType.Warning, 1001);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText);
+                        Console.ResetColor();
                     }
                 }
 
@@ -879,16 +965,34 @@ namespace AzureDevOpsBackup
                 if (totalTreeFilesIsBackup == 0)
                 {
                     totalTreeFilesIsBackupStatusText = "Warning - nothing to backup!";
+
+                    // Log
+                    Message($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText, EventType.Warning, 1001);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText);
+                    Console.ResetColor();
                 }
                 else
                 {
                     if (isBackupOk)
                     {
                         totalTreeFilesIsBackupStatusText = "Good!";
+
+                        // Log
+                        Message($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText, EventType.Information, 1000);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText);
+                        Console.ResetColor();
                     }
                     else
                     {
                         totalTreeFilesIsBackupStatusText = "Warning!";
+
+                        // Log
+                        Message($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText, EventType.Warning, 1001);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText);
+                        Console.ResetColor();
                     }
                 }
 
@@ -900,10 +1004,22 @@ namespace AzureDevOpsBackup
                     {
                         totalFilesIsDeletedAfterUnZippedStatusText =
                             "Warning - not all files is deleted and backup is not OK!";
+
+                        // Log
+                        Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
+                        Console.ResetColor();
                     }
                     else
                     {
                         totalFilesIsDeletedAfterUnZippedStatusText = "Warning - nothing to backup!";
+
+                        // Log
+                        Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
+                        Console.ResetColor();
                     }
                 }
                 else
@@ -911,10 +1027,22 @@ namespace AzureDevOpsBackup
                     if (isBackupOkAndUnZip)
                     {
                         totalFilesIsDeletedAfterUnZippedStatusText = "Good - matched total files downloaded!";
+
+                        // Log
+                        Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Information, 1000);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
+                        Console.ResetColor();
                     }
                     else
                     {
                         totalFilesIsDeletedAfterUnZippedStatusText = "Warning - not all files is deleted!";
+
+                        // Log
+                        Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
+                        Console.ResetColor();
                     }
                 }
 
@@ -922,16 +1050,34 @@ namespace AzureDevOpsBackup
                 if (_numZip != 0)
                 {
                     letOverZipFilesStatusText = "Warning - leftover .zip files!";
+
+                    // Log
+                    Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText, EventType.Warning, 1001);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText);
+                    Console.ResetColor();
                 }
                 else
                 {
                     if (isBackupOk)
                     {
                         letOverZipFilesStatusText = "Good - no leftover .zip files!";
+
+                        // Log
+                        Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText, EventType.Information, 1000);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText);
+                        Console.ResetColor();
                     }
                     else
                     {
                         letOverZipFilesStatusText = "Warning - backup not OK!";
+
+                        // Log
+                        Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText, EventType.Warning, 1001);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText);
+                        Console.ResetColor();
                     }
                 }
 
@@ -939,42 +1085,93 @@ namespace AzureDevOpsBackup
                 if (_numJson != 0)
                 {
                     letOverJsonFilesStatusText = "Warning - leftover .json files!";
+
+                    // Log
+                    Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText, EventType.Warning, 1001);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText);
+                    Console.ResetColor();
                 }
                 else
                 {
                     if (isBackupOk)
                     {
                         letOverJsonFilesStatusText = "Good - no leftover .json files!";
+
+                        // Log
+                        Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText, EventType.Information, 1000);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText);
+                        Console.ResetColor();
                     }
                     else
                     {
                         letOverJsonFilesStatusText = "Warning!";
+
+                        // Log
+                        Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText, EventType.Warning, 1001);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText);
+                        Console.ResetColor();
                     }
                 }
 
-                // Backup folder:
+                // Old backup(s) deleted in backup folder:
                 if (_totalBackupsIsDeleted != 0)
                 {
                     totalBackupsIsDeletedStatusText = "Good - deleted " + _totalBackupsIsDeleted + " old backup(s) from backup folder";
+
+                    // Log
+                    Message($"Old backup(s) deleted in backup folder: status: " + totalBackupsIsDeletedStatusText, EventType.Information, 1000);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"Old backup(s) deleted in backup folder: status: " + totalBackupsIsDeletedStatusText);
+                    Console.ResetColor();
                 }
                 else
                 {
                     if (isBackupOk)
                     {
                         totalBackupsIsDeletedStatusText = "Good - no old backup(s) to delete from backup folder";
+
+                        // Log
+                        Message($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText, EventType.Information, 1000);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText);
+                        Console.ResetColor();
                     }
                     else
                     {
                         totalBackupsIsDeletedStatusText = "Warning!";
+
+                        // Log
+                        Message($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText, EventType.Warning, 1001);
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText);
+                        Console.ResetColor();
                     }
                 }
-                
+
+                // Log
+                Message($"Getting status for tasks for email report is done", EventType.Information, 1000);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine($"Getting status for tasks for email report is done");
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Message($"Parsing, processing and collecting data for email report", EventType.Information, 1000);
+                Console.WriteLine($"\nParsing, processing and collecting data for email report");
+                Console.ResetColor();
+
                 // Send status email and parse data to function
                 SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements, repoitemscountelements,
                     repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup, totalTreeFilesIsBackup,
                     outDir, elapsedTime, copyrightdata, vData, _errors, _totalFilesIsDeletedAfterUnZipped, _totalBackupsIsDeleted, daysToKeepBackups,
                     repoCountStatusText, repoItemsCountStatusText, totalFilesIsBackupUnZippedStatusText, totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
                     totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText);
+
+                Console.ForegroundColor = ConsoleColor.Green;
+                Message($"Parsing, processing and collecting data for email report is done", EventType.Information, 1000);
+                Console.WriteLine($"Parsing, processing and collecting data for email report is done");
+                Console.ResetColor();
             }
             // Not do work
             else
@@ -1238,13 +1435,13 @@ namespace AzureDevOpsBackup
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
             string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText)
         {
-            string serverPortStr = serverPort;
+            var serverPortStr = serverPort;
 
             //Parse data to list from list of repo.name
             var listrepocountelements = "<h3>List of Git repositories in Azure DevOps:</h3>∘ " + string.Join("<br>∘ ", repoCountElements);
             var listitemscountelements = "<h3>List of Git repositories in Azure DevOps a backup is performed (Default branch):</h3>∘ " + string.Join("<br>∘ ", repoItemsCountElements);
-            int letOverJsonFiles = 0;
-            int letOverZipFiles = 0;
+            var letOverJsonFiles = 0;
+            var letOverZipFiles = 0;
 
             // Add subject if cleanup after unzip is set
             if (_deletedFilesAfterUnzip)
@@ -1296,16 +1493,17 @@ namespace AzureDevOpsBackup
                 $"<tbody><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 33%; height: 18px;\"><strong>Backup task(s):</strong></td>" +
                 $"<td style=\"width: 10%; height: 18px;\"><strong>File(s):</strong></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\"><strong>Status:</strong></td>" +
-                $"</tr><tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Processed Git repos in Azure DevOps (total):</td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\"><strong>Status:</strong></td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33%; height: 18px;\">Processed Git repos in Azure DevOps (total):</td>" +
                 $"<td style=\"width: 10%; height: 18px;\"><b>{repoCount}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{repoCountStatusText}</td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 33%; height: 18px;\">Processed Git repos a backup is made of from Azure DevOps:</td>" +
-                $"<td style=\"width: 10%; height: 18px;\"><b>{repoItemsCount}</b></td><td style=\"width: 33.3333%; height: 18px;\">{repoItemsCountStatusText}</td>" +
-                $"</tr><tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Processed files to backup from Git repos (total unzipped if specified):</td>" +
+                $"<td style=\"width: 10%; height: 18px;\"><b>{repoItemsCount}</b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{repoItemsCountStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33%; height: 18px;\">Processed files to backup from Git repos (total unzipped if specified):</td>" +
                 $"<td style=\"width: 10%; height: 18px;\"><b>{totalFilesIsBackupUnZipped}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{totalFilesIsBackupUnZippedStatusText}</td></tr>" +
-                $"<tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Processed files to backup from Git repos (blob files (.zip files)):</td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{totalFilesIsBackupUnZippedStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33%; height: 18px;\">Processed files to backup from Git repos (blob files (.zip files)):</td>" +
                 $"<td style=\"width: 10%; height: 18px;\"><b>{totalBlobFilesIsBackup}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{totalBlobFilesIsBackupStatusText}</td></tr><tr>" +
                 $"<td style=\"width: 33%;\">Processed files to backup from Git repos (tree files (.json files)):</td>" +
@@ -1313,25 +1511,31 @@ namespace AzureDevOpsBackup
                 $"<td style=\"width: 33.3333%;\">{totalTreeFilesIsBackupStatusText}</td></tr></tbody></table><br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\"><tbody><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 33%; height: 18px;\"><strong>Download cleanup (if specified):</strong></td>" +
                 $"<td style=\"width: 10%; height: 18px;\"><strong>File(s):</strong></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\"><strong>Status:</strong></td></tr>" +
-                $"<tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Deleted original downloaded .zip and .json files in backup folder:</td>" +
-                $"<td style=\"width: 10%; height: 18px;\"><b>{totalFilesIsDeletedAfterUnZipped}</b></td><td style=\"width: 33.3333%; height: 18px;\">{totalFilesIsDeletedAfterUnZippedStatusText}</td></tr>" +
-                $"<tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete):</td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\"><strong>Status:</strong></td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33%; height: 18px;\">Deleted original downloaded .zip and .json files in backup folder:</td>" +
+                $"<td style=\"width: 10%; height: 18px;\"><b>{totalFilesIsDeletedAfterUnZipped}</b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{totalFilesIsDeletedAfterUnZippedStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33%; height: 18px;\">Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete):</td>" +
                 $"<td style=\"width: 10%; height: 18px;\"><b>{letOverZipFiles}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{letOverZipFilesStatusText}</td></tr>" +
-                $"<tr style=\"height: 18px;\"><td style=\"width: 33%; height: 18px;\">Leftovers for original downloaded .json files in backup folder (error(s) when try to delete):</td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{letOverZipFilesStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33%; height: 18px;\">Leftovers for original downloaded .json files in backup folder (error(s) when try to delete):</td>" +
                 $"<td style=\"width: 10%; height: 18px;\"><b>{letOverJsonFiles}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{letOverJsonFilesStatusText}</td></tr></tbody></table><br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\"><tr>" +
                 $"<td style=\"width: 21%; height: 18px;\"><strong>Backup:</strong></td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><strong>Info:</strong></td>" +
                 $"<td style=\"width: 33%; height: 18px;\"><strong>Status:</strong></td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 21%; height: 18px;\">Backup folder:</td><td style=\"width: 22%; height: 18px;\"><strong><b>\"{outDir}\"</b></b></td>" +
+                $"<td style=\"width: 21%; height: 18px;\">Backup folder:</td>" +
+                $"<td style=\"width: 22%; height: 18px;\"><strong><b>\"{outDir}\"</b></b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 21%; height: 18px;\">Backup server:</td><td style=\"width: 22%; height: 18px;\"><b>{Environment.MachineName}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr><tr style=\"height: 18px;\"><td style=\"width: 21%; height: 18px;\">Old backup(s) set to keep in backup folder (days):</td>" +
-                $"<td style=\"width: 22%; height: 18px;\"><b>{daysToKeep}</b></td><td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr>" +
-                $"<tr style=\"height: 18px;\"><td style=\"width: 21%; height: 18px;\">Old backup(s) deleted in backup folder:</td>" +
-                $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td><td style=\"width: 33.3333%; height: 18px;\">{totalBackupsIsDeletedStatusText}</td></tr></table>" +
+                $"<td style=\"width: 21%; height: 18px;\">Backup server:</td>" +
+                $"<td style=\"width: 22%; height: 18px;\"><b>{Environment.MachineName}</b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 21%; height: 18px;\">Old backup(s) set to keep in backup folder (days):</td>" +
+                $"<td style=\"width: 22%; height: 18px;\"><b>{daysToKeep}</b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 21%; height: 18px;\">Old backup(s) deleted in backup folder:</td>" +
+                $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{totalBackupsIsDeletedStatusText}</td></tr></table>" +
                 $"<p>See the attached logfile for the backup(s) today: <b>{AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log</b>.<o:p></o:p></p>" +
                 $"<p>Total Backup Run Time is: \"{elapsedTime}\".</p><hr/>" +
                 listrepocountelements + "<br>" +
@@ -1339,7 +1543,7 @@ namespace AzureDevOpsBackup
                 $"<h3>From Your {AppName} tool!<o:p></o:p></h3>" + copyrightData + ", v." + vData;
 
             // Create mail
-            MailMessage message = new MailMessage(emailFrom, emailTo);
+            var message = new MailMessage(emailFrom, emailTo);
             message.Subject = "[" + emailStatusMessage + $"] - {AppName} status - (" + totalBlobFilesIsBackup +
                               " Git projects backed up), " + errors + " issues(s) - (backups to keep (days): " + daysToKeep +
                               ", backup(s) deleted: " + totalBackupsIsDeleted + ")";
@@ -1347,43 +1551,112 @@ namespace AzureDevOpsBackup
             message.Body = mailbody;
             message.BodyEncoding = Encoding.UTF8;
             message.IsBodyHtml = true;
-
+            
             // ReSharper disable once UnusedVariable
-            bool isParsable = Int32.TryParse(serverPortStr, out var serverPortNumber);
-            SmtpClient client = new SmtpClient(serveraddress, serverPortNumber)
+            var isParsable = Int32.TryParse(serverPortStr, out var serverPortNumber);
+            var client = new SmtpClient(serveraddress, serverPortNumber)
             {
                 EnableSsl = true,
                 UseDefaultCredentials = true
             };
 
+            // Log
+            Message("Created email report and parsed data", EventType.Information, 1000);
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.WriteLine("Created email report and parsed data");
+            Console.ResetColor();
+
+            // Get all the files in the log dir for today
+
+            // Log
+            Message("Finding logfile for today to attach in email report...", EventType.Information, 1000);
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine("Finding logfile for today to attach in email report...");
+            Console.ResetColor();
+
+            // Get filename to find
+            var filePaths = Directory.GetFiles(Files.LogFilePath, $"{AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + "*.*");
+
+            // Get the files that their extension are .log or .txt
+            var files = filePaths.Where(filePath => Path.GetExtension(filePath).Contains(".log") || Path.GetExtension(filePath).Contains(".txt"));
+
+            // Loop through the files enumeration and attach each file in the mail.
+            foreach (var file in files)
+            {
+                _fileAttathedIneMailreport = file;
+
+                // Log
+                Message("Found logfile for today:", EventType.Information, 1000);
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("Found logfile for today:");
+                Console.ResetColor();
+
+                // Full file name   
+                var fileName = _fileAttathedIneMailreport;
+                var fi = new FileInfo(fileName);
+                // Get File Name  
+                var justFileName = fi.Name;
+                Console.WriteLine("File name: " + justFileName);
+                Message("File name: " + justFileName, EventType.Information, 1000);
+                // Get file name with full path   
+                var fullFileName = fi.FullName;
+                Console.WriteLine("Full file name: " + fullFileName);
+                Message("Full file name: " + fullFileName, EventType.Information, 1000);
+                // Get file extension   
+                var extn = fi.Extension;
+                Console.WriteLine("File Extension: " + extn);
+                Message("File Extension: " + extn, EventType.Information, 1000);
+                // Get directory name   
+                var directoryName = fi.DirectoryName;
+                Console.WriteLine("Directory name: " + directoryName);
+                Message("Directory name: " + directoryName, EventType.Information, 1000);
+                // File Exists ?  
+                var exists = fi.Exists;
+                Console.WriteLine("File exists: " + exists);
+                Message("File exists: " + exists, EventType.Information, 1000);
+                if (fi.Exists)
+                {
+                    // Get file size  
+                    var size = fi.Length;
+                    Console.WriteLine("File Size in Bytes: " + size);
+                    Message("File Size in Bytes: " + size, EventType.Information, 1000);
+                    // File ReadOnly ?  
+                    var isReadOnly = fi.IsReadOnly;
+                    Console.WriteLine("Is ReadOnly: " + isReadOnly);
+                    Message("Is ReadOnly: " + isReadOnly, EventType.Information, 1000);
+                    // Creation, last access, and last write time   
+                    var creationTime = fi.CreationTime;
+                    Console.WriteLine("Creation time: " + creationTime);
+                    Message("Creation time: " + creationTime, EventType.Information, 1000);
+                    var accessTime = fi.LastAccessTime;
+                    Console.WriteLine("Last access time: " + accessTime);
+                    Message("Last access time: " + accessTime, EventType.Information, 1000);
+                    var updatedTime = fi.LastWriteTime;
+                    Console.WriteLine("Last write time: " + updatedTime + "\n");
+                    Message("Last write time: " + updatedTime, EventType.Information, 1000);
+                }
+
+                // Do not add more to logfile here - file is locked
+                var attachment = new Attachment(file);
+
+                // Attach file to email
+                message.Attachments.Add(attachment);
+            }
+
             //Try to send email status email
             try
             {
-                // Get all the files in the log dir for today
-                string[] filePaths = Directory.GetFiles(Files.LogFilePath,
-                    $"{AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + "*.*");
-                
-                // Get the files that their extension are .log or .txt
-                var files = filePaths.Where(filePath =>
-                    Path.GetExtension(filePath).Contains(".log") || Path.GetExtension(filePath).Contains(".txt"));
-                
-                // Loop through the files enumeration and attach each file in the mail.
-                foreach (var file in files)
-                {
-                    var attachment = new Attachment(file);
-                    message.Attachments.Add(attachment);
-                }
-
                 // Send the email
                 client.Send(message);
-
+                
                 // Release files for the email
                 message.Dispose();
+                // logfile is not locked from here - you can add logs to logfile again from here
 
                 // Log
-                Message("Email notification is send to " + emailTo + "!", EventType.Information, 1000);
+                Message("Email notification is send to " + emailTo + " at " + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + "!", EventType.Information, 1000);
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Email notification is send to " + emailTo + "!");
+                Console.WriteLine("Email notification is send to " + emailTo + " at " + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + "!");
                 Console.ResetColor();
             }
             catch (Exception ex)
