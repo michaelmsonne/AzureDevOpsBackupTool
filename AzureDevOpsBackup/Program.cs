@@ -64,9 +64,9 @@ namespace AzureDevOpsBackup
         static void Main(string[] args)
         {
             //How to use:
-            // --unzip, --deletezipandjson and --daystokeepbackup xx not needed
+            // --unzip, --deletezipandjson, --daystokeepbackup xx and --simpelreportlayout not needed
             //.\AzureDevOpsBackup.exe --token "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" --organization "xxxxxxxxxxxxxxxxxx" --outdir "D:\Microsoft\Azure DevOps\Backup" --server "domain.mail.protection.outlook.com" --serverport "25" --from "azure-devops-backup@domain.com" --to "recipient@domain.com" --unzip --deletezipandjson --daystokeepbackup 50
-            
+
             // Global variabels
             int projectCount = 0;
             int totalFilesIsBackupUnZipped = 0;
@@ -97,6 +97,8 @@ namespace AzureDevOpsBackup
             bool isBackupOkAndUnZip = false;
             bool oldLogfilesToDelete = false;
             bool noProjectsToBackup = false;
+
+            bool useSimpelMailReportLayout = true;
 
             // Get application data to later use in tool
             AssemblyCopyrightAttribute copyright = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false)[0] as AssemblyCopyrightAttribute;
@@ -1161,12 +1163,22 @@ namespace AzureDevOpsBackup
                 Console.WriteLine($"\nParsing, processing and collecting data for email report");
                 Console.ResetColor();
 
+                // If args is set to old mail report layout
+                if (Array.Exists(args, argument => argument == "--simpelreportlayout"))
+                {
+                    useSimpelMailReportLayout = true;
+                }
+                else
+                {
+                    useSimpelMailReportLayout = false;
+                }
+
                 // Send status email and parse data to function
                 SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements, repoitemscountelements,
                     repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup, totalTreeFilesIsBackup,
                     outDir, elapsedTime, copyrightdata, vData, _errors, _totalFilesIsDeletedAfterUnZipped, _totalBackupsIsDeleted, daysToKeepBackups,
                     repoCountStatusText, repoItemsCountStatusText, totalFilesIsBackupUnZippedStatusText, totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
-                    totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText);
+                    totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText, useSimpelMailReportLayout);
 
                 Console.ForegroundColor = ConsoleColor.Green;
                 Message($"Parsing, processing and collecting data for email report is done", EventType.Information, 1000);
@@ -1433,9 +1445,12 @@ namespace AzureDevOpsBackup
             int totalBlobFilesIsBackup, int totalTreeFilesIsBackup, string outDir, string elapsedTime, string copyrightData, string vData, int errors,
             int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep, string repoCountStatusText, string repoItemsCountStatusText,
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
-            string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText)
+            string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText,
+            bool useSimpelMailReportLayout)
         {
             var serverPortStr = serverPort;
+            var mailBody = "";
+            if (mailBody == null) throw new ArgumentNullException(nameof(mailBody));
 
             //Parse data to list from list of repo.name
             var listrepocountelements = "<h3>List of Git repositories in Azure DevOps:</h3>∘ " + string.Join("<br>∘ ", repoCountElements);
@@ -1462,32 +1477,35 @@ namespace AzureDevOpsBackup
                 letOverZipFiles = _numZip;
             }
 
-            // Make email body data
-            /*
-            var mailbody =
-                $"<hr><h2>Your {AppName} is: {emailStatusMessage}</h2><hr><p><h3>Details:</h3><p>" +
-                $"<p>Processed Git repos in Azure DevOps (total): <b>{repoCount}</b><br>" +
-                $"Processed Git repos a backup is made of from Azure DevOps: <b>{repoItemsCount}</b><p>" +
-                $"Processed files to backup from Git repos (total unzipped if specified): <b>{totalFilesIsBackupUnZipped}</b><br>" +
-                $"Processed files to backup from Git repos (blob files (.zip files)): <b>{totalBlobFilesIsBackup}</b><br>" +
-                $"Processed files to backup from Git repos (tree files (.json files)): <b>{totalTreeFilesIsBackup}</b><p>" +
-                $"See the attached logfile for the backup(s) today: <b>{AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log</b>.<p>" +
-                $"Total Backup Run Time is: \"{elapsedTime}\"<br>" +
-                "<h3>Download cleanup (if specified):</h3><p>" +
-                $"Deleted original downloaded <b>.zip</b> and <b>.json</b> files in backup folder: <b>{totalFilesIsDeletedAfterUnZipped}</b><br>" +
-                $"Leftovers for original downloaded <b>.zip</b> files in backup folder (error(s) when try to delete): <b>{letOverZipFiles}</b><br>" +
-                $"Leftovers for original downloaded <b>.json</b> files in backup folder (error(s) when try to delete): <b>{letOverJsonFiles}</b><p>" +
-                $"<h3>Backup location:</h3><p>Backed up in folder: <b>\"{outDir}\"</b> on host/server: <b>{Environment.MachineName}</b><br>" +
-                $"Old backups set to keep in backup folder (days): <b>{daysToKeep}</b><br>" +
-                $"Old backups deleted in backup folder: <b>{totalBackupsIsDeleted}</b><br>" +
-                listrepocountelements + "<br>" +
-                listitemscountelements + "</p><hr>" +
-                $"<h3>From Your {AppName} tool!</h3></b><br>" +
-                copyrightData + ", v." + vData;
-            */
-
-            // Make email body data
-            var mailbody =
+            // If args is set to old mail report layout
+            if (useSimpelMailReportLayout)
+            {
+                // Make email body data
+                mailBody =
+                    $"<hr><h2>Your {AppName} is: {emailStatusMessage}</h2><hr><p><h3>Details:</h3><p>" +
+                    $"<p>Processed Git repos in Azure DevOps (total): <b>{repoCount}</b><br>" +
+                    $"Processed Git repos a backup is made of from Azure DevOps: <b>{repoItemsCount}</b><p>" +
+                    $"Processed files to backup from Git repos (total unzipped if specified): <b>{totalFilesIsBackupUnZipped}</b><br>" +
+                    $"Processed files to backup from Git repos (blob files (.zip files)): <b>{totalBlobFilesIsBackup}</b><br>" +
+                    $"Processed files to backup from Git repos (tree files (.json files)): <b>{totalTreeFilesIsBackup}</b><p>" +
+                    $"See the attached logfile for the backup(s) today: <b>{AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log</b>.<p>" +
+                    $"Total Backup Run Time is: \"{elapsedTime}\"<br>" +
+                    "<h3>Download cleanup (if specified):</h3><p>" +
+                    $"Deleted original downloaded <b>.zip</b> and <b>.json</b> files in backup folder: <b>{totalFilesIsDeletedAfterUnZipped}</b><br>" +
+                    $"Leftovers for original downloaded <b>.zip</b> files in backup folder (error(s) when try to delete): <b>{letOverZipFiles}</b><br>" +
+                    $"Leftovers for original downloaded <b>.json</b> files in backup folder (error(s) when try to delete): <b>{letOverJsonFiles}</b><p>" +
+                    $"<h3>Backup location:</h3><p>Backed up in folder: <b>\"{outDir}\"</b> on host/server: <b>{Environment.MachineName}</b><br>" +
+                    $"Old backups set to keep in backup folder (days): <b>{daysToKeep}</b><br>" +
+                    $"Old backups deleted in backup folder: <b>{totalBackupsIsDeleted}</b><br>" +
+                    listrepocountelements + "<br>" +
+                    listitemscountelements + "</p><hr>" +
+                    $"<h3>From Your {AppName} tool!</h3></b><br>" +
+                    copyrightData + ", v." + vData;
+            }
+            else
+            {
+                // Make email body data
+                mailBody =
                 $"<hr/><h2>Your {AppName} is: {emailStatusMessage}</h2><hr />" +
                 $"<br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\">" +
                 $"<tbody><tr style=\"height: 18px;\">" +
@@ -1541,6 +1559,7 @@ namespace AzureDevOpsBackup
                 listrepocountelements + "<br>" +
                 listitemscountelements + "</p><br><hr>" +
                 $"<h3>From Your {AppName} tool!<o:p></o:p></h3>" + copyrightData + ", v." + vData;
+            }
 
             // Create mail
             var message = new MailMessage(emailFrom, emailTo);
@@ -1548,7 +1567,7 @@ namespace AzureDevOpsBackup
                               " Git projects backed up), " + errors + " issues(s) - (backups to keep (days): " + daysToKeep +
                               ", backup(s) deleted: " + totalBackupsIsDeleted + ")";
             
-            message.Body = mailbody;
+            message.Body = mailBody;
             message.BodyEncoding = Encoding.UTF8;
             message.IsBodyHtml = true;
             
@@ -1594,22 +1613,27 @@ namespace AzureDevOpsBackup
                 // Full file name   
                 var fileName = _fileAttathedIneMailreport;
                 var fi = new FileInfo(fileName);
+
                 // Get File Name  
                 var justFileName = fi.Name;
                 Console.WriteLine("File name: " + justFileName);
                 Message("File name: " + justFileName, EventType.Information, 1000);
+                
                 // Get file name with full path   
                 var fullFileName = fi.FullName;
                 Console.WriteLine("Full file name: " + fullFileName);
                 Message("Full file name: " + fullFileName, EventType.Information, 1000);
+                
                 // Get file extension   
                 var extn = fi.Extension;
                 Console.WriteLine("File Extension: " + extn);
                 Message("File Extension: " + extn, EventType.Information, 1000);
+                
                 // Get directory name   
                 var directoryName = fi.DirectoryName;
                 Console.WriteLine("Directory name: " + directoryName);
                 Message("Directory name: " + directoryName, EventType.Information, 1000);
+                
                 // File Exists ?  
                 var exists = fi.Exists;
                 Console.WriteLine("File exists: " + exists);
@@ -1620,10 +1644,12 @@ namespace AzureDevOpsBackup
                     var size = fi.Length;
                     Console.WriteLine("File Size in Bytes: " + size);
                     Message("File Size in Bytes: " + size, EventType.Information, 1000);
+                    
                     // File ReadOnly ?  
                     var isReadOnly = fi.IsReadOnly;
                     Console.WriteLine("Is ReadOnly: " + isReadOnly);
                     Message("Is ReadOnly: " + isReadOnly, EventType.Information, 1000);
+                    
                     // Creation, last access, and last write time   
                     var creationTime = fi.CreationTime;
                     Console.WriteLine("Creation time: " + creationTime);
@@ -1636,7 +1662,7 @@ namespace AzureDevOpsBackup
                     Message("Last write time: " + updatedTime, EventType.Information, 1000);
                 }
 
-                // Do not add more to logfile here - file is locked
+                // TODO Do not add more to logfile here - file is locked!
                 var attachment = new Attachment(file);
 
                 // Attach file to email
@@ -1651,7 +1677,7 @@ namespace AzureDevOpsBackup
                 
                 // Release files for the email
                 message.Dispose();
-                // logfile is not locked from here - you can add logs to logfile again from here
+                // TODO logfile is not locked from here - you can add logs to logfile again from here!
 
                 // Log
                 Message("Email notification is send to " + emailTo + " at " + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + "!", EventType.Information, 1000);
