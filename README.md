@@ -34,13 +34,21 @@ The argument **--unzip** id needed for this to work.
 If the **--daystokeepbackup** argument is present, the program will keep that number of days in the backup folder. If not present the default days of backups to keep is **30 days**.
 It looks at the backup folder, and see when last changed. If the days matches the days you set, the program **will delete** the old backup in the backup folder you had set.
 
-Logs for backup jobs is keept in the **.\Log** folder for **30 days** beside AzureDevOpsBackup.exe.
+If the **--simpelreportlayout** argument is present, the program will use the old email report layout, else it will use the new default.
+
+Logs for backup jobs is keept in the **.\Log** folder for **30 days** beside **AzureDevOpsBackup.exe**.
 
 # Final thoughts
 This is not an exhaustive method to retrieve every artifact on Azure DevOps. There’s a lot more to be done to make this a complete solution. As it is, it will only retrieve the files from the last commit of the default — usually Master — branch. However, it’s a good starting point to backup Azure DevOps projects and keep a local repository of these.
 
 There is send an email report to the specified email address when the backup is done with status and other information about the backup.
 
-## Email report sample:
+# Email report sample:
+
+**New layout:**
+
+![Screenshot](docs/email-report-new.png)
+
+**Simpel layout:**
 
 ![Screenshot](docs/email-report.png)
