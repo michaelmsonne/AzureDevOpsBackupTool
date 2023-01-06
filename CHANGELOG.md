@@ -1,4 +1,7 @@
 
+## 6-1-2023
+- Created an installer for the project
+
 ## [1.0.0.2] - 5-1-2023
 ### Fixed
 - Fix no logging when email function reads logfile when sending report
