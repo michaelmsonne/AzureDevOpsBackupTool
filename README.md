@@ -45,10 +45,10 @@ There is send an email report to the specified email address when the backup is 
 
 # Email report sample:
 
-**New layout:**
+**Full layout:**
 
-![Screenshot](docs/email-report-new.png)
+![Screenshot](docs/email-report-full.png)
 
 **Simpel layout:**
 
-![Screenshot](docs/email-report.png)
+![Screenshot](docs/email-report-simpel.png)
