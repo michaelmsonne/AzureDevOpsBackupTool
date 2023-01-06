@@ -52,3 +52,9 @@ There is send an email report to the specified email address when the backup is 
 **Simpel layout:**
 
 ![Screenshot](docs/email-report-simpel.png)
+
+---
+
+The installer is created from a Free Advanced Installer License for Open-Source from https://www.advancedinstaller.com/ - check it out!
+
+[<img src="https://cdn.advancedinstaller.com/svg/pressinfo/AiLogoColor.svg" width="350"/>](image.png)
