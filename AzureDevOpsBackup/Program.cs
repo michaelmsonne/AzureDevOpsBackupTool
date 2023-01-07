@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Threading;
 using static AzureDevOpsBackup.FileLogger;
+using System.Xml.Linq;
 // ReSharper disable RedundantAssignment
 // ReSharper disable NotAccessedVariable
 
@@ -59,14 +60,13 @@ namespace AzureDevOpsBackup
         static bool _checkForLeftoverFilesAfterCleanup;
         static bool _deletedFilesAfterUnzip;
 
-        public static string _fileAttathedIneMailreport;
+        public static string _currentExeFileName;
+        public static string _fileAttachedIneMailReport;
+        public static string _vData;
+        public static string _companyName;
 
         static void Main(string[] args)
         {
-            //How to use:
-            // --unzip, --deletezipandjson, --daystokeepbackup xx and --simpelreportlayout not needed
-            //.\AzureDevOpsBackup.exe --token "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx" --organization "xxxxxxxxxxxxxxxxxx" --outdir "D:\Microsoft\Azure DevOps\Backup" --server "domain.mail.protection.outlook.com" --serverport "25" --from "azure-devops-backup@domain.com" --to "recipient@domain.com" --unzip --deletezipandjson --daystokeepbackup 50
-
             // Global variabels
             int projectCount = 0;
             int totalFilesIsBackupUnZipped = 0;
@@ -98,15 +98,15 @@ namespace AzureDevOpsBackup
             bool oldLogfilesToDelete = false;
             bool noProjectsToBackup = false;
 
-            bool useSimpelMailReportLayout = true;
-
             // Get application data to later use in tool
             AssemblyCopyrightAttribute copyright = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false)[0] as AssemblyCopyrightAttribute;
             // ReSharper disable once PossibleNullReferenceException
             var copyrightdata = copyright.Copyright;
-            var vData = Assembly.GetEntryAssembly()?.GetName().Version.ToString();
+            _vData = Assembly.GetEntryAssembly()?.GetName().Version.ToString();
             var attributes = typeof(Program).GetTypeInfo().Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute));
             var assemblyTitleAttribute = attributes.SingleOrDefault() as AssemblyTitleAttribute;
+            var versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly()?.Location);
+            _companyName = versionInfo.CompanyName;
 
             // Start timer for runtime
             Stopwatch stopWatch = new Stopwatch();
@@ -115,10 +115,11 @@ namespace AzureDevOpsBackup
             // Set application name in code
             //AppName = "Azure DevOps Backup";
             AppName = assemblyTitleAttribute?.Title;
+            _currentExeFileName = Path.GetFileName(Process.GetCurrentProcess().MainModule?.FileName);
 
             // Start of program
-            Message($"Start of application - {AppName}, v." + vData, EventType.Information, 1000);
-            Console.WriteLine($"\nStart of application - {AppName}, v. {vData}");
+            Message($"Welcome to {AppName}, v." + _vData + " by " + _companyName, EventType.Information, 1000);
+            Console.WriteLine($"\nWelcome to {AppName}, v." + _vData + " by " + _companyName + "\n");
             
             // Set Global Logfile properties
             FileLogger.DateFormat = "dd-MM-yyyy";
@@ -129,21 +130,41 @@ namespace AzureDevOpsBackup
             Message("Loaded log configuration into the program: " + AppName, EventType.Information, 1000);
             
             // Check for required Args for application will work
-            string[] requiredArgs = { "--token", "--organization", "--outdir", "--server", "--serverport", "--from", "--to" };
+            string[] requiredArgs = { "--token", "--org", "--outdir", "--server", "--port", "--from", "--to" };
 
             // Log
-            Message("Checking if there is 7 required arguments (--token, --organization, --outdir, --server, --serverport, --from, --to)", EventType.Information, 1000);
+            Message("Checking if there is 7 required arguments (--token, --org, --outdir, --server, --port, --from, --to)", EventType.Information, 1000);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Checking if there is 7 required arguments (--token, --organization, --outdir, --server, --serverport, --from, --to)");
+            Console.WriteLine("Checking if there is 7 required arguments (--token, --org, --outdir, --server, --port, --from, --to)...");
             Console.ResetColor();
+
+            // Check if parameters have been provided
+            if (args.Length == 0)
+            {
+                // No arguments have been provided
+                Message("ERROR: No arguments is provided - try again!", EventType.Error, 1001);
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("ERROR: No arguments is provided - try again!\n");
+                Console.ResetColor();
+
+                // Show help
+                DisplayHelp();
+
+                Message("Showed help to Console - Exciting!", EventType.Information, 1000);
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine("Showed help to Console - Exciting!\n");
+                Console.ResetColor();
+
+                Environment.Exit(1);
+            }
 
             // If okay do some work
             if (args.Intersect(requiredArgs).Count() == 7)
             {
                 // Startup log entry
-                Message("Checked if there is 7 required arguments (--token, --organization, --outdir, --server, --serverport, --from, --to) - all is fine!", EventType.Information, 1000);
+                Message("Checked if there is 7 required arguments (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!", EventType.Information, 1000);
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Checked if there is 7 required arguments (--token, --organization, --outdir, --server, --serverport, --from, --to) - all is fine!");
+                Console.WriteLine("Checked if there is 7 required arguments (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!");
                 Console.ResetColor();
 
                 // Start URL parse to AIP access
@@ -153,7 +174,7 @@ namespace AzureDevOpsBackup
                 // Base GET API
                 const string version = "api-version=5.1-preview.1";
                 string auth = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", args[Array.IndexOf(args, "--token") + 1])));
-                string baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--organization") + 1] + "/";
+                string baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
 
                 // URL parse to API access done
                 Message("Base URL is for Organization is: " + baseUrl, EventType.Information, 1000);
@@ -613,19 +634,19 @@ namespace AzureDevOpsBackup
 
                     // Parse data
                     server = args[Array.IndexOf(args, "--server") + 1];
-                    serverPort = args[Array.IndexOf(args, "--serverport") + 1];
+                    serverPort = args[Array.IndexOf(args, "--port") + 1];
                     emailFrom = args[Array.IndexOf(args, "--from") + 1];
                     emailTo = args[Array.IndexOf(args, "--to") + 1];
 
                     // Log details regarding email send
                     Console.WriteLine("Email details:");
                     Console.WriteLine("--server: " + server);
-                    Console.WriteLine("--serverport: " + serverPort);
+                    Console.WriteLine("--port: " + serverPort);
                     Console.WriteLine("--from: " + emailFrom);
                     Console.WriteLine("--to: " + emailTo + Environment.NewLine);
                     Message("Email details:", EventType.Information, 1000);
                     Message("--server: " + server, EventType.Information, 1000);
-                    Message("--serverport: " + serverPort, EventType.Information, 1000);
+                    Message("--port: " + serverPort, EventType.Information, 1000);
                     Message("--from: " + emailFrom, EventType.Information, 1000);
                     Message("--to: " + emailTo, EventType.Information, 1000);
 
@@ -785,33 +806,33 @@ namespace AzureDevOpsBackup
                 }
 
                 // If user set to delete downloaded files (.zip and .json) after unzipped
-                if (Array.Exists(args, argument => argument == "--deletezipandjson"))
+                if (Array.Exists(args, argument => argument == "--cleanup"))
                 {
-                    // If --deletezipandjson was set to and --unzip
+                    // If --cleanup was set to and --unzip
                     if (Array.Exists(args, argument => argument == "--unzip"))
                     {
                         // Log
-                        Message("Parameter --deletezipandjson and --unzip is set - deleting downloaded .zip and .json files when unzipped...", EventType.Information, 1000);
+                        Message("Parameter --cleanup and --unzip is set - deleting downloaded .zip and .json files when unzipped...", EventType.Information, 1000);
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("\nParameter --deletezipandjson and --unzip is set - deleting downloaded .zip and .json files when unzipped...\n");
+                        Console.WriteLine("\nParameter --cleanup and --unzip is set - deleting downloaded .zip and .json files when unzipped...\n");
                         Console.ResetColor();
 
                         // Do task
                         Deletezipandjson(outDir);
 
                         // Log
-                        Message("Parameter --deletezipandjson was set - deleted downloaded .zip and .json files after unzipped!", EventType.Information, 1000);
+                        Message("Parameter --cleanup was set - deleted downloaded .zip and .json files after unzipped!", EventType.Information, 1000);
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("\nParameter --deletezipandjson was set - deleted downloaded .zip and .json files after unzipped!\n");
+                        Console.WriteLine("\nParameter --cleanup was set - deleted downloaded .zip and .json files after unzipped!\n");
                         Console.ResetColor();
                     }
-                    // If --unzip was not set when --deletezipandjson is - do not delete anything!
+                    // If --unzip was not set when --cleanup is - do not delete anything!
                     else
                     {
                         // Log
-                        Message("Parameter --deletezipandjson is set but NOT --unzip - will not delete any downloaded .zip and .json files as that the only files there is backup of!", EventType.Warning, 1002);
+                        Message("Parameter --cleanup is set but NOT --unzip - will not delete any downloaded .zip and .json files as that the only files there is backup of!", EventType.Warning, 1002);
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("\nParameter --deletezipandjson is set but NOT --unzip - will not delete any downloaded .zip and .json files as that the only files there is backup of!\n");
+                        Console.WriteLine("\nParameter --cleanup is set but NOT --unzip - will not delete any downloaded .zip and .json files as that the only files there is backup of!\n");
                         Console.ResetColor();
                     }
                 }
@@ -1164,7 +1185,8 @@ namespace AzureDevOpsBackup
                 Console.ResetColor();
 
                 // If args is set to old mail report layout
-                if (Array.Exists(args, argument => argument == "--simpelreportlayout"))
+                bool useSimpelMailReportLayout;
+                if (Array.Exists(args, argument => argument == "--simpelreport"))
                 {
                     useSimpelMailReportLayout = true;
                 }
@@ -1176,7 +1198,7 @@ namespace AzureDevOpsBackup
                 // Send status email and parse data to function
                 SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements, repoitemscountelements,
                     repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup, totalTreeFilesIsBackup,
-                    outDir, elapsedTime, copyrightdata, vData, _errors, _totalFilesIsDeletedAfterUnZipped, _totalBackupsIsDeleted, daysToKeepBackups,
+                    outDir, elapsedTime, copyrightdata, _vData, _errors, _totalFilesIsDeletedAfterUnZipped, _totalBackupsIsDeleted, daysToKeepBackups,
                     repoCountStatusText, repoItemsCountStatusText, totalFilesIsBackupUnZippedStatusText, totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
                     totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText, useSimpelMailReportLayout);
 
@@ -1189,15 +1211,15 @@ namespace AzureDevOpsBackup
             else
             {
                 // Log
-                Message("The 7 required arguments is missing: --token, --organization, --outdir, --server, --serverport, --from and --to!", EventType.Error, 1001);
+                Message("The 7 required arguments is missing: --token, --org, --outdir, --server, --port, --from and --to!", EventType.Error, 1001);
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("\nThe 7 required arguments is missing: --token, --organization, --outdir, --server, --serverport, --from and --to!\n");
+                Console.WriteLine("\nThe 7 required arguments is missing: --token, --org, --outdir, --server, --port, --from and --to!");
                 Console.ResetColor();
             }
 
             // End of program
-            Message($"End of application - {AppName}, v." + vData, EventType.Information, 1000);
-            Console.WriteLine($"\nEnd of application - {AppName}, v. {vData}\n");
+            Message($"End of application - {AppName}, v." + _vData, EventType.Information, 1000);
+            Console.WriteLine($"\nEnd of application - {AppName}, v. {_vData}\n");
         }
 
         public static void DeleteDirectory(string path)
@@ -1342,6 +1364,54 @@ namespace AzureDevOpsBackup
             }
         }
 
+        /// <summary>
+        /// Shows the syntax
+        /// </summary>
+        private static void DisplayHelp()
+        {
+            Console.WriteLine("Usage:");
+            Console.WriteLine($"\t{_currentExeFileName} --token <token> --org <organization> --outdir <folder> --server <smtpserver> ");
+            Console.WriteLine("\t--port <25> --from <fromemail> --to <toemail>");
+            Console.WriteLine();
+            Console.WriteLine("Description:");
+            Console.WriteLine("\tAzure DevOps Backup for Git Projects and is using the API for Azure DevOps");
+            Console.WriteLine();
+            Console.WriteLine("\tWhile the code is perfectly safe on the Azure infrastructure, there are cases where a centralized");
+            Console.WriteLine("\tlocal backup of all projects and repositories is needed. These might include Corporate Policies,");
+            Console.WriteLine("\tDisaster Recovery and Business Continuity Plans.");
+            Console.WriteLine();
+            Console.WriteLine("Parameter List:");
+            Console.WriteLine("\t--token:             Token to access the API in Azure DevOps");
+            Console.WriteLine("\t--org:               Name of the organization in Azure DevOps");
+            Console.WriteLine("\t--outdir:            Folder where to store the backup(s) - folder with timestamp will be created");
+            Console.WriteLine("\t--server:            IP address or DNS name of the SMTP server");
+            Console.WriteLine("\t--port:              The port for the SMTP server");
+            Console.WriteLine("\t--from:              The email address the report is send from");
+            Console.WriteLine("\t--toemail:           The email address the report is send to");
+            Console.WriteLine("\t--unzip:             Unzip downloaded .zip and .json files in --outdir (optional)");
+            Console.WriteLine("\t--cleanup:           Delete downloaded .zip and .json files in --outdir after unzip (optional)");
+            Console.WriteLine("\t--daystokeepbackup:  Number of days to keep backups for in --outdir. Backups older than this will");
+            Console.WriteLine("\t\t\t     be deleted (default is 30 dayes) (optional)");
+            Console.WriteLine("\t--simpelreport:      If set, the email report layout is simple");
+            Console.WriteLine();
+            Console.WriteLine("Examples:");
+            Console.WriteLine($"\t{_currentExeFileName} --token XXX... --org OrgName --outdir C:\\Backup --server smtp.domain.local");
+            Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local\n");
+            Console.WriteLine($"\t{_currentExeFileName} --token XXX... --org OrgName --outdir C:\\Backup --server smtp.domain.local");
+            Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip\n");
+            Console.WriteLine($"\t{_currentExeFileName} --token XXX... --org OrgName --outdir C:\\Backup --server smtp.domain.local");
+            Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --cleanup\n");
+            Console.WriteLine($"\t{_currentExeFileName} --token XXX... --org OrgName --outdir C:\\Backup --server smtp.domain.local");
+            Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --daystokeepbackup 50");
+            Console.WriteLine();
+            Console.WriteLine("Output:");
+            Console.WriteLine("\tA timestamped folder containing the backup will be created within this directory unless --outdir");
+            Console.WriteLine("\tis being specified");
+            Console.WriteLine();
+            Console.WriteLine($"{AppName}, v." + _vData + " by " + _companyName);
+            Console.WriteLine();
+        }
+
         // If args is set to delete original downloaded .zip and .json files
         // Get output folder from backup with date for folder to backup to
         public static void Deletezipandjson(string outDir)
@@ -1442,7 +1512,7 @@ namespace AzureDevOpsBackup
 
         public static void SendEmail(string serveraddress, string serverPort, string emailFrom, string emailTo, string emailStatusMessage,
             List<string> repoCountElements, List<string> repoItemsCountElements, int repoCount, int repoItemsCount, int totalFilesIsBackupUnZipped,
-            int totalBlobFilesIsBackup, int totalTreeFilesIsBackup, string outDir, string elapsedTime, string copyrightData, string vData, int errors,
+            int totalBlobFilesIsBackup, int totalTreeFilesIsBackup, string outDir, string elapsedTime, string copyrightData, string _vData, int errors,
             int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep, string repoCountStatusText, string repoItemsCountStatusText,
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
             string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText,
@@ -1500,7 +1570,7 @@ namespace AzureDevOpsBackup
                     listrepocountelements + "<br>" +
                     listitemscountelements + "</p><hr>" +
                     $"<h3>From Your {AppName} tool!</h3></b><br>" +
-                    copyrightData + ", v." + vData;
+                    copyrightData + ", v." + _vData;
             }
             else
             {
@@ -1558,7 +1628,7 @@ namespace AzureDevOpsBackup
                 $"<p>Total Backup Run Time is: \"{elapsedTime}\".</p><hr/>" +
                 listrepocountelements + "<br>" +
                 listitemscountelements + "</p><br><hr>" +
-                $"<h3>From Your {AppName} tool!<o:p></o:p></h3>" + copyrightData + ", v." + vData;
+                $"<h3>From Your {AppName} tool!<o:p></o:p></h3>" + copyrightData + ", v." + _vData;
             }
 
             // Create mail
@@ -1602,7 +1672,7 @@ namespace AzureDevOpsBackup
             // Loop through the files enumeration and attach each file in the mail.
             foreach (var file in files)
             {
-                _fileAttathedIneMailreport = file;
+                _fileAttachedIneMailReport = file;
 
                 // Log
                 Message("Found logfile for today:", EventType.Information, 1000);
@@ -1611,7 +1681,7 @@ namespace AzureDevOpsBackup
                 Console.ResetColor();
 
                 // Full file name   
-                var fileName = _fileAttathedIneMailreport;
+                var fileName = _fileAttachedIneMailReport;
                 var fi = new FileInfo(fileName);
 
                 // Get File Name  
