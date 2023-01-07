@@ -1,5 +1,5 @@
 
-## 6-1-2023
+## 7-1-2023
 - Created an installer for the project
 
 ## [1.0.0.2] - 5-1-2023
