@@ -13,7 +13,7 @@ To get the sample code, we can clone this GitHub repository or another and open 
 
 Here’s how the argument list will look like:
 
-`.\AzureDevOpsBackup.exe --token "our-auth-token" --organization "our-org" --outdir "C:\backup\our-directory" --server "smtp.server.com" --serverport "25" --from "azure-devops-backup@domain.com" --to "backupmail@domain.com" --unzip --deletezipandjson --daystokeepbackup 50`
+`.\AzureDevOpsBackup.exe --token "our-auth-token" --org "our-org" --outdir "C:\backup\our-directory" --server "smtp.server.com" --port "25" --from "azure-devops-backup@domain.com" --to "backupmail@domain.com" --unzip --cleanup --daystokeepbackup 50`
 
 This solution uses two external libraries we need to reference: RestSharp to facilitate the API calls and Newtonsoft JSON to deserialize the API responses into objects.
 
@@ -24,11 +24,11 @@ When we get to the repository level we don’t need to make individual API calls
 
 Note we are also saving the original JSON item list we got from the repository call. This will be needed to map the files inside the Zip package, because these are presented in a single flat directory and their names are the object ids and not their actual names and extension. This is where the --unzip argument enters. If it’s omitted, the process does not go further and we get a simple backup: for every repository of each project we get a Zip file with the content and a JSON file to map it.
 
-Mandatory arguments is: **--token, --organization, --outdir, --server, --serverport, --from and --to**
+Mandatory arguments is: **--token, --org, --outdir, --server, --port, --from and --to**
 
 If the **--unzip** argument is present, the program will create a directory for each repository based on the information provided by each Zip/JSON file pair. In this directory, we will get the original file and folder structure with real file names and extensions. Looping through all the items on the JSON list file, we consider a simple condition: if the item is a folder we create the directory according to the item.path property. Otherwise, we assume it’s a blob and we extract it from the Zip archive into the corresponding directory assigning the original file name and extension.
 
-If the **--deletezipandjson** argument is present, the program will cleanup the blob files downloaded from the API in the backup folder. If not present, the downloaded original .json and .zip files is still the backup folder.
+If the **--cleanup** argument is present, the program will cleanup the blob files downloaded from the API in the backup folder. If not present, the downloaded original .json and .zip files is still the backup folder.
 The argument **--unzip** id needed for this to work.
 
 If the **--daystokeepbackup** argument is present, the program will keep that number of days in the backup folder. If not present the default days of backups to keep is **30 days**.
