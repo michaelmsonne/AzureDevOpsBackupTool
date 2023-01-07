@@ -154,6 +154,7 @@ namespace AzureDevOpsBackup
                 Console.WriteLine("Showed help to Console - Exciting!\n");
                 Console.ResetColor();
 
+                // End application
                 Environment.Exit(1);
             }
 
@@ -219,6 +220,9 @@ namespace AzureDevOpsBackup
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("Unable to create folder to store the backups: " + outDir + ". Make sure the account you use to run this tool has write rights to this location.");
                             Console.ResetColor();
+
+                            // Count errors
+                            _errors++;
                         }
                         catch (Exception e)
                         {
@@ -350,6 +354,9 @@ namespace AzureDevOpsBackup
                                         Console.ForegroundColor = ConsoleColor.Red;
                                         Console.WriteLine("Unable to write the backup file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
                                         Console.ResetColor();
+
+                                        // Count errors
+                                        _errors++;
                                     }
                                     catch (Exception e)
                                     {
@@ -392,6 +399,9 @@ namespace AzureDevOpsBackup
                                         Console.ForegroundColor = ConsoleColor.Red;
                                         Console.WriteLine("Unable to write the backup file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
                                         Console.ResetColor();
+
+                                        // Count errors
+                                        _errors++;
                                     }
                                     catch (Exception e)
                                     {
@@ -440,6 +450,9 @@ namespace AzureDevOpsBackup
                                                 Console.ForegroundColor = ConsoleColor.Red;
                                                 Console.WriteLine("Unable to delete folder under unzip: " + outDir + project.Name + "_" + repo.Name + ". Make sure the account you use to run this tool has delete rights to this location.");
                                                 Console.ResetColor();
+
+                                                // Count errors
+                                                _errors++;
                                             }
                                             catch (Exception e)
                                             {
@@ -478,6 +491,9 @@ namespace AzureDevOpsBackup
 
                                                 // Set backup status
                                                 isBackupOkAndUnZip = false;
+
+                                                // Count errors
+                                                _errors++;
                                             }
                                         }
                                         else
@@ -517,6 +533,9 @@ namespace AzureDevOpsBackup
                                             Console.ForegroundColor = ConsoleColor.Red;
                                             Console.WriteLine("Unable to create folder under unzipping: " + outDir + project.Name + "_" + repo.Name + ". Make sure the account you use to run this tool has write rights to this location.");
                                             Console.ResetColor();
+
+                                            // Count errors
+                                            _errors++;
                                         }
                                         catch (Exception e)
                                         {
@@ -565,6 +584,9 @@ namespace AzureDevOpsBackup
                                                     Console.ForegroundColor = ConsoleColor.Red;
                                                     Console.WriteLine("Unable to create folder under unzipping: " + outDir + project.Name + "_" + repo.Name + item.Path + ". Make sure the account you use to run this tool has write rights to this location.");
                                                     Console.ResetColor();
+
+                                                    // Count errors
+                                                    _errors++;
                                                 }
                                                 catch (Exception e)
                                                 {
@@ -607,6 +629,9 @@ namespace AzureDevOpsBackup
                                                     Console.ForegroundColor = ConsoleColor.Red;
                                                     Console.WriteLine("Unable to create file under unzipping: " + outDir + project.Name + "_" + repo.Name + item.Path + ". Make sure the account you use to run this tool has write rights to this location.");
                                                     Console.ResetColor();
+
+                                                    // Count errors
+                                                    _errors++;
                                                 }
                                                 catch (Exception e)
                                                 {
@@ -797,6 +822,9 @@ namespace AzureDevOpsBackup
                                     Console.ForegroundColor = ConsoleColor.Red;
                                     Console.WriteLine("Unable to delete old log file: " + fi + ". Make sure the account you use to run this tool has delete rights to this location.");
                                     Console.ResetColor();
+
+                                    // Count errors
+                                    _errors++;
                                 }
                                 catch (Exception ex)
                                 {
@@ -1339,6 +1367,9 @@ namespace AzureDevOpsBackup
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.");
                         Console.ResetColor();
+
+                        // Count errors
+                        _errors++;
                     }
                     catch (Exception e)
                     {
@@ -1404,6 +1435,16 @@ namespace AzureDevOpsBackup
 
                         // Set state
                         backupsToDelete = true;
+                    }
+                    catch (UnauthorizedAccessException)
+                    {
+                        Message("Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.");
+                        Console.ResetColor();
+
+                        // Count errors
+                        _errors++;
                     }
                     catch (Exception e)
                     {
@@ -1645,6 +1686,9 @@ namespace AzureDevOpsBackup
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("Unable to delete downloaded file: " + filepath + " in backup folder: " + outDir + ". Make sure the account you use to run this tool has write rights to this location.");
                     Console.ResetColor();
+
+                    // Count errors
+                    _errors++;
                 }
                 catch (Exception e)
                 {
