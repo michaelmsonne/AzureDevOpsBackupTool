@@ -51,6 +51,14 @@
   <PropertyGroup>
     <ApplicationIcon>Azure Dev Ops.ico</ApplicationIcon>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release-Installer|AnyCPU'">
+    <OutputPath>bin\Release-Installer\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <LangVersion>7.3</LangVersion>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>packages\Newtonsoft.Json.12.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -99,10 +107,10 @@
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release (
   echo "Release build - rename output file!".
-  powershell -command $(SolutionDir)\RenameOutputRelease.ps1
+  powershell -command $(SolutionDir)\Scripts\RenameOutputRelease.ps1
 ) ELSE (
   echo "Debug build - rename output file!".
-  powershell -command $(SolutionDir)\RenameOutputDebug .ps1
+  powershell -command $(SolutionDir)\Scripts\RenameOutputDebug .ps1
 )</PostBuildEvent>
   </PropertyGroup>
 </Project>

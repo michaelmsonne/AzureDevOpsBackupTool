@@ -17,6 +17,7 @@
     </LoadFromTemplate>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)' == 'DefaultBuild' " />
+  <PropertyGroup Condition=" '$(Configuration)' == 'Release-Installer' " />
   <ItemGroup>
     <Compile Include="AI Setup Project.aip">
       <SubType>Code</SubType>

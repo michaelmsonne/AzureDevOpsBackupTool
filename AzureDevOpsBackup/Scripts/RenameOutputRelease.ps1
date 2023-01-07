@@ -1,11 +1,11 @@
 #Folder for old builds
 $FolderName = ".\Old\"
 if(Get-Item -Path $FolderName -ErrorAction Ignore) {   
-    Write-Host "Folder Exists"
+    Write-Host "Old folder for Release builds Exists"
     Get-ChildItem -Path ".\*AzureDevOpsBackup*Build at*.exe" -Recurse | Move-Item -Destination $FolderName
 }
 else {
-    Write-Host "Folder Doesn't Exists - Creating it..."    
+    Write-Host "Old folder for Release builds doesn't Exists - Creating it..."    
     #PowerShell Create directory if not exists
     New-Item $FolderName -ItemType Directory
 }
@@ -15,5 +15,5 @@ Get-ChildItem ".\*AzureDevOpsBackup*Build at*" -File | Where-Object CreationTime
 #Get file v. for last build ServiceAccounts.exe file
 $FileVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo(".\AzureDevOpsBackup.exe").FileVersion
 
-#Rename file to v. and buildtime
-Get-ChildItem ".\AzureDevOpsBackup.exe" | Where-Object {!$_.PSIsContainer -and $_.extension -eq '.exe'} | Rename-Item -NewName {"$($_.BaseName) v. $FileVersion - Build at $(Get-Date -format "ddMMyyyy-HHmmss")$($_.extension)"} -Force
+#Rename file to v. and buildtime - keep original
+Get-ChildItem ".\AzureDevOpsBackup.exe" | Where-Object {!$_.PSIsContainer -and $_.extension -eq '.exe'} | Copy-Item -Path ".\AzureDevOpsBackup.exe" -Destination {"$($_.BaseName) v. $FileVersion - Build at $(Get-Date -format "ddMMyyyy-HHmmss")$($_.extension)"} -Force
