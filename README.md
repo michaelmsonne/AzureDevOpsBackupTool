@@ -55,6 +55,17 @@ There is send an email report to the specified email address when the backup is 
 
 ---
 
+## How to build
+
+- Get [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/) (Community Edition is fine)
+- Install ".NET desktop development" workload  
+  ![dotnet-desktop-develoment.png](docs/dotnet-desktop-develoment.png)
+- Remember to select: Install .NET Framework 4.6.1 SDK
+- Build the solution in Visual Studio
+
+---
+
+## Sponsors
 The installer is created from a Free Advanced Installer License for Open-Source from https://www.advancedinstaller.com/ - check it out!
 
-[<img src="https://cdn.advancedinstaller.com/svg/pressinfo/AiLogoColor.svg" width="350"/>](image.png)
+[<img src="https://cdn.advancedinstaller.com/svg/pressinfo/AiLogoColor.svg" title="Advanced Installer" alt="Advanced Instzaller" height="120"/>](https://www.advancedinstaller.com/)
