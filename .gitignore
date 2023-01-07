@@ -262,5 +262,5 @@ paket-files/
 # Python Tools for Visual Studio (PTVS)
 __pycache__/
 *.pyc
-/AI Setup Project/AI Setup Project-cache
-/AI Setup Project/AI Setup Project-SetupFiles
+/AI Setup Project/AzureDevOpsBackup Installer-cache
+/AI Setup Project/AzureDevOpsBackup Installer-SetupFiles

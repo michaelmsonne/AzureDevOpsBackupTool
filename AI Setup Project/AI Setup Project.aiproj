@@ -16,10 +16,12 @@
     <LoadFromTemplate>
     </LoadFromTemplate>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)' == 'DefaultBuild' " />
-  <PropertyGroup Condition=" '$(Configuration)' == 'Release-Installer' " />
+  <PropertyGroup Condition=" '$(Configuration)' == 'DefaultBuild' ">
+    <PackageName>
+    </PackageName>
+  </PropertyGroup>
   <ItemGroup>
-    <Compile Include="AI Setup Project.aip">
+    <Compile Include="AzureDevOpsBackup Installer.aip">
       <SubType>Code</SubType>
     </Compile>
   </ItemGroup>
