@@ -66,6 +66,6 @@ There is send an email report to the specified email address when the backup is 
 ---
 
 ## Sponsors
-The installer is created from a Free Advanced Installer License for Open-Source from https://www.advancedinstaller.com/ - check it out!
+The installer is created from a Free Advanced Installer License for Open-Source from <a href="https://www.advancedinstaller.com/" target="_blank">https://www.advancedinstaller.com/</a> - check it out!
 
 [<img src="https://cdn.advancedinstaller.com/svg/pressinfo/AiLogoColor.svg" title="Advanced Installer" alt="Advanced Instzaller" height="120"/>](https://www.advancedinstaller.com/)
