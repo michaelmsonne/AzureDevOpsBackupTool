@@ -158,13 +158,12 @@ namespace AzureDevOpsBackup
                 Environment.Exit(1);
             }
 
-            // Parse the provided arguments
-            if (args.Length > 0)
+            switch (args.Length > 0)
             {
+                // Parse the provided arguments
                 //ParseArguments(args);
-
                 // If okay do some work
-                if (args.Intersect(requiredArgs).Count() == 7)
+                case true when args.Intersect(requiredArgs).Count() == 7:
                 {
                     // Startup log entry
                     Message("Checked if there is 7 required arguments (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!", EventType.Information, 1000);
@@ -1294,16 +1293,16 @@ namespace AzureDevOpsBackup
                     Message($"Parsing, processing and collecting data for email report is done", EventType.Information, 1000);
                     Console.WriteLine($"Parsing, processing and collecting data for email report is done");
                     Console.ResetColor();
+                    break;
                 }
                 // Not do work
-                else
-                {
+                case true:
                     // Log
-                    Message("The 7 required arguments is missing: --token, --org, --outdir, --server, --port, --from and --to!", EventType.Error, 1001);
+                    Message("Some of the 7 required arguments is missing: --token, --org, --outdir, --server, --port, --from and --to!", EventType.Error, 1001);
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\nThe 7 required arguments is missing: --token, --org, --outdir, --server, --port, --from and --to!");
+                    Console.WriteLine("\nSome of the 7 required arguments is missing: --token, --org, --outdir, --server, --port, --from and --to!");
                     Console.ResetColor();
-                }
+                    break;
             }
 
             // End of program
