@@ -58,6 +58,7 @@ namespace AzureDevOpsBackup
         static int _totalBackupsIsDeleted;
         static bool _checkForLeftoverFilesAfterCleanup;
         static bool _deletedFilesAfterUnzip;
+        private static bool _cleanUpState;
 
         public static string _currentExeFileName;
         public static string _fileAttachedIneMailReport;
@@ -900,6 +901,9 @@ namespace AzureDevOpsBackup
                     // If user set to delete downloaded files (.zip and .json) after unzipped
                     if (Array.Exists(args, argument => argument == "--cleanup"))
                     {
+                        // Set state
+                        _cleanUpState = true;
+
                         // If --cleanup was set to and --unzip
                         if (Array.Exists(args, argument => argument == "--unzip"))
                         {
@@ -927,6 +931,11 @@ namespace AzureDevOpsBackup
                             Console.WriteLine("\nParameter --cleanup is set but NOT --unzip - will not delete any downloaded .zip and .json files as that the only files there is backup of!\n");
                             Console.ResetColor();
                         }
+                    }
+                    else
+                    {
+                        // Set state
+                        _cleanUpState = false;
                     }
 
                     // Get status email text for Status colums in email report
@@ -1128,9 +1137,6 @@ namespace AzureDevOpsBackup
                         }
                         else
                         {
-                            // TODO Fix so not get here when --cleanup is not set
-                            //totalFilesIsDeletedAfterUnZippedStatusText = "Warning - nothing to backup!";
-
                             if (isBackupOk)
                             {
                                 totalFilesIsDeletedAfterUnZippedStatusText = "Good - not set to cleanup!";
@@ -1295,20 +1301,33 @@ namespace AzureDevOpsBackup
                         // Set status
                         isOutputFolderContainFiles = true;
                     }
-                    //TODO Fix so not get in there when --cleanup is set
                     else
                     {
-                        // Log
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine($"Directory " + outDir + " is not created successfully and contains no files - see logs for more information");
-                        Console.ResetColor();
-                        Message("Directory " + outDir + " is not created successfully and contains no files - see logs for more information", EventType.Error, 1001);
+                        if (_cleanUpState)
+                        {
+                            // Log
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine($"Directory " + outDir + " contains no files - set to cleanup downloaded files - see logs for more information");
+                            Console.ResetColor();
+                            Message("Directory " + outDir + " contains no files - set to cleanup downloaded files - see logs for more information", EventType.Information, 1000);
 
-                        // Set status
-                        isOutputFolderContainFiles = false;
+                            // Set status
+                            isOutputFolderContainFiles = false;
+                        }
+                        else
+                        {
+                            // Log
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"Directory " + outDir + " is not created successfully and contains no files - see logs for more information");
+                            Console.ResetColor();
+                            Message("Directory " + outDir + " is not created successfully and contains no files - see logs for more information", EventType.Error, 1001);
 
-                        // Count errors
-                        _errors++;
+                            // Set status
+                            isOutputFolderContainFiles = false;
+
+                            // Count errors
+                            _errors++;
+                        }
                     }
 
                     // Get status for output folder
