@@ -91,11 +91,15 @@ namespace AzureDevOpsBackup
             string letOverJsonFilesStatusText;
             string totalBackupsIsDeletedStatusText;
 
+            string isOutputFolderContainFilesStatusText;
+            string isDaysToKeepNotDefaultStatusText;
+
             // Set default status for backup job
             bool isBackupOk = false;
             bool isBackupOkAndUnZip = false;
             bool oldLogfilesToDelete = false;
             bool noProjectsToBackup = false;
+            bool isOutputFolderContainFiles = false;
 
             // Get application data to later use in tool
             AssemblyCopyrightAttribute copyright = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false)[0] as AssemblyCopyrightAttribute;
@@ -112,7 +116,6 @@ namespace AzureDevOpsBackup
             stopWatch.Start();
 
             // Set application name in code
-            //AppName = "Azure DevOps Backup";
             AppName = assemblyTitleAttribute?.Title;
             _currentExeFileName = Path.GetFileName(Process.GetCurrentProcess().MainModule?.FileName);
 
@@ -132,9 +135,9 @@ namespace AzureDevOpsBackup
             string[] requiredArgs = { "--token", "--org", "--outdir", "--server", "--port", "--from", "--to" };
 
             // Log
-            Message("Checking if there is 7 required arguments (--token, --org, --outdir, --server, --port, --from, --to)", EventType.Information, 1000);
+            Message("Checking if the 7 required arguments is present (--token, --org, --outdir, --server, --port, --from, --to)", EventType.Information, 1000);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Checking if there is 7 required arguments (--token, --org, --outdir, --server, --port, --from, --to)...");
+            Console.WriteLine("Checking if the 7 required arguments is present (--token, --org, --outdir, --server, --port, --from, --to)...");
             Console.ResetColor();
 
             // Check if parameters have been provided
@@ -149,9 +152,9 @@ namespace AzureDevOpsBackup
                 // Show help
                 DisplayHelp();
 
-                Message("Showed help to Console - Exciting!", EventType.Information, 1000);
+                Message($"Showed help to Console - Exciting {AppName}, v." + _vData + " by " + _companyName + "!", EventType.Information, 1000);
                 Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Showed help to Console - Exciting!\n");
+                Console.WriteLine($"Showed help to Console - Exciting {AppName}, v." + _vData + " by " + _companyName + "!\n");
                 Console.ResetColor();
 
                 // End application
@@ -166,9 +169,9 @@ namespace AzureDevOpsBackup
                 case true when args.Intersect(requiredArgs).Count() == 7:
                 {
                     // Startup log entry
-                    Message("Checked if there is 7 required arguments (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!", EventType.Information, 1000);
+                    Message("Checked if the 7 required arguments is present (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!", EventType.Information, 1000);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Checked if there is 7 required arguments (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!");
+                    Console.WriteLine("Checked if the 7 required arguments is present (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!");
                     Console.ResetColor();
 
                     // Start URL parse to AIP access
@@ -208,6 +211,8 @@ namespace AzureDevOpsBackup
                         {
                             // Create backup folder if not exist
                             Directory.CreateDirectory(outDir);
+
+                            // Log
                             Message("Output folder is created: " + outDir, EventType.Information, 1000);
                             Console.ForegroundColor = ConsoleColor.Green;
                             Console.WriteLine("Output folder is created: " + outDir);
@@ -272,11 +277,11 @@ namespace AzureDevOpsBackup
                             Message("Getting information about Git project: " + project.Name, EventType.Information, 1000);
                             Console.WriteLine("Getting information about Git project: " + project.Name);
 
+                            // Repos
                             var clientRepos = new RestClient(baseUrl + project.Name + "/_apis/git/repositories?" + version);
                             var requestRepos = new RestRequest(Method.GET);
                             requestRepos.AddHeader("Authorization", auth);
                             IRestResponse responseRepos = clientRepos.Execute(requestRepos);
-
                             Repos repos = JsonConvert.DeserializeObject<Repos>(responseRepos.Content);
 
                             // Get info about repos in projects
@@ -1123,7 +1128,17 @@ namespace AzureDevOpsBackup
                         }
                         else
                         {
-                            totalFilesIsDeletedAfterUnZippedStatusText = "Warning - nothing to backup!";
+                            // TODO Fix so not get here when --cleanup is not set
+                            //totalFilesIsDeletedAfterUnZippedStatusText = "Warning - nothing to backup!";
+
+                            if (isBackupOk)
+                            {
+                                totalFilesIsDeletedAfterUnZippedStatusText = "Good - not set to cleanup!";
+                            }
+                            else
+                            {
+                                totalFilesIsDeletedAfterUnZippedStatusText = "Warning - nothing to backup!";
+                            }
 
                             // Log
                             Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
@@ -1136,7 +1151,7 @@ namespace AzureDevOpsBackup
                     {
                         if (isBackupOkAndUnZip)
                         {
-                            totalFilesIsDeletedAfterUnZippedStatusText = "Good - matched total files downloaded!";
+                            totalFilesIsDeletedAfterUnZippedStatusText = "Good - set to cleanup, and matched total files downloaded!";
 
                             // Log
                             Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Information, 1000);
@@ -1261,6 +1276,71 @@ namespace AzureDevOpsBackup
                         }
                     }
 
+                    // Check if output folder exists to email report and folder contains files
+                    // Log
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"Checking if directory " + outDir + " contains files");
+                    Console.ResetColor();
+                    Message("Checking if directory " + outDir + " and contains files", EventType.Information, 1000);
+
+                    // Check if done for status in mail report
+                    if (Directory.Exists(outDir) && (Directory.EnumerateFiles(outDir, "*.zip", SearchOption.AllDirectories).FirstOrDefault() != null))
+                    {
+                        // Log
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Directory " + outDir + " contains files");
+                        Console.ResetColor();
+                        Message("Directory " + outDir + " contains files", EventType.Information, 1000);
+
+                        // Set status
+                        isOutputFolderContainFiles = true;
+                    }
+                    //TODO Fix so not get in there when --cleanup is set
+                    else
+                    {
+                        // Log
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine($"Directory " + outDir + " is not created successfully and contains no files - see logs for more information");
+                        Console.ResetColor();
+                        Message("Directory " + outDir + " is not created successfully and contains no files - see logs for more information", EventType.Error, 1001);
+
+                        // Set status
+                        isOutputFolderContainFiles = false;
+
+                        // Count errors
+                        _errors++;
+                    }
+
+                    // Get status for output folder
+                    if (isOutputFolderContainFiles)
+                    {
+                        isOutputFolderContainFilesStatusText = "Checked - folder is containing original downloaded files";
+
+                        if (checkIfHaveSubfolders(outDir))
+                        {
+                            isOutputFolderContainFilesStatusText += ", but has also subfolders with unzipped backup(s)";
+                        }
+                    }
+                    else
+                    {
+                        isOutputFolderContainFilesStatusText = "Checked - folder is NOT containing original downloaded files";
+                        if (checkIfHaveSubfolders(outDir))
+                        {
+                            isOutputFolderContainFilesStatusText += ", but has subfolders with unzipped backup(s)";
+                        }
+                    }
+
+                    // Log
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine(isOutputFolderContainFilesStatusText);
+                    Console.ResetColor();
+                    Message(isOutputFolderContainFilesStatusText, EventType.Information, 1000);
+
+
+
+
+
+
                     // Log
                     Message($"Getting status for tasks for email report is done", EventType.Information, 1000);
                     Console.ForegroundColor = ConsoleColor.Green;
@@ -1272,22 +1352,22 @@ namespace AzureDevOpsBackup
                     Console.ResetColor();
 
                     // If args is set to old mail report layout
-                    bool useSimpelMailReportLayout;
+                    bool useSimpleMailReportLayout;
                     if (Array.Exists(args, argument => argument == "--simpelreport"))
                     {
-                        useSimpelMailReportLayout = true;
+                        useSimpleMailReportLayout = true;
                     }
                     else
                     {
-                        useSimpelMailReportLayout = false;
+                        useSimpleMailReportLayout = false;
                     }
-
+                    
                     // Send status email and parse data to function
                     SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements, repoitemscountelements,
                         repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup, totalTreeFilesIsBackup,
                         outDir, elapsedTime, copyrightdata, _vData, _errors, _totalFilesIsDeletedAfterUnZipped, _totalBackupsIsDeleted, daysToKeepBackups,
                         repoCountStatusText, repoItemsCountStatusText, totalFilesIsBackupUnZippedStatusText, totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
-                        totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText, useSimpelMailReportLayout);
+                        totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, isOutputFolderContainFilesStatusText);
 
                     Console.ForegroundColor = ConsoleColor.Green;
                     Message($"Parsing, processing and collecting data for email report is done", EventType.Information, 1000);
@@ -1295,6 +1375,7 @@ namespace AzureDevOpsBackup
                     Console.ResetColor();
                     break;
                 }
+
                 // Not do work
                 case true:
                     // Log
@@ -1308,6 +1389,18 @@ namespace AzureDevOpsBackup
             // End of program
             Message($"End of application - {AppName}, v." + _vData, EventType.Information, 1000);
             Console.WriteLine($"\nEnd of application - {AppName}, v. {_vData}\n");
+        }
+
+        private static bool checkIfHaveSubfolders(string path)
+        {
+            if (Directory.GetDirectories(path).Length > 0)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
         }
 
         public static void DeleteDirectory(string path)
@@ -1719,7 +1812,7 @@ namespace AzureDevOpsBackup
             int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep, string repoCountStatusText, string repoItemsCountStatusText,
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
             string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText,
-            bool useSimpelMailReportLayout)
+            bool useSimpleMailReportLayout, string isOutputFolderContainFilesStatusText)
         {
             var serverPortStr = serverPort;
             var mailBody = "";
@@ -1751,7 +1844,7 @@ namespace AzureDevOpsBackup
             }
 
             // If args is set to old mail report layout
-            if (useSimpelMailReportLayout)
+            if (useSimpleMailReportLayout)
             {
                 // Make email body data
                 mailBody =
@@ -1817,10 +1910,10 @@ namespace AzureDevOpsBackup
                 $"<td style=\"width: 33%; height: 18px;\"><strong>Status:</strong></td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Backup folder:</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><strong><b>\"{outDir}\"</b></b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{isOutputFolderContainFilesStatusText}</td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Backup server:</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><b>{Environment.MachineName}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">  </td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Old backup(s) set to keep in backup folder (days):</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><b>{daysToKeep}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr><tr style=\"height: 18px;\">" +
