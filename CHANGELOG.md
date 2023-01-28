@@ -1,3 +1,20 @@
+## [1.0.3.0] - 29-1-2023
+### Fixed
+- Fix no arguments is set - show the help in console
+- Error handling if files cant be deletes
+- Better email status/added some of the missing statuses (still more to do)
+- args.Length > 0' is always true
+
+### Added
+- Help menu
+- Error handling if files cant be deleted
+- Count errors and add to email report
+
+### Changed
+- Changes to log text
+- Changes to arguments names
+- Small changes to email function
+- Reordered some code/functions for better application
 
 ## 7-1-2023
 - Created an installer for the project
