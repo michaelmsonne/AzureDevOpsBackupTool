@@ -1,4 +1,7 @@
-## [1.0.3.0] - 29-1-2023
+## [1.0.3.0] - 30-1-2023
+
+Now signed with Code Sign Certificate from Sectigo
+
 ### Fixed
 - Fix no arguments is set - show the help in console
 - Error handling if files cant be deletes
