@@ -106,6 +106,10 @@
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release (
+  echo "Release build - signing output file(s)!".
+  "C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe" sign /n "Michael Morten Sonne" /fd sha256 /tr http://timestamp.sectigo.com /td sha256 /as /v $(TargetDir)*.exe
+  "C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe" sign /n "Michael Morten Sonne" /fd sha256 /tr http://timestamp.sectigo.com /td sha256 /as /v $(TargetDir)*.dll
+  echo "Release build - signing output file(s) done!".
   echo "Release build - rename output file!".
   powershell -command $(SolutionDir)\Scripts\RenameOutputRelease.ps1
 ) ELSE (
