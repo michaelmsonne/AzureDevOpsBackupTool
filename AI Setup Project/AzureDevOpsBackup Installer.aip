@@ -70,7 +70,7 @@
     <ROW Path="&lt;AI_DICTS&gt;ui_en.ail"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DigCertStoreComponent">
-    <ROW TimeStampUrl="http://timestamp.digicert.com" SignerDescription="[|ProductName]" SignOptions="7" SignTool="0" UseSha256="1" Thumbprint="a31a722adbbdc9de0009cea2d72c26956478970c Subject: Michael Morten Sonne&#10;Issuer: Sectigo Public Code Signing CA R36&#10;Valid from 01/19/2023 to 04/19/2026&#10;User\MY" Subject="CN=Michael Morten Sonne, O=Michael Morten Sonne, S=Hovedstaden, C=DK"/>
+    <ROW TimeStampUrl="http://timestamp.sectigo.com" SignerDescription="[|ProductName]" SignOptions="7" SignTool="0" UseSha256="1" Thumbprint="a31a722adbbdc9de0009cea2d72c26956478970c Subject: Michael Morten Sonne&#10;Issuer: Sectigo Public Code Signing CA R36&#10;Valid from 01/19/2023 to 04/19/2026&#10;User\MY" Subject="CN=Michael Morten Sonne, O=Michael Morten Sonne, S=Hovedstaden, C=DK"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DynamicPropertyComponent">
     <ROW Property="ProductVersion" Type="2" SourcePath="AzureDevOpsBackup.exe"/>
@@ -181,6 +181,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
     <ROW Shortcut="AzureDevOpsBackup" Directory_="SHORTCUTDIR" Name="AZURED~1|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
     <ROW Shortcut="AzureDevOpsBackup_1" Directory_="SHORTCUTDIR" Name="AZURED~2|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
+    <ROW Shortcut="AzureDevOpsBackup_10" Directory_="SHORTCUTDIR" Name="AZURE~11|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
     <ROW Shortcut="AzureDevOpsBackup_2" Directory_="SHORTCUTDIR" Name="AZURED~3|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
     <ROW Shortcut="AzureDevOpsBackup_3" Directory_="SHORTCUTDIR" Name="AZURED~4|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
     <ROW Shortcut="AzureDevOpsBackup_4" Directory_="SHORTCUTDIR" Name="AZURED~5|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
@@ -197,7 +198,7 @@
     <ROW UpgradeCode="[|UpgradeCode]" VersionMin="0.0.1" VersionMax="[|ProductVersion]" Attributes="257" ActionProperty="OLDPRODUCTS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.VsProjectComponent">
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="PrimaryOutput" OutputFile="AzureDevOpsBackup.exe" OutputFileShortcut="AzureDevOpsBackup_9"/>
+    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="PrimaryOutput" OutputFile="AzureDevOpsBackup.exe" OutputFileShortcut="AzureDevOpsBackup_10"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="Newtonsoft.Json.dll"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="RestSharp.dll"/>
   </COMPONENT>
