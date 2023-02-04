@@ -91,9 +91,8 @@ namespace AzureDevOpsBackup
             string letOverZipFilesStatusText;
             string letOverJsonFilesStatusText;
             string totalBackupsIsDeletedStatusText;
-
             string isOutputFolderContainFilesStatusText;
-            string isDaysToKeepNotDefaultStatusText;
+            string isDaysToKeepNotDefaultStatusText = null;
 
             // Set default status for backup job
             bool isBackupOk = false;
@@ -754,6 +753,12 @@ namespace AzureDevOpsBackup
                                     Console.WriteLine($"argument --daystokeepbackup is set to (default) {daysToKeepBackups}");
                                     Console.ResetColor();
 
+                                    // Set status text for email
+                                    isDaysToKeepNotDefaultStatusText = "Default number of old backup(s) set to keep in backup folder (days)";
+
+                                    // Log
+                                    Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
+
                                     // Do work
                                     DaysToKeepBackupsDefault(outBackupDir);
                                 }
@@ -766,6 +771,12 @@ namespace AzureDevOpsBackup
                                     Console.ForegroundColor = ConsoleColor.Yellow;
                                     Console.WriteLine($"argument --daystokeepbackup is not default (30), it is set to {daysToKeepBackups} days");
                                     Console.ResetColor();
+
+                                    // Set status text for email
+                                    isDaysToKeepNotDefaultStatusText = "Custom number of old backup(s) set to keep in backup folder (days)";
+
+                                    // Log
+                                    Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
 
                                     // Do work
                                     DaysToKeepBackups(outBackupDir, daysToKeepBackups);
@@ -1030,7 +1041,7 @@ namespace AzureDevOpsBackup
                     {
                         if (isBackupOkAndUnZip)
                         {
-                            totalFilesIsBackupUnZippedStatusText = "Good - and unzip is OK!";
+                            totalFilesIsBackupUnZippedStatusText = "Good! (and unzip is OK)";
 
                             // Log
                             Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Information, 1000);
@@ -1157,7 +1168,7 @@ namespace AzureDevOpsBackup
                     {
                         if (isBackupOkAndUnZip)
                         {
-                            totalFilesIsDeletedAfterUnZippedStatusText = "Good - set to cleanup, and matched total files downloaded!";
+                            totalFilesIsDeletedAfterUnZippedStatusText = "Good! (set to cleanup, and matched the total files downloaded)";
 
                             // Log
                             Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Information, 1000);
@@ -1192,7 +1203,7 @@ namespace AzureDevOpsBackup
                     {
                         if (isBackupOk)
                         {
-                            letOverZipFilesStatusText = "Good - no leftover .zip files!";
+                            letOverZipFilesStatusText = "Good (no leftover .zip files)";
 
                             // Log
                             Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText, EventType.Information, 1000);
@@ -1227,7 +1238,7 @@ namespace AzureDevOpsBackup
                     {
                         if (isBackupOk)
                         {
-                            letOverJsonFilesStatusText = "Good - no leftover .json files!";
+                            letOverJsonFilesStatusText = "Good (no leftover .json files)";
 
                             // Log
                             Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText, EventType.Information, 1000);
@@ -1355,11 +1366,6 @@ namespace AzureDevOpsBackup
                     Console.ResetColor();
                     Message(isOutputFolderContainFilesStatusText, EventType.Information, 1000);
 
-
-
-
-
-
                     // Log
                     Message($"Getting status for tasks for email report is done", EventType.Information, 1000);
                     Console.ForegroundColor = ConsoleColor.Green;
@@ -1386,7 +1392,7 @@ namespace AzureDevOpsBackup
                         repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup, totalTreeFilesIsBackup,
                         outDir, elapsedTime, copyrightdata, _vData, _errors, _totalFilesIsDeletedAfterUnZipped, _totalBackupsIsDeleted, daysToKeepBackups,
                         repoCountStatusText, repoItemsCountStatusText, totalFilesIsBackupUnZippedStatusText, totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
-                        totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, isOutputFolderContainFilesStatusText);
+                        totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, isOutputFolderContainFilesStatusText, isDaysToKeepNotDefaultStatusText);
 
                     Console.ForegroundColor = ConsoleColor.Green;
                     Message($"Parsing, processing and collecting data for email report is done", EventType.Information, 1000);
@@ -1831,7 +1837,7 @@ namespace AzureDevOpsBackup
             int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep, string repoCountStatusText, string repoItemsCountStatusText,
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
             string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText,
-            bool useSimpleMailReportLayout, string isOutputFolderContainFilesStatusText)
+            bool useSimpleMailReportLayout, string isOutputFolderContainFilesStatusText, string isDaysToKeepNotDefaultStatusText)
         {
             var serverPortStr = serverPort;
             var mailBody = "";
@@ -1935,7 +1941,7 @@ namespace AzureDevOpsBackup
                 $"<td style=\"width: 33.3333%; height: 18px;\">  </td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Old backup(s) set to keep in backup folder (days):</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><b>{daysToKeep}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">XX!</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">{isDaysToKeepNotDefaultStatusText}</td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Old backup(s) deleted in backup folder:</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{totalBackupsIsDeletedStatusText}</td></tr></table>" +
