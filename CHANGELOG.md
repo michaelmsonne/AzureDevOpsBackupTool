@@ -1,3 +1,11 @@
+## [1.0.3.1] - 05-2-2023
+
+### Changed
+- Small changes to email text
+
+### Fixed
+- Missing email text for missing email status text for backups to keep (status)
+
 ## [1.0.3.0] - 30-1-2023
 
 Now signed with Code Sign Certificate from Sectigo
