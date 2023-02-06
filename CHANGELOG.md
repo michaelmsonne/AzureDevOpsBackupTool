@@ -1,3 +1,12 @@
+## [1.0.3.2] - 06-2-2023
+
+### Changed
+- Small changes to email function
+
+### Fixed
+- Fixed vulnerable Incorrect Regular Expression in RestSharp (CVE-2021-27293)
+- Fixed vulnerable Improper Handling of Exceptional Conditions in Newtonsoft.Json (GHSA ID GHSA-5crp-9r3c-p9vr)
+
 ## [1.0.3.1] - 05-2-2023
 
 ### Changed
