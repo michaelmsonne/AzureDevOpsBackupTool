@@ -3,14 +3,14 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Collections.Generic;
-using Newtonsoft.Json;
-using RestSharp;
-using RestSharp.Extensions;
 using System.Net.Mail;
 using System.Text;
 using System.Diagnostics;
+using System.Net.Mime;
 using System.Reflection;
 using System.Threading;
+using Newtonsoft.Json;
+using RestSharp;
 using static AzureDevOpsBackup.FileLogger;
 // ReSharper disable RedundantAssignment
 // ReSharper disable NotAccessedVariable
@@ -337,7 +337,14 @@ namespace AzureDevOpsBackup
                                     try
                                     {
                                         // Save file to disk
-                                        clientBlob.DownloadData(requestBlob).SaveAs(outDir + project.Name + "_" + repo.Name + "_blob.zip");
+                                        //clientBlob.DownloadData(requestBlob).SaveAs(outDir + project.Name + "_" + repo.Name + "_blob.zip");
+
+                                        // Save file to disk
+                                        byte[] data = clientBlob.DownloadData(requestBlob);
+                                        using (FileStream fs = new FileStream(outDir + project.Name + "_" + repo.Name + "_blob.zip", FileMode.Create))
+                                        {
+                                            fs.Write(data, 0, data.Length);
+                                        }
 
                                         // Log
                                         Message("Saved file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip", EventType.Information, 1000);
@@ -1346,7 +1353,7 @@ namespace AzureDevOpsBackup
                     {
                         isOutputFolderContainFilesStatusText = "Checked - folder is containing original downloaded files";
 
-                        if (checkIfHaveSubfolders(outDir))
+                        if (CheckIfHaveSubfolders(outDir))
                         {
                             isOutputFolderContainFilesStatusText += ", but has also subfolders with unzipped backup(s)";
                         }
@@ -1354,7 +1361,7 @@ namespace AzureDevOpsBackup
                     else
                     {
                         isOutputFolderContainFilesStatusText = "Checked - folder is NOT containing original downloaded files";
-                        if (checkIfHaveSubfolders(outDir))
+                        if (CheckIfHaveSubfolders(outDir))
                         {
                             isOutputFolderContainFilesStatusText += ", but has subfolders with unzipped backup(s)";
                         }
@@ -1416,7 +1423,7 @@ namespace AzureDevOpsBackup
             Console.WriteLine($"\nEnd of application - {AppName}, v. {_vData}\n");
         }
 
-        private static bool checkIfHaveSubfolders(string path)
+        private static bool CheckIfHaveSubfolders(string path)
         {
             if (Directory.GetDirectories(path).Length > 0)
             {
@@ -1833,7 +1840,7 @@ namespace AzureDevOpsBackup
 
         public static void SendEmail(string serveraddress, string serverPort, string emailFrom, string emailTo, string emailStatusMessage,
             List<string> repoCountElements, List<string> repoItemsCountElements, int repoCount, int repoItemsCount, int totalFilesIsBackupUnZipped,
-            int totalBlobFilesIsBackup, int totalTreeFilesIsBackup, string outDir, string elapsedTime, string copyrightData, string _vData, int errors,
+            int totalBlobFilesIsBackup, int totalTreeFilesIsBackup, string outDir, string elapsedTime, string copyrightData, string vData, int errors,
             int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep, string repoCountStatusText, string repoItemsCountStatusText,
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
             string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText,
@@ -1891,7 +1898,7 @@ namespace AzureDevOpsBackup
                     listrepocountelements + "<br>" +
                     listitemscountelements + "</p><hr>" +
                     $"<h3>From Your {AppName} tool!</h3></b><br>" +
-                    copyrightData + ", v." + _vData;
+                    copyrightData + ", v." + vData;
             }
             else
             {
@@ -1949,7 +1956,7 @@ namespace AzureDevOpsBackup
                 $"<p>Total Backup Run Time is: \"{elapsedTime}\".</p><hr/>" +
                 listrepocountelements + "<br>" +
                 listitemscountelements + "</p><br><hr>" +
-                $"<h3>From Your {AppName} tool!<o:p></o:p></h3>" + copyrightData + ", v." + _vData;
+                $"<h3>From Your {AppName} tool!<o:p></o:p></h3>" + copyrightData + ", v." + vData;
             }
 
             // Create mail
@@ -1957,10 +1964,13 @@ namespace AzureDevOpsBackup
             message.Subject = "[" + emailStatusMessage + $"] - {AppName} status - (" + totalBlobFilesIsBackup +
                               " Git projects backed up), " + errors + " issues(s) - (backups to keep (days): " + daysToKeep +
                               ", backup(s) deleted: " + totalBackupsIsDeleted + ")";
-            
+
             message.Body = mailBody;
             message.BodyEncoding = Encoding.UTF8;
             message.IsBodyHtml = true;
+            message.Priority = MailPriority.Normal;
+            message.DeliveryNotificationOptions = DeliveryNotificationOptions.None;
+            message.BodyTransferEncoding = TransferEncoding.QuotedPrintable;
             
             // ReSharper disable once UnusedVariable
             var isParsable = Int32.TryParse(serverPortStr, out var serverPortNumber);
