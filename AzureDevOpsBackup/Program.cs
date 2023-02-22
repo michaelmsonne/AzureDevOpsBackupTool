@@ -179,7 +179,8 @@ namespace AzureDevOpsBackup
                     Console.WriteLine("Starting connection to Azure DevOps API from data provided from arguments");
 
                     // Base GET API
-                    const string version = "api-version=5.1-preview.1";
+                    //const string version = "api-version=5.1-preview.1";
+                    const string version = "api-version=7.0";
                     string auth = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", args[Array.IndexOf(args, "--token") + 1])));
                     string baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
 
