@@ -1,3 +1,12 @@
+## [1.0.3.3] - 22-2-2023
+
+### Changed
+- Checked api uses - no changes in API calls, so set to api-version=7.0 (api-version=5.1-preview.1 before)
+- Use new code sign
+
+### Fixed
+- 
+
 ## [1.0.3.2] - 06-2-2023
 
 ### Changed
