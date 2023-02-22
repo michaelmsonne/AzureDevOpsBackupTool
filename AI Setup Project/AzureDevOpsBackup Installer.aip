@@ -242,6 +242,8 @@
     <ROW Shortcut="AzureDevOpsBackup_30" Directory_="SHORTCUTDIR" Name="AZURE~31|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
     <ROW Shortcut="AzureDevOpsBackup_31" Directory_="SHORTCUTDIR" Name="AZURE~32|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
     <ROW Shortcut="AzureDevOpsBackup_32" Directory_="SHORTCUTDIR" Name="AZURE~33|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
+    <ROW Shortcut="AzureDevOpsBackup_33" Directory_="SHORTCUTDIR" Name="AZURE~34|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
+    <ROW Shortcut="AzureDevOpsBackup_34" Directory_="SHORTCUTDIR" Name="AZURE~35|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
     <ROW Shortcut="AzureDevOpsBackup_4" Directory_="SHORTCUTDIR" Name="AZURED~5|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
     <ROW Shortcut="AzureDevOpsBackup_5" Directory_="SHORTCUTDIR" Name="AZURED~6|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
     <ROW Shortcut="AzureDevOpsBackup_6" Directory_="SHORTCUTDIR" Name="AZURED~7|AzureDevOpsBackup" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Target="[#AzureDevOpsBackup.exe]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
@@ -256,7 +258,7 @@
     <ROW UpgradeCode="[|UpgradeCode]" VersionMin="0.0.1" VersionMax="[|ProductVersion]" Attributes="257" ActionProperty="OLDPRODUCTS"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.VsProjectComponent">
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="PrimaryOutput" OutputFile="AzureDevOpsBackup.exe" OutputFileShortcut="AzureDevOpsBackup_32"/>
+    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="PrimaryOutput" OutputFile="AzureDevOpsBackup.exe" OutputFileShortcut="AzureDevOpsBackup_34"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="Newtonsoft.Json.dll"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="RestSharp.dll"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="Microsoft.Bcl.AsyncInterfaces.dll"/>
