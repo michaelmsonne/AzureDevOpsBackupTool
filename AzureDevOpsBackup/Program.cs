@@ -1,40 +1,45 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using RestSharp;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Collections.Generic;
 using System.Net.Mail;
-using System.Text;
-using System.Diagnostics;
 using System.Net.Mime;
 using System.Reflection;
+using System.Text;
 using System.Threading;
-using Newtonsoft.Json;
-using RestSharp;
 using static AzureDevOpsBackup.FileLogger;
+
 // ReSharper disable RedundantAssignment
 // ReSharper disable NotAccessedVariable
 
 namespace AzureDevOpsBackup
 {
-    struct Project
+    internal struct Project
     {
         public string Name;
     }
-    struct Projects
+
+    internal struct Projects
     {
         public List<Project> Value;
     }
-    struct Repo
+
+    internal struct Repo
     {
         public string Id;
         public string Name;
     }
-    struct Repos
+
+    internal struct Repos
     {
         public List<Repo> Value;
     }
-    struct Item
+
+    internal struct Item
     {
         public string ObjectId;
         public string GitObjectType;
@@ -43,21 +48,22 @@ namespace AzureDevOpsBackup
         public bool IsFolder;
         public string Url;
     }
-    struct Items
+
+    internal struct Items
     {
         public int Count;
         public List<Item> Value;
     }
 
-    class Program
+    internal class Program
     {
-        static int _totalFilesIsDeletedAfterUnZipped;
-        static int _errors;
-        static int _numZip;
-        static int _numJson;
-        static int _totalBackupsIsDeleted;
-        static bool _checkForLeftoverFilesAfterCleanup;
-        static bool _deletedFilesAfterUnzip;
+        private static int _totalFilesIsDeletedAfterUnZipped;
+        private static int _errors;
+        private static int _numZip;
+        private static int _numJson;
+        private static int _totalBackupsIsDeleted;
+        private static bool _checkForLeftoverFilesAfterCleanup;
+        private static bool _deletedFilesAfterUnzip;
         private static bool _cleanUpState;
 
         public static string _currentExeFileName;
@@ -65,7 +71,7 @@ namespace AzureDevOpsBackup
         public static string _vData;
         public static string _companyName;
 
-        static void Main(string[] args)
+        private static void Main(string[] args)
         {
             // Global variabels
             int projectCount = 0;
@@ -122,7 +128,7 @@ namespace AzureDevOpsBackup
             // Start of program
             Message($"Welcome to {AppName}, v." + _vData + " by " + _companyName, EventType.Information, 1000);
             Console.WriteLine($"\nWelcome to {AppName}, v." + _vData + " by " + _companyName + "\n");
-            
+
             // Set Global Logfile properties
             FileLogger.DateFormat = "dd-MM-yyyy";
             DateTimeFormat = "dd-MM-yyyy HH:mm:ss";
@@ -130,7 +136,7 @@ namespace AzureDevOpsBackup
             WriteToEventLog = false;
             WriteToFile = true;
             Message("Loaded log configuration into the program: " + AppName, EventType.Information, 1000);
-            
+
             // Check for required Args for application will work
             string[] requiredArgs = { "--token", "--org", "--outdir", "--server", "--port", "--from", "--to" };
 
@@ -167,383 +173,204 @@ namespace AzureDevOpsBackup
                 //ParseArguments(args);
                 // If okay do some work
                 case true when args.Intersect(requiredArgs).Count() == 7:
-                {
-                    // Startup log entry
-                    Message("Checked if the 7 required arguments is present (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!", EventType.Information, 1000);
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Checked if the 7 required arguments is present (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!");
-                    Console.ResetColor();
-
-                    // Start URL parse to AIP access
-                    Message("Starting connection to Azure DevOps API from data provided from arguments", EventType.Information, 1000);
-                    Console.WriteLine("Starting connection to Azure DevOps API from data provided from arguments");
-
-                    // Base GET API
-                    //const string version = "api-version=5.1-preview.1";
-                    const string version = "api-version=7.0";
-                    string auth = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", args[Array.IndexOf(args, "--token") + 1])));
-                    string baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
-
-                    // URL parse to API access done
-                    Message("Base URL is for Organization is: " + baseUrl, EventType.Information, 1000);
-                    Console.WriteLine("Base URL is for Organization is: " + baseUrl);
-
-                    // Get output folder to backup (not with date stamp for backup folder name)
-                    string outBackupDir = args[Array.IndexOf(args, "--outdir") + 1] + "\\";
-
-                    // Set output folder name
-                    string todaysdate = DateTime.Now.ToString("dd-MM-yyyy-(HH-mm)");
-                    string outDir = outBackupDir + todaysdate + "\\";
-
-                    // Output folder to backup to (without date stamp for backup) done
-                    Message("Output folder is: " + outDir, EventType.Information, 1000);
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Output folder is: " + outDir);
-                    Console.ResetColor();
-
-                    // Check if folder to backup (with date stamp for today) exist, else create it
-                    if (!Directory.Exists(outDir))
                     {
-                        Message("Output folder does not exists - trying to create...: " + outDir, EventType.Information, 1000);
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("Output folder does not exists - trying to create..." + outDir);
-                        Console.ResetColor();
-                        try
-                        {
-                            // Create backup folder if not exist
-                            Directory.CreateDirectory(outDir);
-
-                            // Log
-                            Message("Output folder is created: " + outDir, EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine("Output folder is created: " + outDir);
-                            Console.ResetColor();
-                        }
-                        catch (UnauthorizedAccessException)
-                        {
-                            Message("Unable to create folder to store the backups: " + outDir + ". Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("Unable to create folder to store the backups: " + outDir + ". Make sure the account you use to run this tool has write rights to this location.");
-                            Console.ResetColor();
-
-                            // Count errors
-                            _errors++;
-                        }
-                        catch (Exception e)
-                        {
-                            // Error when create backup folder
-                            Message("Exception caught when trying to create output folder - error: " + e, EventType.Error, 1001);
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("{0} Exception caught.", e);
-                            Console.ResetColor();
-
-                            // Count errors
-                            _errors++;
-                        }
-                    }
-                    else
-                    {
-                        // Backup folder exists - will not create a new folder
-                        Message("Output folder exists (will not create it again): " + outDir, EventType.Information, 1000);
+                        // Startup log entry
+                        Message("Checked if the 7 required arguments is present (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!", EventType.Information, 1000);
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Output folder exists (will not create it again): " + outDir);
+                        Console.WriteLine("Checked if the 7 required arguments is present (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!");
                         Console.ResetColor();
-                    }
 
-                    // Save log entry
-                    Message("Getting information about Git projects...", EventType.Information, 1000);
-                    Console.WriteLine("Getting information about Git projects...");
+                        // Start URL parse to AIP access
+                        Message("Starting connection to Azure DevOps API from data provided from arguments", EventType.Information, 1000);
+                        Console.WriteLine("Starting connection to Azure DevOps API from data provided from arguments");
 
-                    // Get Git projects from REST API
-                    var clientProjects = new RestClient(baseUrl + "_apis/projects?" + version);
-                    var requestProjects = new RestRequest(Method.GET);
+                        // Base GET API
+                        //const string version = "api-version=5.1-preview.1";
+                        const string version = "api-version=7.0";
+                        string auth = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", args[Array.IndexOf(args, "--token") + 1])));
+                        string baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
 
-                    requestProjects.AddHeader("Authorization", auth);
-                    IRestResponse responseProjects = clientProjects.Execute(requestProjects);
-                    Projects projects = JsonConvert.DeserializeObject<Projects>(responseProjects.Content);
+                        // URL parse to API access done
+                        Message("Base URL is for Organization is: " + baseUrl, EventType.Information, 1000);
+                        Console.WriteLine("Base URL is for Organization is: " + baseUrl);
 
-                    // Get Git project details from project to backup
-                    List<string> repocountelements = new List<string>();
-                    List<string> repoitemscountelements = new List<string>();
+                        // Get output folder to backup (not with date stamp for backup folder name)
+                        string outBackupDir = args[Array.IndexOf(args, "--outdir") + 1] + "\\";
 
-                    if (projects.Value != null)
-                    {
-                        // If there is not 0 Git projects > do work
-                        foreach (Project project in projects.Value)
+                        // Set output folder name
+                        string todaysdate = DateTime.Now.ToString("dd-MM-yyyy-(HH-mm)");
+                        string outDir = outBackupDir + todaysdate + "\\";
+
+                        // Output folder to backup to (without date stamp for backup) done
+                        Message("Output folder is: " + outDir, EventType.Information, 1000);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Output folder is: " + outDir);
+                        Console.ResetColor();
+
+                        // Check if folder to backup (with date stamp for today) exist, else create it
+                        if (!Directory.Exists(outDir))
                         {
-                            // Count projects
-                            projectCount++;
-
-                            // Log
-                            Message("Getting information about Git project: " + project.Name, EventType.Information, 1000);
-                            Console.WriteLine("Getting information about Git project: " + project.Name);
-
-                            // Repos
-                            var clientRepos = new RestClient(baseUrl + project.Name + "/_apis/git/repositories?" + version);
-                            var requestRepos = new RestRequest(Method.GET);
-                            requestRepos.AddHeader("Authorization", auth);
-                            IRestResponse responseRepos = clientRepos.Execute(requestRepos);
-                            Repos repos = JsonConvert.DeserializeObject<Repos>(responseRepos.Content);
-
-                            // Get info about repos in projects
-                            foreach (Repo repo in repos.Value)
+                            Message("Output folder does not exists - trying to create...: " + outDir, EventType.Information, 1000);
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("Output folder does not exists - trying to create..." + outDir);
+                            Console.ResetColor();
+                            try
                             {
-                                // List data about repos in projects
-                                repocountelements.Add(repo.Name);
-
-                                // Count total repos got
-                                repoCount++;
+                                // Create backup folder if not exist
+                                Directory.CreateDirectory(outDir);
 
                                 // Log
-                                Message("Getting information about Git repository: " + repo.Name, EventType.Information, 1000);
-                                Console.WriteLine("Getting information about Git repository: " + repo.Name);
-
-                                var clientItems = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/items?recursionlevel=full&" + version);
-                                var requestItems = new RestRequest(Method.GET);
-
-                                requestItems.AddHeader("Authorization", auth);
-                                IRestResponse responseItems = clientItems.Execute(requestItems);
-                                Items items = JsonConvert.DeserializeObject<Items>(responseItems.Content);
-
-                                // Get info about repos in projects, files
-                                Message("Getting information about Git repository: " + repo.Name + " is done, items count in here is: " + items.Count, EventType.Information, 1000);
-                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine("Getting information about Git repository: " + repo.Name + " is done, items count in here is: " + items.Count);
+                                Message("Output folder is created: " + outDir, EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine("Output folder is created: " + outDir);
+                                Console.ResetColor();
+                            }
+                            catch (UnauthorizedAccessException)
+                            {
+                                Message("Unable to create folder to store the backups: " + outDir + ". Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("Unable to create folder to store the backups: " + outDir + ". Make sure the account you use to run this tool has write rights to this location.");
                                 Console.ResetColor();
 
-                                // If more then 0 is returned
-                                if (items.Count > 0)
+                                // Count errors
+                                _errors++;
+                            }
+                            catch (Exception e)
+                            {
+                                // Error when create backup folder
+                                Message("Exception caught when trying to create output folder - error: " + e, EventType.Error, 1001);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("{0} Exception caught.", e);
+                                Console.ResetColor();
+
+                                // Count errors
+                                _errors++;
+                            }
+                        }
+                        else
+                        {
+                            // Backup folder exists - will not create a new folder
+                            Message("Output folder exists (will not create it again): " + outDir, EventType.Information, 1000);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("Output folder exists (will not create it again): " + outDir);
+                            Console.ResetColor();
+                        }
+
+                        // Save log entry
+                        Message("Getting information about Git projects...", EventType.Information, 1000);
+                        Console.WriteLine("Getting information about Git projects...");
+
+                        // Get Git projects from REST API
+                        var clientProjects = new RestClient(baseUrl + "_apis/projects?" + version);
+                        var requestProjects = new RestRequest(Method.GET);
+
+                        requestProjects.AddHeader("Authorization", auth);
+                        IRestResponse responseProjects = clientProjects.Execute(requestProjects);
+                        Projects projects = JsonConvert.DeserializeObject<Projects>(responseProjects.Content);
+
+                        // Get Git project details from project to backup
+                        List<string> repocountelements = new List<string>();
+                        List<string> repoitemscountelements = new List<string>();
+
+                        if (projects.Value != null)
+                        {
+                            // If there is not 0 Git projects > do work
+                            foreach (Project project in projects.Value)
+                            {
+                                // Count projects
+                                projectCount++;
+
+                                // Log
+                                Message("Getting information about Git project: " + project.Name, EventType.Information, 1000);
+                                Console.WriteLine("Getting information about Git project: " + project.Name);
+
+                                // Repos
+                                var clientRepos = new RestClient(baseUrl + project.Name + "/_apis/git/repositories?" + version);
+                                var requestRepos = new RestRequest(Method.GET);
+                                requestRepos.AddHeader("Authorization", auth);
+                                IRestResponse responseRepos = clientRepos.Execute(requestRepos);
+                                Repos repos = JsonConvert.DeserializeObject<Repos>(responseRepos.Content);
+
+                                // Get info about repos in projects
+                                foreach (Repo repo in repos.Value)
                                 {
-                                    // If repos have files, get it
-
-                                    // Count files
-                                    repoItemsCount++;
-
-                                    var clientBlob = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/blobs?" + version);
-                                    var requestBlob = new RestRequest(Method.POST);
-
                                     // List data about repos in projects
-                                    repoitemscountelements.Add(repo.Name);
+                                    repocountelements.Add(repo.Name);
+
+                                    // Count total repos got
+                                    repoCount++;
 
                                     // Log
-                                    Message("Getting client blob for Git repository: " + repo.Name + " from API", EventType.Information, 1000);
-                                    Console.WriteLine("Getting client blob for Git repository: " + repo.Name + " from API");
+                                    Message("Getting information about Git repository: " + repo.Name, EventType.Information, 1000);
+                                    Console.WriteLine("Getting information about Git repository: " + repo.Name);
 
-                                    // Get the files from repo to storage
-                                    requestBlob.AddJsonBody(items.Value.Where(itm => itm.GitObjectType == "blob").Select(itm => itm.ObjectId).ToList());
-                                    requestBlob.AddHeader("Authorization", auth);
-                                    requestBlob.AddHeader("Accept", "application/zip");
+                                    var clientItems = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/items?recursionlevel=full&" + version);
+                                    var requestItems = new RestRequest(Method.GET);
 
-                                    // Save to disk - _blob.zip
-                                    try
+                                    requestItems.AddHeader("Authorization", auth);
+                                    IRestResponse responseItems = clientItems.Execute(requestItems);
+                                    Items items = JsonConvert.DeserializeObject<Items>(responseItems.Content);
+
+                                    // Get info about repos in projects, files
+                                    Message("Getting information about Git repository: " + repo.Name + " is done, items count in here is: " + items.Count, EventType.Information, 1000);
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                    Console.WriteLine("Getting information about Git repository: " + repo.Name + " is done, items count in here is: " + items.Count);
+                                    Console.ResetColor();
+
+                                    // If more then 0 is returned
+                                    if (items.Count > 0)
                                     {
-                                        // Save file to disk
-                                        //clientBlob.DownloadData(requestBlob).SaveAs(outDir + project.Name + "_" + repo.Name + "_blob.zip");
+                                        // If repos have files, get it
 
-                                        // Save file to disk
-                                        byte[] data = clientBlob.DownloadData(requestBlob);
-                                        using (FileStream fs = new FileStream(outDir + project.Name + "_" + repo.Name + "_blob.zip", FileMode.Create))
-                                        {
-                                            fs.Write(data, 0, data.Length);
-                                        }
+                                        // Count files
+                                        repoItemsCount++;
+
+                                        var clientBlob = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/blobs?" + version);
+                                        var requestBlob = new RestRequest(Method.POST);
+
+                                        // List data about repos in projects
+                                        repoitemscountelements.Add(repo.Name);
 
                                         // Log
-                                        Message("Saved file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip", EventType.Information, 1000);
-                                        Console.ForegroundColor = ConsoleColor.Green;
-                                        Console.WriteLine("Saved file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip");
-                                        Console.ResetColor();
+                                        Message("Getting client blob for Git repository: " + repo.Name + " from API", EventType.Information, 1000);
+                                        Console.WriteLine("Getting client blob for Git repository: " + repo.Name + " from API");
 
-                                        // Count files there is downloaded
-                                        totalBlobFilesIsBackup++;
+                                        // Get the files from repo to storage
+                                        requestBlob.AddJsonBody(items.Value.Where(itm => itm.GitObjectType == "blob").Select(itm => itm.ObjectId).ToList());
+                                        requestBlob.AddHeader("Authorization", auth);
+                                        requestBlob.AddHeader("Accept", "application/zip");
 
-                                        //Set backup status
-                                        isBackupOk = true;
-                                        isBackupOkAndUnZip = false;
-                                    }
-                                    catch (UnauthorizedAccessException)
-                                    {
-                                        Message("Unable to write the backup file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
-                                        Console.ForegroundColor = ConsoleColor.Red;
-                                        Console.WriteLine("Unable to write the backup file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
-                                        Console.ResetColor();
-
-                                        // Count errors
-                                        _errors++;
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        // Error
-                                        Message("Exception caught when trying to save file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip - error: " + e, EventType.Error, 1001);
-                                        Console.ForegroundColor = ConsoleColor.Red;
-                                        Console.WriteLine("Exception caught when trying to save file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip - error: " + e);
-                                        Console.ResetColor();
-
-                                        // Set backup status
-                                        isBackupOk = false;
-                                        isBackupOkAndUnZip = false;
-
-                                        // Count errors
-                                        _errors++;
-                                    }
-
-                                    //Save to disk - _tree.json
-                                    try
-                                    {
-                                        // Save file to disk
-                                        File.WriteAllText(outDir + project.Name + "_" + repo.Name + "_tree.json", responseItems.Content);
-
-                                        // Log
-                                        Message("Saved file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json", EventType.Information, 1000);
-                                        Console.ForegroundColor = ConsoleColor.Green;
-                                        Console.WriteLine("Saved file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json");
-                                        Console.ResetColor();
-
-                                        // Count files there is downloaded
-                                        totalTreeFilesIsBackup++;
-
-                                        // Set backup status
-                                        isBackupOk = true;
-                                        isBackupOkAndUnZip = false;
-                                    }
-                                    catch (UnauthorizedAccessException)
-                                    {
-                                        Message("Unable to write the backup file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
-                                        Console.ForegroundColor = ConsoleColor.Red;
-                                        Console.WriteLine("Unable to write the backup file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
-                                        Console.ResetColor();
-
-                                        // Count errors
-                                        _errors++;
-                                    }
-                                    catch (Exception e)
-                                    {
-                                        // Error
-                                        Message("Exception caught when trying to save file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json - error: " + e, EventType.Error, 1001);
-                                        Console.ForegroundColor = ConsoleColor.Red;
-                                        Console.WriteLine("Exception caught when trying to save file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json - error: " + e);
-                                        Console.ResetColor();
-
-                                        // Set backup status
-                                        isBackupOk = false;
-                                        isBackupOkAndUnZip = false;
-
-                                        // Count errors
-                                        _errors++;
-                                    }
-
-                                    // If args is set to unzip files
-                                    if (Array.Exists(args, argument => argument == "--unzip"))
-                                    {
-                                        // If need to unzip data from .zip and .json (files details is in here)
-                                        Message("Checking if folder exists before unzip: " + outDir + project.Name + "_" + repo.Name, EventType.Information, 1000);
-                                        Console.WriteLine("Checking if folder exists before unzip: " + outDir + project.Name + "_" + repo.Name);
-
-                                        // Check if folder to unzip exists
-                                        if (Directory.Exists(outDir + project.Name + "_" + repo.Name))
-                                        {
-                                            // Check if an old folder exists, then try to delete it
-                                            try
-                                            {
-                                                // Do work
-                                                Directory.Delete(outDir + project.Name + "_" + repo.Name, true);
-
-                                                // Log
-                                                Message("Folder exists before unzip: " + outDir + project.Name + "_" + repo.Name + ", deleting folder...", EventType.Information, 1000);
-                                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                                Console.WriteLine("Folder exists before unzip: " + outDir + project.Name + "_" + repo.Name + ", deleting folder...");
-                                                Console.ResetColor();
-
-                                                // Set backup status
-                                                isBackupOkAndUnZip = true;
-                                            }
-                                            catch (UnauthorizedAccessException)
-                                            {
-                                                Message("Unable to delete folder under unzip: " + outDir + project.Name + "_" + repo.Name + ". Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
-                                                Console.ForegroundColor = ConsoleColor.Red;
-                                                Console.WriteLine("Unable to delete folder under unzip: " + outDir + project.Name + "_" + repo.Name + ". Make sure the account you use to run this tool has delete rights to this location.");
-                                                Console.ResetColor();
-
-                                                // Count errors
-                                                _errors++;
-                                            }
-                                            catch (Exception e)
-                                            {
-                                                // Error
-                                                Message("Exception caught when trying to delete folder when unzip: " + outDir + project.Name + "_" + repo.Name + " - error: " + e, EventType.Error, 1001);
-                                                Console.ForegroundColor = ConsoleColor.Red;
-                                                Console.WriteLine("Exception caught when trying to delete folder when unzip: " + outDir + project.Name + "_" + repo.Name + " - error: " + e);
-                                                Console.ResetColor();
-
-                                                // Set backup status
-                                                isBackupOkAndUnZip = false;
-
-                                                // Count errors
-                                                _errors++;
-                                            }
-
-                                            // Check if done delete folder
-                                            if (!Directory.Exists(outDir + project.Name + "_" + repo.Name))
-                                            {
-                                                // Log
-                                                Console.ForegroundColor = ConsoleColor.Green;
-                                                Console.WriteLine($"Directory " + outDir + project.Name + "_" + repo.Name + " is deleted successfully");
-                                                Console.ResetColor();
-                                                Message("Directory " + outDir + project.Name + "_" + repo.Name + " is deleted successfully", EventType.Information, 1000);
-
-                                                // Set backup status
-                                                isBackupOkAndUnZip = true;
-                                            }
-                                            else
-                                            {
-                                                // Log
-                                                Console.ForegroundColor = ConsoleColor.Red;
-                                                Console.WriteLine($"Directory " + outDir + project.Name + "_" + repo.Name + " is not deleted successfully - see logs for more information");
-                                                Console.ResetColor();
-                                                Message("Directory " + outDir + project.Name + "_" + repo.Name + " is not deleted successfully - see logs for more information", EventType.Error, 1001);
-
-                                                // Set backup status
-                                                isBackupOkAndUnZip = false;
-
-                                                // Count errors
-                                                _errors++;
-                                            }
-                                        }
-                                        else
-                                        {
-                                            // if not folder to unzip exists
-                                            Console.ForegroundColor = ConsoleColor.Yellow;
-                                            Console.WriteLine($"Folder to unzip files from does not exists: " + outDir + project.Name + "_" + repo.Name);
-                                            Console.ResetColor();
-                                            Message("Folder to unzip files from does not exists: " + outDir + project.Name + "_" + repo.Name, EventType.Warning, 1001);
-                                        }
-
-                                        // Do work to start over - create folder to files
-                                        // Create folder when not exists
+                                        // Save to disk - _blob.zip
                                         try
                                         {
-                                            // Do work
-                                            Directory.CreateDirectory(outDir + project.Name + "_" + repo.Name);
+                                            // Save file to disk
+                                            //clientBlob.DownloadData(requestBlob).SaveAs(outDir + project.Name + "_" + repo.Name + "_blob.zip");
+
+                                            // Save file to disk
+                                            byte[] data = clientBlob.DownloadData(requestBlob);
+                                            using (FileStream fs = new FileStream(outDir + project.Name + "_" + repo.Name + "_blob.zip", FileMode.Create))
+                                            {
+                                                fs.Write(data, 0, data.Length);
+                                            }
 
                                             // Log
-                                            Message(
-                                                "Checked if folder exists before unzip: " + outDir + project.Name + "_" +
-                                                repo.Name + " - The folder does not exist, creating folder: " + outDir +
-                                                project.Name + "_" + repo.Name, EventType.Information, 1000);
-                                            Console.ForegroundColor = ConsoleColor.Yellow;
-                                            Console.WriteLine("Checked if folder exists before unzip: " + outDir +
-                                                              project.Name + "_" + repo.Name +
-                                                              " - The folder does not exist, creating folder: " + outDir +
-                                                              project.Name + "_" + repo.Name);
+                                            Message("Saved file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip", EventType.Information, 1000);
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            Console.WriteLine("Saved file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip");
                                             Console.ResetColor();
 
-                                            // Set backup status
-                                            isBackupOkAndUnZip = true;
+                                            // Count files there is downloaded
+                                            totalBlobFilesIsBackup++;
+
+                                            //Set backup status
+                                            isBackupOk = true;
+                                            isBackupOkAndUnZip = false;
                                         }
                                         catch (UnauthorizedAccessException)
                                         {
-                                            Message("Unable to create folder under unzipping: " + outDir + project.Name + "_" + repo.Name + ". Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                            Message("Unable to write the backup file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
                                             Console.ForegroundColor = ConsoleColor.Red;
-                                            Console.WriteLine("Unable to create folder under unzipping: " + outDir + project.Name + "_" + repo.Name + ". Make sure the account you use to run this tool has write rights to this location.");
+                                            Console.WriteLine("Unable to write the backup file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
                                             Console.ResetColor();
 
                                             // Count errors
@@ -552,49 +379,94 @@ namespace AzureDevOpsBackup
                                         catch (Exception e)
                                         {
                                             // Error
-                                            Message("Exception caught when trying to creating folder: " + outDir + project.Name + "_" + repo.Name + " - error: " + e, EventType.Error, 1001);
+                                            Message("Exception caught when trying to save file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip - error: " + e, EventType.Error, 1001);
                                             Console.ForegroundColor = ConsoleColor.Red;
-                                            Console.WriteLine("{0} Exception caught.", e);
+                                            Console.WriteLine("Exception caught when trying to save file to disk: " + outDir + project.Name + "_" + repo.Name + "_blob.zip - error: " + e);
                                             Console.ResetColor();
 
                                             // Set backup status
+                                            isBackupOk = false;
                                             isBackupOkAndUnZip = false;
+
+                                            // Count errors
                                             _errors++;
                                         }
 
-                                        // Get files from .zip folder to unzip
-                                        ZipArchive archive = ZipFile.OpenRead(outDir + project.Name + "_" + repo.Name + "_blob.zip");
-
-                                        foreach (Item item in items.Value)
+                                        //Save to disk - _tree.json
+                                        try
                                         {
-                                            // Work on all files/folders
-                                            if (item.IsFolder)
-                                            {
-                                                // If folder data
-                                                Message("Unzipping Git repository folder data: " + outDir + project.Name + "_" + repo.Name + item.Path, EventType.Information, 1000);
-                                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                                Console.WriteLine("Unzipping Git repository folder data: " + outDir + project.Name + "_" + repo.Name + item.Path);
-                                                Console.ResetColor();
+                                            // Save file to disk
+                                            File.WriteAllText(outDir + project.Name + "_" + repo.Name + "_tree.json", responseItems.Content);
 
+                                            // Log
+                                            Message("Saved file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json", EventType.Information, 1000);
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            Console.WriteLine("Saved file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json");
+                                            Console.ResetColor();
+
+                                            // Count files there is downloaded
+                                            totalTreeFilesIsBackup++;
+
+                                            // Set backup status
+                                            isBackupOk = true;
+                                            isBackupOkAndUnZip = false;
+                                        }
+                                        catch (UnauthorizedAccessException)
+                                        {
+                                            Message("Unable to write the backup file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                            Console.ForegroundColor = ConsoleColor.Red;
+                                            Console.WriteLine("Unable to write the backup file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                            Console.ResetColor();
+
+                                            // Count errors
+                                            _errors++;
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            // Error
+                                            Message("Exception caught when trying to save file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json - error: " + e, EventType.Error, 1001);
+                                            Console.ForegroundColor = ConsoleColor.Red;
+                                            Console.WriteLine("Exception caught when trying to save file to disk: " + outDir + project.Name + "_" + repo.Name + "_tree.json - error: " + e);
+                                            Console.ResetColor();
+
+                                            // Set backup status
+                                            isBackupOk = false;
+                                            isBackupOkAndUnZip = false;
+
+                                            // Count errors
+                                            _errors++;
+                                        }
+
+                                        // If args is set to unzip files
+                                        if (Array.Exists(args, argument => argument == "--unzip"))
+                                        {
+                                            // If need to unzip data from .zip and .json (files details is in here)
+                                            Message("Checking if folder exists before unzip: " + outDir + project.Name + "_" + repo.Name, EventType.Information, 1000);
+                                            Console.WriteLine("Checking if folder exists before unzip: " + outDir + project.Name + "_" + repo.Name);
+
+                                            // Check if folder to unzip exists
+                                            if (Directory.Exists(outDir + project.Name + "_" + repo.Name))
+                                            {
+                                                // Check if an old folder exists, then try to delete it
                                                 try
                                                 {
                                                     // Do work
-                                                    Directory.CreateDirectory(outDir + project.Name + "_" + repo.Name + item.Path);
+                                                    Directory.Delete(outDir + project.Name + "_" + repo.Name, true);
 
                                                     // Log
-                                                    Console.ForegroundColor = ConsoleColor.Green;
-                                                    Console.WriteLine($"Created folder: " + outDir + project.Name + "_" + repo.Name + item.Path);
+                                                    Message("Folder exists before unzip: " + outDir + project.Name + "_" + repo.Name + ", deleting folder...", EventType.Information, 1000);
+                                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                                    Console.WriteLine("Folder exists before unzip: " + outDir + project.Name + "_" + repo.Name + ", deleting folder...");
                                                     Console.ResetColor();
-                                                    Message("Created folder: " + outDir + project.Name + "_" + repo.Name + item.Path, EventType.Information, 1000);
 
                                                     // Set backup status
                                                     isBackupOkAndUnZip = true;
                                                 }
                                                 catch (UnauthorizedAccessException)
                                                 {
-                                                    Message("Unable to create folder under unzipping: " + outDir + project.Name + "_" + repo.Name + item.Path + ". Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                    Message("Unable to delete folder under unzip: " + outDir + project.Name + "_" + repo.Name + ". Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
                                                     Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine("Unable to create folder under unzipping: " + outDir + project.Name + "_" + repo.Name + item.Path + ". Make sure the account you use to run this tool has write rights to this location.");
+                                                    Console.WriteLine("Unable to delete folder under unzip: " + outDir + project.Name + "_" + repo.Name + ". Make sure the account you use to run this tool has delete rights to this location.");
                                                     Console.ResetColor();
 
                                                     // Count errors
@@ -602,11 +474,38 @@ namespace AzureDevOpsBackup
                                                 }
                                                 catch (Exception e)
                                                 {
-                                                    // Log
-                                                    Message("Exception caught when trying to create folder: " + outDir + project.Name + "_" + repo.Name + item.Path + " - error: " + e, EventType.Error, 1001);
+                                                    // Error
+                                                    Message("Exception caught when trying to delete folder when unzip: " + outDir + project.Name + "_" + repo.Name + " - error: " + e, EventType.Error, 1001);
                                                     Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine("{0} Exception caught.", e);
+                                                    Console.WriteLine("Exception caught when trying to delete folder when unzip: " + outDir + project.Name + "_" + repo.Name + " - error: " + e);
                                                     Console.ResetColor();
+
+                                                    // Set backup status
+                                                    isBackupOkAndUnZip = false;
+
+                                                    // Count errors
+                                                    _errors++;
+                                                }
+
+                                                // Check if done delete folder
+                                                if (!Directory.Exists(outDir + project.Name + "_" + repo.Name))
+                                                {
+                                                    // Log
+                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                    Console.WriteLine($"Directory " + outDir + project.Name + "_" + repo.Name + " is deleted successfully");
+                                                    Console.ResetColor();
+                                                    Message("Directory " + outDir + project.Name + "_" + repo.Name + " is deleted successfully", EventType.Information, 1000);
+
+                                                    // Set backup status
+                                                    isBackupOkAndUnZip = true;
+                                                }
+                                                else
+                                                {
+                                                    // Log
+                                                    Console.ForegroundColor = ConsoleColor.Red;
+                                                    Console.WriteLine($"Directory " + outDir + project.Name + "_" + repo.Name + " is not deleted successfully - see logs for more information");
+                                                    Console.ResetColor();
+                                                    Message("Directory " + outDir + project.Name + "_" + repo.Name + " is not deleted successfully - see logs for more information", EventType.Error, 1001);
 
                                                     // Set backup status
                                                     isBackupOkAndUnZip = false;
@@ -617,414 +516,499 @@ namespace AzureDevOpsBackup
                                             }
                                             else
                                             {
-                                                // If file data
-                                                try
-                                                {
-                                                    //Try to save data to disk
-                                                    archive.GetEntry(item.ObjectId).ExtractToFile(outDir + project.Name + "_" + repo.Name + item.Path, true);
+                                                // if not folder to unzip exists
+                                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                                Console.WriteLine($"Folder to unzip files from does not exists: " + outDir + project.Name + "_" + repo.Name);
+                                                Console.ResetColor();
+                                                Message("Folder to unzip files from does not exists: " + outDir + project.Name + "_" + repo.Name, EventType.Warning, 1001);
+                                            }
 
-                                                    // Log
+                                            // Do work to start over - create folder to files
+                                            // Create folder when not exists
+                                            try
+                                            {
+                                                // Do work
+                                                Directory.CreateDirectory(outDir + project.Name + "_" + repo.Name);
+
+                                                // Log
+                                                Message(
+                                                    "Checked if folder exists before unzip: " + outDir + project.Name + "_" +
+                                                    repo.Name + " - The folder does not exist, creating folder: " + outDir +
+                                                    project.Name + "_" + repo.Name, EventType.Information, 1000);
+                                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                                Console.WriteLine("Checked if folder exists before unzip: " + outDir +
+                                                                  project.Name + "_" + repo.Name +
+                                                                  " - The folder does not exist, creating folder: " + outDir +
+                                                                  project.Name + "_" + repo.Name);
+                                                Console.ResetColor();
+
+                                                // Set backup status
+                                                isBackupOkAndUnZip = true;
+                                            }
+                                            catch (UnauthorizedAccessException)
+                                            {
+                                                Message("Unable to create folder under unzipping: " + outDir + project.Name + "_" + repo.Name + ". Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                Console.ForegroundColor = ConsoleColor.Red;
+                                                Console.WriteLine("Unable to create folder under unzipping: " + outDir + project.Name + "_" + repo.Name + ". Make sure the account you use to run this tool has write rights to this location.");
+                                                Console.ResetColor();
+
+                                                // Count errors
+                                                _errors++;
+                                            }
+                                            catch (Exception e)
+                                            {
+                                                // Error
+                                                Message("Exception caught when trying to creating folder: " + outDir + project.Name + "_" + repo.Name + " - error: " + e, EventType.Error, 1001);
+                                                Console.ForegroundColor = ConsoleColor.Red;
+                                                Console.WriteLine("{0} Exception caught.", e);
+                                                Console.ResetColor();
+
+                                                // Set backup status
+                                                isBackupOkAndUnZip = false;
+                                                _errors++;
+                                            }
+
+                                            // Get files from .zip folder to unzip
+                                            ZipArchive archive = ZipFile.OpenRead(outDir + project.Name + "_" + repo.Name + "_blob.zip");
+
+                                            foreach (Item item in items.Value)
+                                            {
+                                                // Work on all files/folders
+                                                if (item.IsFolder)
+                                                {
+                                                    // If folder data
+                                                    Message("Unzipping Git repository folder data: " + outDir + project.Name + "_" + repo.Name + item.Path, EventType.Information, 1000);
                                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                                    Console.WriteLine($"Unzipping Git repository file data on disk: " + outDir + project.Name + "_" + repo.Name + item.Path);
+                                                    Console.WriteLine("Unzipping Git repository folder data: " + outDir + project.Name + "_" + repo.Name + item.Path);
                                                     Console.ResetColor();
-                                                    Message("Unzipping Git repository file data on disk: " + outDir + project.Name + "_" + repo.Name + item.Path, EventType.Information, 1000);
 
-                                                    // Count
-                                                    totalFilesIsBackupUnZipped++;
+                                                    try
+                                                    {
+                                                        // Do work
+                                                        Directory.CreateDirectory(outDir + project.Name + "_" + repo.Name + item.Path);
 
-                                                    // Set backup status
-                                                    isBackupOkAndUnZip = true;
+                                                        // Log
+                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                        Console.WriteLine($"Created folder: " + outDir + project.Name + "_" + repo.Name + item.Path);
+                                                        Console.ResetColor();
+                                                        Message("Created folder: " + outDir + project.Name + "_" + repo.Name + item.Path, EventType.Information, 1000);
+
+                                                        // Set backup status
+                                                        isBackupOkAndUnZip = true;
+                                                    }
+                                                    catch (UnauthorizedAccessException)
+                                                    {
+                                                        Message("Unable to create folder under unzipping: " + outDir + project.Name + "_" + repo.Name + item.Path + ". Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                        Console.ForegroundColor = ConsoleColor.Red;
+                                                        Console.WriteLine("Unable to create folder under unzipping: " + outDir + project.Name + "_" + repo.Name + item.Path + ". Make sure the account you use to run this tool has write rights to this location.");
+                                                        Console.ResetColor();
+
+                                                        // Count errors
+                                                        _errors++;
+                                                    }
+                                                    catch (Exception e)
+                                                    {
+                                                        // Log
+                                                        Message("Exception caught when trying to create folder: " + outDir + project.Name + "_" + repo.Name + item.Path + " - error: " + e, EventType.Error, 1001);
+                                                        Console.ForegroundColor = ConsoleColor.Red;
+                                                        Console.WriteLine("{0} Exception caught.", e);
+                                                        Console.ResetColor();
+
+                                                        // Set backup status
+                                                        isBackupOkAndUnZip = false;
+
+                                                        // Count errors
+                                                        _errors++;
+                                                    }
                                                 }
-                                                catch (UnauthorizedAccessException)
+                                                else
                                                 {
-                                                    Message("Unable to create file under unzipping: " + outDir + project.Name + "_" + repo.Name + item.Path + ". Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
-                                                    Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine("Unable to create file under unzipping: " + outDir + project.Name + "_" + repo.Name + item.Path + ". Make sure the account you use to run this tool has write rights to this location.");
-                                                    Console.ResetColor();
+                                                    // If file data
+                                                    try
+                                                    {
+                                                        //Try to save data to disk
+                                                        archive.GetEntry(item.ObjectId).ExtractToFile(outDir + project.Name + "_" + repo.Name + item.Path, true);
 
-                                                    // Count errors
-                                                    _errors++;
-                                                }
-                                                catch (Exception e)
-                                                {
-                                                    // Error
-                                                    Message("Exception caught when trying to create data on disk: " + outDir + project.Name + "_" + repo.Name + item.Path + " - error: " + e, EventType.Error, 1001);
-                                                    Console.ForegroundColor = ConsoleColor.Green;
-                                                    Console.WriteLine("Exception caught when trying to create data on disk: " + outDir + project.Name + "_" + repo.Name + item.Path + " - error: " + e);
-                                                    Console.ResetColor();
+                                                        // Log
+                                                        Console.ForegroundColor = ConsoleColor.Yellow;
+                                                        Console.WriteLine($"Unzipping Git repository file data on disk: " + outDir + project.Name + "_" + repo.Name + item.Path);
+                                                        Console.ResetColor();
+                                                        Message("Unzipping Git repository file data on disk: " + outDir + project.Name + "_" + repo.Name + item.Path, EventType.Information, 1000);
 
-                                                    // Set backup status
-                                                    isBackupOkAndUnZip = false;
+                                                        // Count
+                                                        totalFilesIsBackupUnZipped++;
 
-                                                    // Count errors
-                                                    _errors++;
+                                                        // Set backup status
+                                                        isBackupOkAndUnZip = true;
+                                                    }
+                                                    catch (UnauthorizedAccessException)
+                                                    {
+                                                        Message("Unable to create file under unzipping: " + outDir + project.Name + "_" + repo.Name + item.Path + ". Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                        Console.ForegroundColor = ConsoleColor.Red;
+                                                        Console.WriteLine("Unable to create file under unzipping: " + outDir + project.Name + "_" + repo.Name + item.Path + ". Make sure the account you use to run this tool has write rights to this location.");
+                                                        Console.ResetColor();
+
+                                                        // Count errors
+                                                        _errors++;
+                                                    }
+                                                    catch (Exception e)
+                                                    {
+                                                        // Error
+                                                        Message("Exception caught when trying to create data on disk: " + outDir + project.Name + "_" + repo.Name + item.Path + " - error: " + e, EventType.Error, 1001);
+                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                        Console.WriteLine("Exception caught when trying to create data on disk: " + outDir + project.Name + "_" + repo.Name + item.Path + " - error: " + e);
+                                                        Console.ResetColor();
+
+                                                        // Set backup status
+                                                        isBackupOkAndUnZip = false;
+
+                                                        // Count errors
+                                                        _errors++;
+                                                    }
                                                 }
                                             }
+
+                                            // When done unzip
+                                            Message("Unzipping Git repository: " + outDir + project.Name + "_" + repo.Name + " is now done", EventType.Information, 1000);
+                                            Console.ForegroundColor = ConsoleColor.Green;
+                                            Console.WriteLine("Unzipping Git repository: " + outDir + project.Name + "_" + repo.Name + " is now done\n");
+                                            Console.ResetColor();
+
+                                            // When done release zip files from function
+                                            archive.Dispose();
                                         }
 
-                                        // When done unzip
-                                        Message("Unzipping Git repository: " + outDir + project.Name + "_" + repo.Name + " is now done", EventType.Information, 1000);
-                                        Console.ForegroundColor = ConsoleColor.Green;
-                                        Console.WriteLine("Unzipping Git repository: " + outDir + project.Name + "_" + repo.Name + " is now done\n");
+                                        // Set backup status
+                                        noProjectsToBackup = false;
+                                    }
+                                    else
+                                    {
+                                        // If there is nothing in the Git repo/project to backup
+                                        Message("Number of items in project " + project.Name + " repository: " + repo.Name + " is 0, nothing to backup", EventType.Information, 1000);
+                                        Console.ForegroundColor = ConsoleColor.Yellow;
+                                        Console.WriteLine("Number of items in project " + project.Name + " repository: " + repo.Name + " is 0, nothing to backup\n");
                                         Console.ResetColor();
 
-                                        // When done release zip files from function
-                                        archive.Dispose();
+                                        // Set backup status
+                                        noProjectsToBackup = true;
+                                    }
+                                }
+                            }
+
+                            // When done backup
+                            Message("No more projets to work with for now...", EventType.Information, 1000);
+                            Message("Done with " + repoCount + " repositories in Azure DevOps", EventType.Information, 1000);
+                            Message("Done with " + repoItemsCount + " repositories to backup in folder: " + outDir + " on host: " + Environment.MachineName, EventType.Information, 1000);
+                            Message("Processed files to backup from Git repos (total unzipped if specified): " + totalFilesIsBackupUnZipped, EventType.Information, 1000);
+                            Message("Processed files to backup from Git repos (blob files (.zip files)): " + totalBlobFilesIsBackup, EventType.Information, 1000);
+                            Message("Processed files to backup from Git repos (tree files (.json files)): " + totalTreeFilesIsBackup, EventType.Information, 1000);
+
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("== No more projects to work with for now ==\n");
+                            Console.WriteLine("Done with " + repoCount + " repositories in Azure DevOps");
+                            Console.WriteLine("Done with " + repoItemsCount + " repositories to backup in folder: " + outDir + " on host: " + Environment.MachineName);
+                            Console.WriteLine("Processed files to backup from Git repos (total unzipped if specified): " + totalFilesIsBackupUnZipped);
+                            Console.WriteLine("Processed files to backup from Git repos (blob files (.zip files)): " + totalBlobFilesIsBackup);
+                            Console.WriteLine("Processed files to backup from Git repos (tree files (.json files)): " + totalTreeFilesIsBackup);
+                            Console.ResetColor();
+
+                            // Stop timer
+                            stopWatch.Stop();
+
+                            // Get the elapsed time as a TimeSpan value.
+                            TimeSpan ts = stopWatch.Elapsed;
+
+                            // Format and display the TimeSpan value.
+                            // string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                            elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
+                                ts.Hours, ts.Minutes, ts.Seconds,
+                                ts.Milliseconds / 10);
+
+                            // Log
+                            Message("Backup Run Time: " + elapsedTime, EventType.Information, 1000);
+                            Console.WriteLine("\nBackup Run Time: " + elapsedTime);
+
+                            // Parse data
+                            server = args[Array.IndexOf(args, "--server") + 1];
+                            serverPort = args[Array.IndexOf(args, "--port") + 1];
+                            emailFrom = args[Array.IndexOf(args, "--from") + 1];
+                            emailTo = args[Array.IndexOf(args, "--to") + 1];
+
+                            // Log details regarding email send
+                            Console.WriteLine("Email details:");
+                            Console.WriteLine("--server: " + server);
+                            Console.WriteLine("--port: " + serverPort);
+                            Console.WriteLine("--from: " + emailFrom);
+                            Console.WriteLine("--to: " + emailTo + Environment.NewLine);
+                            Message("Email details:", EventType.Information, 1000);
+                            Message("--server: " + server, EventType.Information, 1000);
+                            Message("--port: " + serverPort, EventType.Information, 1000);
+                            Message("--from: " + emailFrom, EventType.Information, 1000);
+                            Message("--to: " + emailTo, EventType.Information, 1000);
+
+                            // Cleanup old backups
+                            Message("Clean up old backups", EventType.Information, 1000);
+                            Console.WriteLine("== Clean up old backups ==");
+
+                            if (args.Contains("--daystokeepbackup"))
+                            {
+                                // If present - do work
+                                daysToKeepBackups = args[Array.IndexOf(args, "--daystokeepbackup") + 1];
+
+                                // Check if data is not null
+                                if (daysToKeepBackups != null)
+                                {
+                                    // If set to 30 (default) show it - other text if --daystokeepbackup is not set
+                                    if (daysToKeepBackups == "30")
+                                    {
+                                        // Log
+                                        Message($"argument --daystokeepbackup is set to (default) {daysToKeepBackups}", EventType.Information, 1000);
+                                        Console.ForegroundColor = ConsoleColor.Green;
+                                        Console.WriteLine($"argument --daystokeepbackup is set to (default) {daysToKeepBackups}");
+                                        Console.ResetColor();
+
+                                        // Set status text for email
+                                        isDaysToKeepNotDefaultStatusText = "Default number of old backup(s) set to keep in backup folder (days)";
+
+                                        // Log
+                                        Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
+
+                                        // Do work
+                                        DaysToKeepBackupsDefault(outBackupDir);
                                     }
 
-                                    // Set backup status
-                                    noProjectsToBackup = false;
+                                    // If --daystokeepbackup is not set to default 30 - show it and do work
+                                    if (daysToKeepBackups != "30")
+                                    {
+                                        // Log
+                                        Message($"argument --daystokeepbackup is not default (30), it is set to {daysToKeepBackups} days", EventType.Information, 1000);
+                                        Console.ForegroundColor = ConsoleColor.Yellow;
+                                        Console.WriteLine($"argument --daystokeepbackup is not default (30), it is set to {daysToKeepBackups} days");
+                                        Console.ResetColor();
+
+                                        // Set status text for email
+                                        isDaysToKeepNotDefaultStatusText = "Custom number of old backup(s) set to keep in backup folder (days)";
+
+                                        // Log
+                                        Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
+
+                                        // Do work
+                                        DaysToKeepBackups(outBackupDir, daysToKeepBackups);
+                                    }
                                 }
                                 else
                                 {
-                                    // If there is nothing in the Git repo/project to backup
-                                    Message("Number of items in project " + project.Name + " repository: " + repo.Name + " is 0, nothing to backup", EventType.Information, 1000);
-                                    Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine("Number of items in project " + project.Name + " repository: " + repo.Name + " is 0, nothing to backup\n");
-                                    Console.ResetColor();
-
-                                    // Set backup status
-                                    noProjectsToBackup = true;
-                                }
-                            }
-                        }
-
-                        // When done backup
-                        Message("No more projets to work with for now...", EventType.Information, 1000);
-                        Message("Done with " + repoCount + " repositories in Azure DevOps", EventType.Information, 1000);
-                        Message("Done with " + repoItemsCount + " repositories to backup in folder: " + outDir + " on host: " + Environment.MachineName, EventType.Information, 1000);
-                        Message("Processed files to backup from Git repos (total unzipped if specified): " + totalFilesIsBackupUnZipped, EventType.Information, 1000);
-                        Message("Processed files to backup from Git repos (blob files (.zip files)): " + totalBlobFilesIsBackup, EventType.Information, 1000);
-                        Message("Processed files to backup from Git repos (tree files (.json files)): " + totalTreeFilesIsBackup, EventType.Information, 1000);
-
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("== No more projects to work with for now ==\n");
-                        Console.WriteLine("Done with " + repoCount + " repositories in Azure DevOps");
-                        Console.WriteLine("Done with " + repoItemsCount + " repositories to backup in folder: " + outDir + " on host: " + Environment.MachineName);
-                        Console.WriteLine("Processed files to backup from Git repos (total unzipped if specified): " + totalFilesIsBackupUnZipped);
-                        Console.WriteLine("Processed files to backup from Git repos (blob files (.zip files)): " + totalBlobFilesIsBackup);
-                        Console.WriteLine("Processed files to backup from Git repos (tree files (.json files)): " + totalTreeFilesIsBackup);
-                        Console.ResetColor();
-
-                        // Stop timer
-                        stopWatch.Stop();
-
-                        // Get the elapsed time as a TimeSpan value.
-                        TimeSpan ts = stopWatch.Elapsed;
-
-                        // Format and display the TimeSpan value.
-                        // string elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-                        elapsedTime = String.Format("{0:00}:{1:00}:{2:00}.{3:00}",
-                            ts.Hours, ts.Minutes, ts.Seconds,
-                            ts.Milliseconds / 10);
-
-                        // Log
-                        Message("Backup Run Time: " + elapsedTime, EventType.Information, 1000);
-                        Console.WriteLine("\nBackup Run Time: " + elapsedTime);
-
-                        // Parse data
-                        server = args[Array.IndexOf(args, "--server") + 1];
-                        serverPort = args[Array.IndexOf(args, "--port") + 1];
-                        emailFrom = args[Array.IndexOf(args, "--from") + 1];
-                        emailTo = args[Array.IndexOf(args, "--to") + 1];
-
-                        // Log details regarding email send
-                        Console.WriteLine("Email details:");
-                        Console.WriteLine("--server: " + server);
-                        Console.WriteLine("--port: " + serverPort);
-                        Console.WriteLine("--from: " + emailFrom);
-                        Console.WriteLine("--to: " + emailTo + Environment.NewLine);
-                        Message("Email details:", EventType.Information, 1000);
-                        Message("--server: " + server, EventType.Information, 1000);
-                        Message("--port: " + serverPort, EventType.Information, 1000);
-                        Message("--from: " + emailFrom, EventType.Information, 1000);
-                        Message("--to: " + emailTo, EventType.Information, 1000);
-
-                        // Cleanup old backups
-                        Message("Clean up old backups", EventType.Information, 1000);
-                        Console.WriteLine("== Clean up old backups ==");
-
-                        if (args.Contains("--daystokeepbackup"))
-                        {
-                            // If present - do work
-                            daysToKeepBackups = args[Array.IndexOf(args, "--daystokeepbackup") + 1];
-
-                            // Check if data is not null
-                            if (daysToKeepBackups != null)
-                            {
-                                // If set to 30 (default) show it - other text if --daystokeepbackup is not set
-                                if (daysToKeepBackups == "30")
-                                {
-                                    // Log
-                                    Message($"argument --daystokeepbackup is set to (default) {daysToKeepBackups}", EventType.Information, 1000);
-                                    Console.ForegroundColor = ConsoleColor.Green;
-                                    Console.WriteLine($"argument --daystokeepbackup is set to (default) {daysToKeepBackups}");
-                                    Console.ResetColor();
-
-                                    // Set status text for email
-                                    isDaysToKeepNotDefaultStatusText = "Default number of old backup(s) set to keep in backup folder (days)";
-
-                                    // Log
-                                    Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
-
-                                    // Do work
+                                    // Set default
                                     DaysToKeepBackupsDefault(outBackupDir);
                                 }
-
-                                // If --daystokeepbackup is not set to default 30 - show it and do work
-                                if (daysToKeepBackups != "30")
-                                {
-                                    // Log
-                                    Message($"argument --daystokeepbackup is not default (30), it is set to {daysToKeepBackups} days", EventType.Information, 1000);
-                                    Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"argument --daystokeepbackup is not default (30), it is set to {daysToKeepBackups} days");
-                                    Console.ResetColor();
-
-                                    // Set status text for email
-                                    isDaysToKeepNotDefaultStatusText = "Custom number of old backup(s) set to keep in backup folder (days)";
-
-                                    // Log
-                                    Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
-
-                                    // Do work
-                                    DaysToKeepBackups(outBackupDir, daysToKeepBackups);
-                                }
                             }
                             else
                             {
-                                // Set default
+                                // Log
+                                Message($"argument --daystokeepbackup does not exits - using default backups to keep (30 days)!", EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"\nargument --daystokeepbackup does not exits - using default backups to keep (30 days)!\n");
+                                Console.ResetColor();
+
+                                // Do work
                                 DaysToKeepBackupsDefault(outBackupDir);
                             }
-                        }
-                        else
-                        {
+
+                            // Cleanup old log files
+                            string[] oldfiles = Directory.GetFiles(Files.LogFilePath);
+
                             // Log
-                            Message($"argument --daystokeepbackup does not exits - using default backups to keep (30 days)!", EventType.Information, 1000);
+                            Message("Checking for old log file(s) to cleanup...", EventType.Information, 1000);
                             Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"\nargument --daystokeepbackup does not exits - using default backups to keep (30 days)!\n");
+                            Console.WriteLine("\nChecking for old log file(s) to cleanup...");
                             Console.ResetColor();
 
-                            // Do work
-                            DaysToKeepBackupsDefault(outBackupDir);
-                        }
-
-                        // Cleanup old log files
-                        string[] oldfiles = Directory.GetFiles(Files.LogFilePath);
-
-                        // Log
-                        Message("Checking for old log file(s) to cleanup...", EventType.Information, 1000);
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("\nChecking for old log file(s) to cleanup...");
-                        Console.ResetColor();
-
-                        // Loop all files in folder
-                        foreach (string file in oldfiles)
-                        {
-                            FileInfo fi = new FileInfo(file);
-
-                            // Get all last access time back in time
-                            if (fi.LastAccessTime < DateTime.Now.AddDays(-30))
+                            // Loop all files in folder
+                            foreach (string file in oldfiles)
                             {
-                                try
+                                FileInfo fi = new FileInfo(file);
+
+                                // Get all last access time back in time
+                                if (fi.LastAccessTime < DateTime.Now.AddDays(-30))
                                 {
-                                    // Do work
-                                    fi.Delete();
+                                    try
+                                    {
+                                        // Do work
+                                        fi.Delete();
 
-                                    // Log
-                                    Message("Deleted old log file: " + fi, EventType.Information, 1000);
-                                    Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine("Deleted old log file: " + fi);
-                                    Console.ResetColor();
+                                        // Log
+                                        Message("Deleted old log file: " + fi, EventType.Information, 1000);
+                                        Console.ForegroundColor = ConsoleColor.Yellow;
+                                        Console.WriteLine("Deleted old log file: " + fi);
+                                        Console.ResetColor();
 
-                                    // Set status
-                                    oldLogfilesToDelete = true;
-                                    oldLogFilesToDeleteCount++;
-                                }
-                                catch (UnauthorizedAccessException)
-                                {
-                                    Message("Unable to delete old log file: " + fi + ". Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("Unable to delete old log file: " + fi + ". Make sure the account you use to run this tool has delete rights to this location.");
-                                    Console.ResetColor();
+                                        // Set status
+                                        oldLogfilesToDelete = true;
+                                        oldLogFilesToDeleteCount++;
+                                    }
+                                    catch (UnauthorizedAccessException)
+                                    {
+                                        Message("Unable to delete old log file: " + fi + ". Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.WriteLine("Unable to delete old log file: " + fi + ". Make sure the account you use to run this tool has delete rights to this location.");
+                                        Console.ResetColor();
 
-                                    // Count errors
-                                    _errors++;
-                                }
-                                catch (Exception ex)
-                                {
-                                    // Log
-                                    Message("Sorry, we are unable to delete old log file: " + fi + "Error: " + ex, EventType.Error, 1001);
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine("Sorry, we are unable to delete old log file: " + fi + "Error: " + ex);
-                                    Console.ResetColor();
+                                        // Count errors
+                                        _errors++;
+                                    }
+                                    catch (Exception ex)
+                                    {
+                                        // Log
+                                        Message("Sorry, we are unable to delete old log file: " + fi + "Error: " + ex, EventType.Error, 1001);
+                                        Console.ForegroundColor = ConsoleColor.Red;
+                                        Console.WriteLine("Sorry, we are unable to delete old log file: " + fi + "Error: " + ex);
+                                        Console.ResetColor();
 
-                                    // Count errors
-                                    _errors++;
+                                        // Count errors
+                                        _errors++;
+                                    }
                                 }
                             }
-                        }
 
-                        // Check if there is old log files to delete
-                        if (oldLogfilesToDelete)
-                        {
-                            // Log
-                            Message($"There was {oldLogFilesToDeleteCount} old log files to delete (-30 days)", EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"There was {oldLogFilesToDeleteCount} old log files to delete (-30 days)");
-                            Console.ResetColor();
-                        }
-                        else
-                        {
-                            // Log
-                            Message("No old log files to delete (-30 days)", EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine("No old log files to delete (-30 days)");
-                            Console.ResetColor();
-                        }
-
-                        // Get email status text from job status
-                        if (isBackupOk)
-                        {
-                            // If unzipped or not
-                            if (isBackupOkAndUnZip)
+                            // Check if there is old log files to delete
+                            if (oldLogfilesToDelete)
                             {
-                                emailStatusMessage = "Success and unzipped";
+                                // Log
+                                Message($"There was {oldLogFilesToDeleteCount} old log files to delete (-30 days)", EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine($"There was {oldLogFilesToDeleteCount} old log files to delete (-30 days)");
+                                Console.ResetColor();
                             }
                             else
                             {
-                                emailStatusMessage = "Success, not unzipped";
+                                // Log
+                                Message("No old log files to delete (-30 days)", EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine("No old log files to delete (-30 days)");
+                                Console.ResetColor();
+                            }
+
+                            // Get email status text from job status
+                            if (isBackupOk)
+                            {
+                                // If unzipped or not
+                                if (isBackupOkAndUnZip)
+                                {
+                                    emailStatusMessage = "Success and unzipped";
+                                }
+                                else
+                                {
+                                    emailStatusMessage = "Success, not unzipped";
+                                }
+                            }
+                            else
+                            {
+                                emailStatusMessage = "Failed!";
+                            }
+
+                            // Text if no Git projects to backup
+                            if (noProjectsToBackup)
+                            {
+                                emailStatusMessage = "No projects to backup!";
                             }
                         }
                         else
                         {
-                            emailStatusMessage = "Failed!";
-                        }
-
-                        // Text if no Git projects to backup
-                        if (noProjectsToBackup)
-                        {
-                            emailStatusMessage = "No projects to backup!";
-                        }
-                    }
-                    else
-                    {
-                        // No projects to backup
-                        // Log
-                        Message("No information from Azure DevOps for Git projects - nothing to backup!", EventType.Information, 1000);
-                        Console.WriteLine("No information from Azure DevOps for Git projects - nothing to backup!");
-
-                        // Stop timer
-                        stopWatch.Stop();
-                    }
-
-                    // If user set to delete downloaded files (.zip and .json) after unzipped
-                    if (Array.Exists(args, argument => argument == "--cleanup"))
-                    {
-                        // Set state
-                        _cleanUpState = true;
-
-                        // If --cleanup was set to and --unzip
-                        if (Array.Exists(args, argument => argument == "--unzip"))
-                        {
+                            // No projects to backup
                             // Log
-                            Message("Parameter --cleanup and --unzip is set - deleting downloaded .zip and .json files when unzipped...", EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("\nParameter --cleanup and --unzip is set - deleting downloaded .zip and .json files when unzipped...\n");
-                            Console.ResetColor();
+                            Message("No information from Azure DevOps for Git projects - nothing to backup!", EventType.Information, 1000);
+                            Console.WriteLine("No information from Azure DevOps for Git projects - nothing to backup!");
 
-                            // Do task
-                            Deletezipandjson(outDir);
-
-                            // Log
-                            Message("Parameter --cleanup was set - deleted downloaded .zip and .json files after unzipped!", EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine("\nParameter --cleanup was set - deleted downloaded .zip and .json files after unzipped!\n");
-                            Console.ResetColor();
+                            // Stop timer
+                            stopWatch.Stop();
                         }
-                        // If --unzip was not set when --cleanup is - do not delete anything!
+
+                        // If user set to delete downloaded files (.zip and .json) after unzipped
+                        if (Array.Exists(args, argument => argument == "--cleanup"))
+                        {
+                            // Set state
+                            _cleanUpState = true;
+
+                            // If --cleanup was set to and --unzip
+                            if (Array.Exists(args, argument => argument == "--unzip"))
+                            {
+                                // Log
+                                Message("Parameter --cleanup and --unzip is set - deleting downloaded .zip and .json files when unzipped...", EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("\nParameter --cleanup and --unzip is set - deleting downloaded .zip and .json files when unzipped...\n");
+                                Console.ResetColor();
+
+                                // Do task
+                                Deletezipandjson(outDir);
+
+                                // Log
+                                Message("Parameter --cleanup was set - deleted downloaded .zip and .json files after unzipped!", EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine("\nParameter --cleanup was set - deleted downloaded .zip and .json files after unzipped!\n");
+                                Console.ResetColor();
+                            }
+                            // If --unzip was not set when --cleanup is - do not delete anything!
+                            else
+                            {
+                                // Log
+                                Message("Parameter --cleanup is set but NOT --unzip - will not delete any downloaded .zip and .json files as that the only files there is backup of!", EventType.Warning, 1002);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("\nParameter --cleanup is set but NOT --unzip - will not delete any downloaded .zip and .json files as that the only files there is backup of!\n");
+                                Console.ResetColor();
+                            }
+                        }
                         else
                         {
-                            // Log
-                            Message("Parameter --cleanup is set but NOT --unzip - will not delete any downloaded .zip and .json files as that the only files there is backup of!", EventType.Warning, 1002);
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("\nParameter --cleanup is set but NOT --unzip - will not delete any downloaded .zip and .json files as that the only files there is backup of!\n");
-                            Console.ResetColor();
+                            // Set state
+                            _cleanUpState = false;
                         }
-                    }
-                    else
-                    {
-                        // Set state
-                        _cleanUpState = false;
-                    }
 
-                    // Get status email text for Status colums in email report
-                    // Log
-                    Message($"Getting status for tasks for email report", EventType.Information, 1000);
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"Getting status for tasks for email report");
-                    Console.ResetColor();
-
-                    // Processed Git repos in Azure DevOps (total):
-                    if (repoCount == 0)
-                    {
-                        repoCountStatusText = "Warning - nothing to backup!";
-
+                        // Get status email text for Status colums in email report
                         // Log
-                        Message($"Processed Git repos in Azure DevOps (total) status:" + repoCountStatusText, EventType.Warning, 1001);
+                        Message($"Getting status for tasks for email report", EventType.Information, 1000);
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText);
+                        Console.WriteLine($"Getting status for tasks for email report");
                         Console.ResetColor();
-                    }
-                    else
-                    {
-                        if (isBackupOk)
+
+                        // Processed Git repos in Azure DevOps (total):
+                        if (repoCount == 0)
                         {
-                            repoCountStatusText = "Good!";
+                            repoCountStatusText = "Warning - nothing to backup!";
 
                             // Log
-                            Message($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText, EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText);
-                            Console.ResetColor();
-                        }
-                        else
-                        {
-                            repoCountStatusText = "Warning!";
-
-                            // Log
-                            Message($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText, EventType.Warning, 1001);
+                            Message($"Processed Git repos in Azure DevOps (total) status:" + repoCountStatusText, EventType.Warning, 1001);
                             Console.ForegroundColor = ConsoleColor.Yellow;
                             Console.WriteLine($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText);
                             Console.ResetColor();
                         }
-                    }
-
-                    // Processed Git repos a backup is made of from Azure DevOps:
-                    if (repoItemsCount == 0)
-                    {
-                        repoItemsCountStatusText = "Warning - nothing to backup!";
-
-                        // Log
-                        Message($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Warning, 1001);
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        if (isBackupOk)
-                        {
-                            repoItemsCountStatusText = "Good!";
-
-                            // Log
-                            Message($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
-                            Console.ResetColor();
-                        }
                         else
                         {
-                            repoItemsCountStatusText = "Warning!";
+                            if (isBackupOk)
+                            {
+                                repoCountStatusText = "Good!";
+
+                                // Log
+                                Message($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText, EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText);
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                repoCountStatusText = "Warning!";
+
+                                // Log
+                                Message($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText, EventType.Warning, 1001);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText);
+                                Console.ResetColor();
+                            }
+                        }
+
+                        // Processed Git repos a backup is made of from Azure DevOps:
+                        if (repoItemsCount == 0)
+                        {
+                            repoItemsCountStatusText = "Warning - nothing to backup!";
 
                             // Log
                             Message($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Warning, 1001);
@@ -1032,34 +1016,34 @@ namespace AzureDevOpsBackup
                             Console.WriteLine($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
                             Console.ResetColor();
                         }
-                    }
-
-                    // Processed files to backup from Git repos (total unzipped if specified):
-                    if (totalFilesIsBackupUnZipped == 0)
-                    {
-                        totalFilesIsBackupUnZippedStatusText = "Good - nothing to unzip!";
-
-                        // Log
-                        Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Warning, 1001);
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText);
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        if (isBackupOkAndUnZip)
-                        {
-                            totalFilesIsBackupUnZippedStatusText = "Good! (and unzip is OK)";
-
-                            // Log
-                            Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText);
-                            Console.ResetColor();
-                        }
                         else
                         {
-                            totalFilesIsBackupUnZippedStatusText = "Warning on unzip!";
+                            if (isBackupOk)
+                            {
+                                repoItemsCountStatusText = "Good!";
+
+                                // Log
+                                Message($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                repoItemsCountStatusText = "Warning!";
+
+                                // Log
+                                Message($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Warning, 1001);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
+                                Console.ResetColor();
+                            }
+                        }
+
+                        // Processed files to backup from Git repos (total unzipped if specified):
+                        if (totalFilesIsBackupUnZipped == 0)
+                        {
+                            totalFilesIsBackupUnZippedStatusText = "Good - nothing to unzip!";
 
                             // Log
                             Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Warning, 1001);
@@ -1067,34 +1051,34 @@ namespace AzureDevOpsBackup
                             Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText);
                             Console.ResetColor();
                         }
-                    }
-
-                    // Processed files to backup from Git repos (blob files (.zip files)):
-                    if (totalBlobFilesIsBackup == 0)
-                    {
-                        totalBlobFilesIsBackupStatusText = "Warning - nothing to backup!";
-
-                        // Log
-                        Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText, EventType.Warning, 1001);
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText);
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        if (isBackupOk)
-                        {
-                            totalBlobFilesIsBackupStatusText = "Good!";
-
-                            // Log
-                            Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText, EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText);
-                            Console.ResetColor();
-                        }
                         else
                         {
-                            totalBlobFilesIsBackupStatusText = "Warning!";
+                            if (isBackupOkAndUnZip)
+                            {
+                                totalFilesIsBackupUnZippedStatusText = "Good! (and unzip is OK)";
+
+                                // Log
+                                Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText);
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                totalFilesIsBackupUnZippedStatusText = "Warning on unzip!";
+
+                                // Log
+                                Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Warning, 1001);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText);
+                                Console.ResetColor();
+                            }
+                        }
+
+                        // Processed files to backup from Git repos (blob files (.zip files)):
+                        if (totalBlobFilesIsBackup == 0)
+                        {
+                            totalBlobFilesIsBackupStatusText = "Warning - nothing to backup!";
 
                             // Log
                             Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText, EventType.Warning, 1001);
@@ -1102,34 +1086,34 @@ namespace AzureDevOpsBackup
                             Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText);
                             Console.ResetColor();
                         }
-                    }
-
-                    // Processed files to backup from Git repos (tree files (.json files)):
-                    if (totalTreeFilesIsBackup == 0)
-                    {
-                        totalTreeFilesIsBackupStatusText = "Warning - nothing to backup!";
-
-                        // Log
-                        Message($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText, EventType.Warning, 1001);
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText);
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        if (isBackupOk)
-                        {
-                            totalTreeFilesIsBackupStatusText = "Good!";
-
-                            // Log
-                            Message($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText, EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText);
-                            Console.ResetColor();
-                        }
                         else
                         {
-                            totalTreeFilesIsBackupStatusText = "Warning!";
+                            if (isBackupOk)
+                            {
+                                totalBlobFilesIsBackupStatusText = "Good!";
+
+                                // Log
+                                Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText, EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText);
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                totalBlobFilesIsBackupStatusText = "Warning!";
+
+                                // Log
+                                Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText, EventType.Warning, 1001);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText);
+                                Console.ResetColor();
+                            }
+                        }
+
+                        // Processed files to backup from Git repos (tree files (.json files)):
+                        if (totalTreeFilesIsBackup == 0)
+                        {
+                            totalTreeFilesIsBackupStatusText = "Warning - nothing to backup!";
 
                             // Log
                             Message($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText, EventType.Warning, 1001);
@@ -1137,91 +1121,91 @@ namespace AzureDevOpsBackup
                             Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText);
                             Console.ResetColor();
                         }
-                    }
-
-                    // Deleted original downloaded .zip and .json files in backup folder:
-                    int totalFilesThereShouldBeDeleted = totalBlobFilesIsBackup + totalTreeFilesIsBackup;
-                    if (_totalFilesIsDeletedAfterUnZipped != totalFilesThereShouldBeDeleted)
-                    {
-                        if (_totalFilesIsDeletedAfterUnZipped != 0)
-                        {
-                            totalFilesIsDeletedAfterUnZippedStatusText =
-                                "Warning - not all files is deleted and backup is not OK!";
-
-                            // Log
-                            Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
-                            Console.ResetColor();
-                        }
                         else
                         {
                             if (isBackupOk)
                             {
-                                totalFilesIsDeletedAfterUnZippedStatusText = "Good - not set to cleanup!";
+                                totalTreeFilesIsBackupStatusText = "Good!";
+
+                                // Log
+                                Message($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText, EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText);
+                                Console.ResetColor();
                             }
                             else
                             {
-                                totalFilesIsDeletedAfterUnZippedStatusText = "Warning - nothing to backup!";
+                                totalTreeFilesIsBackupStatusText = "Warning!";
+
+                                // Log
+                                Message($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText, EventType.Warning, 1001);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText);
+                                Console.ResetColor();
                             }
-
-                            // Log
-                            Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
-                            Console.ResetColor();
                         }
-                    }
-                    else
-                    {
-                        if (isBackupOkAndUnZip)
+
+                        // Deleted original downloaded .zip and .json files in backup folder:
+                        int totalFilesThereShouldBeDeleted = totalBlobFilesIsBackup + totalTreeFilesIsBackup;
+                        if (_totalFilesIsDeletedAfterUnZipped != totalFilesThereShouldBeDeleted)
                         {
-                            totalFilesIsDeletedAfterUnZippedStatusText = "Good! (set to cleanup, and matched the total files downloaded)";
+                            if (_totalFilesIsDeletedAfterUnZipped != 0)
+                            {
+                                totalFilesIsDeletedAfterUnZippedStatusText =
+                                    "Warning - not all files is deleted and backup is not OK!";
 
-                            // Log
-                            Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
-                            Console.ResetColor();
-                        }
-                        else
-                        {
-                            totalFilesIsDeletedAfterUnZippedStatusText = "Warning - not all files is deleted!";
+                                // Log
+                                Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                if (isBackupOk)
+                                {
+                                    totalFilesIsDeletedAfterUnZippedStatusText = "Good - not set to cleanup!";
+                                }
+                                else
+                                {
+                                    totalFilesIsDeletedAfterUnZippedStatusText = "Warning - nothing to backup!";
+                                }
 
-                            // Log
-                            Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
-                            Console.ResetColor();
-                        }
-                    }
-
-                    // Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete):
-                    if (_numZip != 0)
-                    {
-                        letOverZipFilesStatusText = "Warning - leftover .zip files!";
-
-                        // Log
-                        Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText, EventType.Warning, 1001);
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText);
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        if (isBackupOk)
-                        {
-                            letOverZipFilesStatusText = "Good (no leftover .zip files)";
-
-                            // Log
-                            Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText, EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText);
-                            Console.ResetColor();
+                                // Log
+                                Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
+                                Console.ResetColor();
+                            }
                         }
                         else
                         {
-                            letOverZipFilesStatusText = "Warning - backup not OK!";
+                            if (isBackupOkAndUnZip)
+                            {
+                                totalFilesIsDeletedAfterUnZippedStatusText = "Good! (set to cleanup, and matched the total files downloaded)";
+
+                                // Log
+                                Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                totalFilesIsDeletedAfterUnZippedStatusText = "Warning - not all files is deleted!";
+
+                                // Log
+                                Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
+                                Console.ResetColor();
+                            }
+                        }
+
+                        // Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete):
+                        if (_numZip != 0)
+                        {
+                            letOverZipFilesStatusText = "Warning - leftover .zip files!";
 
                             // Log
                             Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText, EventType.Warning, 1001);
@@ -1229,34 +1213,34 @@ namespace AzureDevOpsBackup
                             Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText);
                             Console.ResetColor();
                         }
-                    }
-
-                    // Leftovers for original downloaded .json files in backup folder (error(s) when try to delete):
-                    if (_numJson != 0)
-                    {
-                        letOverJsonFilesStatusText = "Warning - leftover .json files!";
-
-                        // Log
-                        Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText, EventType.Warning, 1001);
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText);
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        if (isBackupOk)
-                        {
-                            letOverJsonFilesStatusText = "Good (no leftover .json files)";
-
-                            // Log
-                            Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText, EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText);
-                            Console.ResetColor();
-                        }
                         else
                         {
-                            letOverJsonFilesStatusText = "Warning!";
+                            if (isBackupOk)
+                            {
+                                letOverZipFilesStatusText = "Good (no leftover .zip files)";
+
+                                // Log
+                                Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText, EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText);
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                letOverZipFilesStatusText = "Warning - backup not OK!";
+
+                                // Log
+                                Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText, EventType.Warning, 1001);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText);
+                                Console.ResetColor();
+                            }
+                        }
+
+                        // Leftovers for original downloaded .json files in backup folder (error(s) when try to delete):
+                        if (_numJson != 0)
+                        {
+                            letOverJsonFilesStatusText = "Warning - leftover .json files!";
 
                             // Log
                             Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText, EventType.Warning, 1001);
@@ -1264,150 +1248,172 @@ namespace AzureDevOpsBackup
                             Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText);
                             Console.ResetColor();
                         }
-                    }
-
-                    // Old backup(s) deleted in backup folder:
-                    if (_totalBackupsIsDeleted != 0)
-                    {
-                        totalBackupsIsDeletedStatusText = "Good - deleted " + _totalBackupsIsDeleted + " old backup(s) from backup folder";
-
-                        // Log
-                        Message($"Old backup(s) deleted in backup folder: status: " + totalBackupsIsDeletedStatusText, EventType.Information, 1000);
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"Old backup(s) deleted in backup folder: status: " + totalBackupsIsDeletedStatusText);
-                        Console.ResetColor();
-                    }
-                    else
-                    {
-                        if (isBackupOk)
+                        else
                         {
-                            totalBackupsIsDeletedStatusText = "Good - no old backup(s) to delete from backup folder";
+                            if (isBackupOk)
+                            {
+                                letOverJsonFilesStatusText = "Good (no leftover .json files)";
+
+                                // Log
+                                Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText, EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText);
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                letOverJsonFilesStatusText = "Warning!";
+
+                                // Log
+                                Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText, EventType.Warning, 1001);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText);
+                                Console.ResetColor();
+                            }
+                        }
+
+                        // Old backup(s) deleted in backup folder:
+                        if (_totalBackupsIsDeleted != 0)
+                        {
+                            totalBackupsIsDeletedStatusText = "Good - deleted " + _totalBackupsIsDeleted + " old backup(s) from backup folder";
 
                             // Log
-                            Message($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText, EventType.Information, 1000);
+                            Message($"Old backup(s) deleted in backup folder: status: " + totalBackupsIsDeletedStatusText, EventType.Information, 1000);
                             Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText);
+                            Console.WriteLine($"Old backup(s) deleted in backup folder: status: " + totalBackupsIsDeletedStatusText);
                             Console.ResetColor();
                         }
                         else
                         {
-                            totalBackupsIsDeletedStatusText = "Warning!";
+                            if (isBackupOk)
+                            {
+                                totalBackupsIsDeletedStatusText = "Good - no old backup(s) to delete from backup folder";
 
-                            // Log
-                            Message($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText, EventType.Warning, 1001);
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText);
-                            Console.ResetColor();
+                                // Log
+                                Message($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText, EventType.Information, 1000);
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText);
+                                Console.ResetColor();
+                            }
+                            else
+                            {
+                                totalBackupsIsDeletedStatusText = "Warning!";
+
+                                // Log
+                                Message($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText, EventType.Warning, 1001);
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText);
+                                Console.ResetColor();
+                            }
                         }
-                    }
 
-                    // Check if output folder exists to email report and folder contains files
-                    // Log
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine($"Checking if directory " + outDir + " contains files");
-                    Console.ResetColor();
-                    Message("Checking if directory " + outDir + " and contains files", EventType.Information, 1000);
-
-                    // Check if done for status in mail report
-                    if (Directory.Exists(outDir) && (Directory.EnumerateFiles(outDir, "*.zip", SearchOption.AllDirectories).FirstOrDefault() != null))
-                    {
+                        // Check if output folder exists to email report and folder contains files
                         // Log
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine($"Directory " + outDir + " contains files");
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine($"Checking if directory " + outDir + " contains files");
                         Console.ResetColor();
-                        Message("Directory " + outDir + " contains files", EventType.Information, 1000);
+                        Message("Checking if directory " + outDir + " and contains files", EventType.Information, 1000);
 
-                        // Set status
-                        isOutputFolderContainFiles = true;
-                    }
-                    else
-                    {
-                        if (_cleanUpState)
+                        // Check if done for status in mail report
+                        if (Directory.Exists(outDir) && (Directory.EnumerateFiles(outDir, "*.zip", SearchOption.AllDirectories).FirstOrDefault() != null))
                         {
                             // Log
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"Directory " + outDir + " contains no files - set to cleanup downloaded files - see logs for more information");
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine($"Directory " + outDir + " contains files");
                             Console.ResetColor();
-                            Message("Directory " + outDir + " contains no files - set to cleanup downloaded files - see logs for more information", EventType.Information, 1000);
+                            Message("Directory " + outDir + " contains files", EventType.Information, 1000);
 
                             // Set status
-                            isOutputFolderContainFiles = false;
+                            isOutputFolderContainFiles = true;
                         }
                         else
                         {
-                            // Log
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"Directory " + outDir + " is not created successfully and contains no files - see logs for more information");
-                            Console.ResetColor();
-                            Message("Directory " + outDir + " is not created successfully and contains no files - see logs for more information", EventType.Error, 1001);
+                            if (_cleanUpState)
+                            {
+                                // Log
+                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                Console.WriteLine($"Directory " + outDir + " contains no files - set to cleanup downloaded files - see logs for more information");
+                                Console.ResetColor();
+                                Message("Directory " + outDir + " contains no files - set to cleanup downloaded files - see logs for more information", EventType.Information, 1000);
 
-                            // Set status
-                            isOutputFolderContainFiles = false;
+                                // Set status
+                                isOutputFolderContainFiles = false;
+                            }
+                            else
+                            {
+                                // Log
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine($"Directory " + outDir + " is not created successfully and contains no files - see logs for more information");
+                                Console.ResetColor();
+                                Message("Directory " + outDir + " is not created successfully and contains no files - see logs for more information", EventType.Error, 1001);
 
-                            // Count errors
-                            _errors++;
+                                // Set status
+                                isOutputFolderContainFiles = false;
+
+                                // Count errors
+                                _errors++;
+                            }
                         }
-                    }
 
-                    // Get status for output folder
-                    if (isOutputFolderContainFiles)
-                    {
-                        isOutputFolderContainFilesStatusText = "Checked - folder is containing original downloaded files";
-
-                        if (CheckIfHaveSubfolders(outDir))
+                        // Get status for output folder
+                        if (isOutputFolderContainFiles)
                         {
-                            isOutputFolderContainFilesStatusText += ", but has also subfolders with unzipped backup(s)";
+                            isOutputFolderContainFilesStatusText = "Checked - folder is containing original downloaded files";
+
+                            if (CheckIfHaveSubfolders(outDir))
+                            {
+                                isOutputFolderContainFilesStatusText += ", but has also subfolders with unzipped backup(s)";
+                            }
                         }
-                    }
-                    else
-                    {
-                        isOutputFolderContainFilesStatusText = "Checked - folder is NOT containing original downloaded files";
-                        if (CheckIfHaveSubfolders(outDir))
+                        else
                         {
-                            isOutputFolderContainFilesStatusText += ", but has subfolders with unzipped backup(s)";
+                            isOutputFolderContainFilesStatusText = "Checked - folder is NOT containing original downloaded files";
+                            if (CheckIfHaveSubfolders(outDir))
+                            {
+                                isOutputFolderContainFilesStatusText += ", but has subfolders with unzipped backup(s)";
+                            }
                         }
+
+                        // Log
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Console.WriteLine(isOutputFolderContainFilesStatusText);
+                        Console.ResetColor();
+                        Message(isOutputFolderContainFilesStatusText, EventType.Information, 1000);
+
+                        // Log
+                        Message($"Getting status for tasks for email report is done", EventType.Information, 1000);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine($"Getting status for tasks for email report is done");
+
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        Message($"Parsing, processing and collecting data for email report", EventType.Information, 1000);
+                        Console.WriteLine($"\nParsing, processing and collecting data for email report");
+                        Console.ResetColor();
+
+                        // If args is set to old mail report layout
+                        bool useSimpleMailReportLayout;
+                        if (Array.Exists(args, argument => argument == "--simpelreport"))
+                        {
+                            useSimpleMailReportLayout = true;
+                        }
+                        else
+                        {
+                            useSimpleMailReportLayout = false;
+                        }
+
+                        // Send status email and parse data to function
+                        SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements, repoitemscountelements,
+                            repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup, totalTreeFilesIsBackup,
+                            outDir, elapsedTime, copyrightdata, _vData, _errors, _totalFilesIsDeletedAfterUnZipped, _totalBackupsIsDeleted, daysToKeepBackups,
+                            repoCountStatusText, repoItemsCountStatusText, totalFilesIsBackupUnZippedStatusText, totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
+                            totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, isOutputFolderContainFilesStatusText, isDaysToKeepNotDefaultStatusText);
+
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Message($"Parsing, processing and collecting data for email report is done", EventType.Information, 1000);
+                        Console.WriteLine($"Parsing, processing and collecting data for email report is done");
+                        Console.ResetColor();
+                        break;
                     }
-
-                    // Log
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine(isOutputFolderContainFilesStatusText);
-                    Console.ResetColor();
-                    Message(isOutputFolderContainFilesStatusText, EventType.Information, 1000);
-
-                    // Log
-                    Message($"Getting status for tasks for email report is done", EventType.Information, 1000);
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"Getting status for tasks for email report is done");
-
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    Message($"Parsing, processing and collecting data for email report", EventType.Information, 1000);
-                    Console.WriteLine($"\nParsing, processing and collecting data for email report");
-                    Console.ResetColor();
-
-                    // If args is set to old mail report layout
-                    bool useSimpleMailReportLayout;
-                    if (Array.Exists(args, argument => argument == "--simpelreport"))
-                    {
-                        useSimpleMailReportLayout = true;
-                    }
-                    else
-                    {
-                        useSimpleMailReportLayout = false;
-                    }
-                    
-                    // Send status email and parse data to function
-                    SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements, repoitemscountelements,
-                        repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup, totalTreeFilesIsBackup,
-                        outDir, elapsedTime, copyrightdata, _vData, _errors, _totalFilesIsDeletedAfterUnZipped, _totalBackupsIsDeleted, daysToKeepBackups,
-                        repoCountStatusText, repoItemsCountStatusText, totalFilesIsBackupUnZippedStatusText, totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
-                        totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, isOutputFolderContainFilesStatusText, isDaysToKeepNotDefaultStatusText);
-
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Message($"Parsing, processing and collecting data for email report is done", EventType.Information, 1000);
-                    Console.WriteLine($"Parsing, processing and collecting data for email report is done");
-                    Console.ResetColor();
-                    break;
-                }
 
                 // Not do work
                 case true:
@@ -1522,7 +1528,7 @@ namespace AzureDevOpsBackup
                 Console.ResetColor();
             }
         }
-        
+
         public static void DaysToKeepBackups(string outBackupDir, string daysToKeep)
         {
             // If other then 30 days of backup
@@ -1680,7 +1686,6 @@ namespace AzureDevOpsBackup
 
             BackupStatisticsData = !args.Contains("-norrd");
             BackupPackageInfo = !args.Contains("-nopackage");
-
         }*/
 
         /// <summary>
@@ -1833,11 +1838,11 @@ namespace AzureDevOpsBackup
                     // Check for letovers when error
                     _checkForLeftoverFilesAfterCleanup = true;
                 }
-                
+
                 // Wait for work
                 mre.Wait(timeout);
             }
-        }        
+        }
 
         public static void SendEmail(string serveraddress, string serverPort, string emailFrom, string emailTo, string emailStatusMessage,
             List<string> repoCountElements, List<string> repoItemsCountElements, int repoCount, int repoItemsCount, int totalFilesIsBackupUnZipped,
@@ -1972,7 +1977,7 @@ namespace AzureDevOpsBackup
             message.Priority = MailPriority.Normal;
             message.DeliveryNotificationOptions = DeliveryNotificationOptions.None;
             message.BodyTransferEncoding = TransferEncoding.QuotedPrintable;
-            
+
             // ReSharper disable once UnusedVariable
             var isParsable = Int32.TryParse(serverPortStr, out var serverPortNumber);
             var client = new SmtpClient(serveraddress, serverPortNumber)
@@ -2012,47 +2017,47 @@ namespace AzureDevOpsBackup
                 Console.WriteLine("Found logfile for today:");
                 Console.ResetColor();
 
-                // Full file name   
+                // Full file name
                 var fileName = _fileAttachedIneMailReport;
                 var fi = new FileInfo(fileName);
 
-                // Get File Name  
+                // Get File Name
                 var justFileName = fi.Name;
                 Console.WriteLine("File name: " + justFileName);
                 Message("File name: " + justFileName, EventType.Information, 1000);
-                
-                // Get file name with full path   
+
+                // Get file name with full path
                 var fullFileName = fi.FullName;
                 Console.WriteLine("Full file name: " + fullFileName);
                 Message("Full file name: " + fullFileName, EventType.Information, 1000);
-                
-                // Get file extension   
+
+                // Get file extension
                 var extn = fi.Extension;
                 Console.WriteLine("File Extension: " + extn);
                 Message("File Extension: " + extn, EventType.Information, 1000);
-                
-                // Get directory name   
+
+                // Get directory name
                 var directoryName = fi.DirectoryName;
                 Console.WriteLine("Directory name: " + directoryName);
                 Message("Directory name: " + directoryName, EventType.Information, 1000);
-                
-                // File Exists ?  
+
+                // File Exists ?
                 var exists = fi.Exists;
                 Console.WriteLine("File exists: " + exists);
                 Message("File exists: " + exists, EventType.Information, 1000);
                 if (fi.Exists)
                 {
-                    // Get file size  
+                    // Get file size
                     var size = fi.Length;
                     Console.WriteLine("File Size in Bytes: " + size);
                     Message("File Size in Bytes: " + size, EventType.Information, 1000);
-                    
-                    // File ReadOnly ?  
+
+                    // File ReadOnly ?
                     var isReadOnly = fi.IsReadOnly;
                     Console.WriteLine("Is ReadOnly: " + isReadOnly);
                     Message("Is ReadOnly: " + isReadOnly, EventType.Information, 1000);
-                    
-                    // Creation, last access, and last write time   
+
+                    // Creation, last access, and last write time
                     var creationTime = fi.CreationTime;
                     Console.WriteLine("Creation time: " + creationTime);
                     Message("Creation time: " + creationTime, EventType.Information, 1000);
@@ -2076,7 +2081,7 @@ namespace AzureDevOpsBackup
             {
                 // Send the email
                 client.Send(message);
-                
+
                 // Release files for the email
                 message.Dispose();
                 // TODO logfile is not locked from here - you can add logs to logfile again from here!
