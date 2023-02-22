@@ -166,11 +166,11 @@ namespace AzureDevOpsBackup
                 // End application
                 Environment.Exit(1);
             }
-
-            switch (args.Length > 0)
+            var i = args.Length > 1;
+            switch (i)
             {
                 // Parse the provided arguments
-                //ParseArguments(args);
+                // ParseArguments(args);
                 // If okay do some work
                 case true when args.Intersect(requiredArgs).Count() == 7:
                     {
@@ -1415,7 +1415,7 @@ namespace AzureDevOpsBackup
                         break;
                     }
 
-                // Not do work
+                // Not do the work
                 case true:
                     // Log
                     Message("Some of the 7 required arguments is missing: --token, --org, --outdir, --server, --port, --from and --to!", EventType.Error, 1001);
