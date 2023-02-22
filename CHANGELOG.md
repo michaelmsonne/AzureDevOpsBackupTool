@@ -2,10 +2,11 @@
 
 ### Changed
 - Checked api uses - no changes in API calls, so set to api-version=7.0 (api-version=5.1-preview.1 before)
-- Use new code sign
+- Use new code sign certificate
+- Small cleanup in email function
 
 ### Fixed
-- 
+- CWE-691: Insufficient Control Flow Management in code
 
 ## [1.0.3.2] - 06-2-2023
 
