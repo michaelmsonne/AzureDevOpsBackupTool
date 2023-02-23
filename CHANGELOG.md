@@ -1,3 +1,12 @@
+## [1.0.4.0] - 23-2-2023
+
+### Changed
+- Changed backup feature to backup all branches prom Git project(s)
+- Small cleanup in email function
+
+### Fixed
+- Small changes to logning
+
 ## [1.0.3.3] - 22-2-2023
 
 Use new code sign certificate
