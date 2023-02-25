@@ -83,6 +83,7 @@ namespace AzureDevOpsBackup
         public static string _fileAttachedIneMailReport;
         public static string _vData;
         public static string _companyName;
+        public static string _orgName;
 
         public static string _startTime;
         public static string _endTime;
@@ -207,6 +208,8 @@ namespace AzureDevOpsBackup
                         string auth = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", args[Array.IndexOf(args, "--token") + 1])));
                         string baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
 
+                        _orgName = args[Array.IndexOf(args, "--org") + 1];
+
                         // URL parse to API access done
                         Message("Base URL is for Organization is: " + baseUrl, EventType.Information, 1000);
                         Console.WriteLine("Base URL is for Organization is: " + baseUrl);
@@ -274,6 +277,9 @@ namespace AzureDevOpsBackup
                         }
 
                         // Save log entry
+                        Message("Getting information form Azure DevOps organization " + _orgName + "...", EventType.Information, 1000);
+                        Console.WriteLine("Getting information form Azure DevOps organization " + _orgName + "...");
+
                         Message("Getting information about Git projects...", EventType.Information, 1000);
                         Console.WriteLine("Getting information about Git projects...");
 
@@ -1944,7 +1950,7 @@ namespace AzureDevOpsBackup
             {
                 // Make email body data
                 mailBody =
-                    $"<hr><h2>Your {AppName} is: {emailStatusMessage}</h2><hr><p><h3>Details:</h3><p>" +
+                    $"<hr><h2>Your {AppName} of organization '{_orgName}' is: {emailStatusMessage}</h2><hr><p><h3>Details:</h3><p>" +
                     $"<p>Processed Git project(s) in Azure DevOps (total): <b>{repoCount}</b><br>" +
                     $"Processed Git repos in project(s) a backup is made of from Azure DevOps (all branches): <b>{repoItemsCount}</b><p>" +
                     $"Processed files to backup from Git repos (total unzipped if specified): <b>{totalFilesIsBackupUnZipped}</b><br>" +
@@ -1970,7 +1976,7 @@ namespace AzureDevOpsBackup
             {
                 // Make email body data
                 mailBody =
-                $"<hr/><h2>Your {AppName} is: {emailStatusMessage}</h2><hr />" +
+                $"<hr/><h2>Your {AppName} of organization '{_orgName}' is: {emailStatusMessage}</h2><hr />" +
                 $"<br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\">" +
                 $"<tbody><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 33%; height: 18px;\"><strong>Backup task(s):</strong></td>" +
