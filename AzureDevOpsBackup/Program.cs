@@ -84,6 +84,9 @@ namespace AzureDevOpsBackup
         public static string _vData;
         public static string _companyName;
 
+        public static string _startTime;
+        public static string _endTime;
+
         private static void Main(string[] args)
         {
             // Global variabels
@@ -133,6 +136,7 @@ namespace AzureDevOpsBackup
             // Start timer for runtime
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
+            DateTime startTime = DateTime.Now; // get current time as start time
 
             // Set application name in code
             AppName = assemblyTitleAttribute?.Title;
@@ -332,7 +336,7 @@ namespace AzureDevOpsBackup
                                         var requestItems = new RestRequest(Method.GET);
 
                                         // List name for projects to list for email report list
-                                        repocountelements.Add(repo.Name);
+                                        repocountelements.Add(repo.Name + $" ('{branchName}' branch)");
 
                                         requestItems.AddHeader("Authorization", auth);
                                         IRestResponse responseItems = clientItems.Execute(requestItems);
@@ -751,6 +755,7 @@ namespace AzureDevOpsBackup
 
                             // Stop timer
                             stopWatch.Stop();
+                            DateTime endTime = DateTime.Now; // get current time as end time
 
                             // Get the elapsed time as a TimeSpan value.
                             TimeSpan ts = stopWatch.Elapsed;
@@ -761,9 +766,17 @@ namespace AzureDevOpsBackup
                                 ts.Hours, ts.Minutes, ts.Seconds,
                                 ts.Milliseconds / 10);
 
+                            _startTime = startTime.ToString("dd-MM-yyyy HH:mm:ss"); // convert start time to string
+                            _endTime = endTime.ToString("dd-MM-yyyy HH:mm:ss"); // convert end time to string
+
                             // Log
                             Message("Backup Run Time: " + elapsedTime, EventType.Information, 1000);
+                            Message("Backup start Time: " + _startTime, EventType.Information, 1000);
+                            Message("Backup end Time: " + _endTime, EventType.Information, 1000);
+                            
                             Console.WriteLine("\nBackup Run Time: " + elapsedTime);
+                            Console.WriteLine("\nBackup start Time: " + _startTime);
+                            Console.WriteLine("\nBackup end Time: " + _endTime);
 
                             // Parse data
                             server = args[Array.IndexOf(args, "--server") + 1];
@@ -958,6 +971,7 @@ namespace AzureDevOpsBackup
 
                             // Stop timer
                             stopWatch.Stop();
+                            DateTime endTime = DateTime.Now; // get current time as end time
                         }
 
                         // If user set to delete downloaded files (.zip and .json) after unzipped
@@ -1022,7 +1036,7 @@ namespace AzureDevOpsBackup
                         {
                             if (isBackupOk)
                             {
-                                repoCountStatusText = "Good!";
+                                repoCountStatusText = "Good";
 
                                 // Log
                                 Message($"Processed Git project(s) in Azure DevOps (total) status: " + repoCountStatusText, EventType.Information, 1000);
@@ -1057,7 +1071,7 @@ namespace AzureDevOpsBackup
                         {
                             if (isBackupOk)
                             {
-                                repoItemsCountStatusText = "Good!";
+                                repoItemsCountStatusText = "Good";
 
                                 // Log
                                 Message($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Information, 1000);
@@ -1092,7 +1106,7 @@ namespace AzureDevOpsBackup
                         {
                             if (isBackupOkAndUnZip)
                             {
-                                totalFilesIsBackupUnZippedStatusText = "Good! (and unzip is OK)";
+                                totalFilesIsBackupUnZippedStatusText = "Good (and unzip is OK)";
 
                                 // Log
                                 Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Information, 1000);
@@ -1127,7 +1141,7 @@ namespace AzureDevOpsBackup
                         {
                             if (isBackupOk)
                             {
-                                totalBlobFilesIsBackupStatusText = "Good!";
+                                totalBlobFilesIsBackupStatusText = "Good";
 
                                 // Log
                                 Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText, EventType.Information, 1000);
@@ -1162,7 +1176,7 @@ namespace AzureDevOpsBackup
                         {
                             if (isBackupOk)
                             {
-                                totalTreeFilesIsBackupStatusText = "Good!";
+                                totalTreeFilesIsBackupStatusText = "Good";
 
                                 // Log
                                 Message($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText, EventType.Information, 1000);
@@ -1219,7 +1233,7 @@ namespace AzureDevOpsBackup
                         {
                             if (isBackupOkAndUnZip)
                             {
-                                totalFilesIsDeletedAfterUnZippedStatusText = "Good! (set to cleanup, and matched the total files downloaded)";
+                                totalFilesIsDeletedAfterUnZippedStatusText = "Good (set to cleanup, and matched the total files downloaded)";
 
                                 // Log
                                 Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Information, 1000);
@@ -1439,11 +1453,18 @@ namespace AzureDevOpsBackup
                         }
 
                         // Send status email and parse data to function
-                        SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements, repoitemscountelements,
-                            repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup, totalTreeFilesIsBackup,
-                            outDir, elapsedTime, copyrightdata, _vData, _errors, _totalFilesIsDeletedAfterUnZipped, _totalBackupsIsDeleted, daysToKeepBackups,
-                            repoCountStatusText, repoItemsCountStatusText, totalFilesIsBackupUnZippedStatusText, totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
-                            totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, isOutputFolderContainFilesStatusText, isDaysToKeepNotDefaultStatusText);
+                        SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements,
+                            repoitemscountelements,
+                            repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup,
+                            totalTreeFilesIsBackup,
+                            outDir, elapsedTime, copyrightdata, _vData, _errors, _totalFilesIsDeletedAfterUnZipped,
+                            _totalBackupsIsDeleted, daysToKeepBackups,
+                            repoCountStatusText, repoItemsCountStatusText, totalFilesIsBackupUnZippedStatusText,
+                            totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
+                            totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText,
+                            letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText, useSimpleMailReportLayout,
+                            isOutputFolderContainFilesStatusText,
+                            isDaysToKeepNotDefaultStatusText, _startTime, _endTime); 
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Message($"Parsing, processing and collecting data for email report is done", EventType.Information, 1000);
@@ -1887,15 +1908,15 @@ namespace AzureDevOpsBackup
             int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep, string repoCountStatusText, string repoItemsCountStatusText,
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
             string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText,
-            bool useSimpleMailReportLayout, string isOutputFolderContainFilesStatusText, string isDaysToKeepNotDefaultStatusText)
+            bool useSimpleMailReportLayout, string isOutputFolderContainFilesStatusText, string isDaysToKeepNotDefaultStatusText, string _startTime, string _endTime)
         {
             var serverPortStr = serverPort;
             var mailBody = "";
             //if (mailBody == null) throw new ArgumentNullException(nameof(mailBody));
 
             //Parse data to list from list of repo.name
-            var listrepocountelements = "<h3>List of Git project(s) in Azure DevOps:</h3>∘ " + string.Join("<br>∘ ", repoCountElements);
-            var listitemscountelements = "<h3>List of Git repositories in Azure DevOps a backup is performed (all branches):</h3>∘ " + string.Join("<br>∘ ", repoItemsCountElements);
+            var listrepocountelements = "<h3>List of Git repositories in Azure DevOps:</h3>∘ " + string.Join("<br>∘ ", repoCountElements);
+            var listitemscountelements = "<h3>List of Git repositories in Azure DevOps a backup is performed of:</h3>∘ " + string.Join("<br>∘ ", repoItemsCountElements);
             var letOverJsonFiles = 0;
             var letOverZipFiles = 0;
 
@@ -1930,7 +1951,9 @@ namespace AzureDevOpsBackup
                     $"Processed files to backup from Git repos (blob files (.zip files)) (all branches): <b>{totalBlobFilesIsBackup}</b><br>" +
                     $"Processed files to backup from Git repos (tree files (.json files)) (all branches): <b>{totalTreeFilesIsBackup}</b><p>" +
                     $"See the attached logfile for the backup(s) today: <b>{AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log</b>.<p>" +
-                    $"Total Backup Run Time is: \"{elapsedTime}\"<br>" +
+                    $"Total Run Time is: \"{elapsedTime}\"<br>" +
+                    $"Backup start Time: \"{_startTime}\"<br>" +
+                    $"Backup end Time: \"{_endTime}\"<br>" +
                     "<h3>Download cleanup (if specified):</h3><p>" +
                     $"Deleted original downloaded <b>.zip</b> and <b>.json</b> files in backup folder: <b>{totalFilesIsDeletedAfterUnZipped}</b><br>" +
                     $"Leftovers for original downloaded <b>.zip</b> files in backup folder (error(s) when try to delete): <b>{letOverZipFiles}</b><br>" +
@@ -1996,7 +2019,9 @@ namespace AzureDevOpsBackup
                 $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{totalBackupsIsDeletedStatusText}</td></tr></table>" +
                 $"<p>See the attached logfile for the backup(s) today: <b>{AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log</b>.<o:p></o:p></p>" +
-                $"<p>Total Backup Run Time is: \"{elapsedTime}\".</p><hr/>" +
+                $"<p>Total Run Time is: \"{elapsedTime}\"<br>" +
+                $"Backup start Time: \"{_startTime}\"<br>" +
+                $"Backup end Time: \"{_endTime}\"</p><hr/>" +
                 listrepocountelements + "<br>" +
                 listitemscountelements + "</p><br><hr>" +
                 $"<h3>From Your {AppName} tool!<o:p></o:p></h3>" + copyrightData + ", v." + vData;
