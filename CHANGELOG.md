@@ -1,7 +1,9 @@
 ## [1.0.4.1] - 25-2-2023
 
 ### Add
-- Added branch name to list of repos there is backed up in email report
+- Added branch name to list of repos there is backed up to email report
+- Added orgname to email report
+- Added backup start and end time timestamp to email report
 
 ### Changed
 - Small changes to email report text
