@@ -308,9 +308,6 @@ namespace AzureDevOpsBackup
                                 // Get info about repos in projects
                                 foreach (Repo repo in repos.Value)
                                 {
-                                    // List data about repos in projects
-                                    repocountelements.Add(repo.Name);
-
                                     // Count total repos got
                                     repoCount++;
 
@@ -327,10 +324,15 @@ namespace AzureDevOpsBackup
                                     
                                     foreach (var branch in branchResponse.Value)
                                     {
+                                        // Get branch name
                                         string branchName = branch.Name.Replace("refs/heads/", "");
 
+                                        // Get data to find in specific branch
                                         var clientItems = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/items?recursionlevel=full&" + version + "&versionDescriptor.versionType=Branch&versionDescriptor.version=" + branchName);
                                         var requestItems = new RestRequest(Method.GET);
+
+                                        // List name for projects to list for email report list
+                                        repocountelements.Add(repo.Name);
 
                                         requestItems.AddHeader("Authorization", auth);
                                         IRestResponse responseItems = clientItems.Execute(requestItems);
@@ -354,7 +356,7 @@ namespace AzureDevOpsBackup
                                             var requestBlob = new RestRequest(Method.POST);
 
                                             // List data about repos in projects
-                                            repoitemscountelements.Add(repo.Name);
+                                            repoitemscountelements.Add(repo.Name + $" ('{branchName}' branch)");
 
                                             // Log
                                             Message("Getting client blob for Git repository: " + repo.Name + " from API", EventType.Information, 1000);
@@ -1046,9 +1048,9 @@ namespace AzureDevOpsBackup
                             repoItemsCountStatusText = "Warning - nothing to backup!";
 
                             // Log
-                            Message($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Warning, 1001);
+                            Message($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Warning, 1001);
                             Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
+                            Console.WriteLine($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
                             Console.ResetColor();
                         }
                         else
@@ -1058,9 +1060,9 @@ namespace AzureDevOpsBackup
                                 repoItemsCountStatusText = "Good!";
 
                                 // Log
-                                Message($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Information, 1000);
+                                Message($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Information, 1000);
                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
+                                Console.WriteLine($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
                                 Console.ResetColor();
                             }
                             else
@@ -1068,9 +1070,9 @@ namespace AzureDevOpsBackup
                                 repoItemsCountStatusText = "Warning!";
 
                                 // Log
-                                Message($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Warning, 1001);
+                                Message($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Warning, 1001);
                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"Processed Git repos a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
+                                Console.WriteLine($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
                                 Console.ResetColor();
                             }
                         }
@@ -1892,8 +1894,8 @@ namespace AzureDevOpsBackup
             //if (mailBody == null) throw new ArgumentNullException(nameof(mailBody));
 
             //Parse data to list from list of repo.name
-            var listrepocountelements = "<h3>List of Git repositories in Azure DevOps:</h3>∘ " + string.Join("<br>∘ ", repoCountElements);
-            var listitemscountelements = "<h3>List of Git repositories in Azure DevOps a backup is performed (Default branch):</h3>∘ " + string.Join("<br>∘ ", repoItemsCountElements);
+            var listrepocountelements = "<h3>List of Git project(s) in Azure DevOps:</h3>∘ " + string.Join("<br>∘ ", repoCountElements);
+            var listitemscountelements = "<h3>List of Git repositories in Azure DevOps a backup is performed (all branches):</h3>∘ " + string.Join("<br>∘ ", repoItemsCountElements);
             var letOverJsonFiles = 0;
             var letOverZipFiles = 0;
 
@@ -1923,7 +1925,7 @@ namespace AzureDevOpsBackup
                 mailBody =
                     $"<hr><h2>Your {AppName} is: {emailStatusMessage}</h2><hr><p><h3>Details:</h3><p>" +
                     $"<p>Processed Git project(s) in Azure DevOps (total): <b>{repoCount}</b><br>" +
-                    $"Processed Git repos a backup is made of from Azure DevOps (all branches): <b>{repoItemsCount}</b><p>" +
+                    $"Processed Git repos in project(s) a backup is made of from Azure DevOps (all branches): <b>{repoItemsCount}</b><p>" +
                     $"Processed files to backup from Git repos (total unzipped if specified): <b>{totalFilesIsBackupUnZipped}</b><br>" +
                     $"Processed files to backup from Git repos (blob files (.zip files)) (all branches): <b>{totalBlobFilesIsBackup}</b><br>" +
                     $"Processed files to backup from Git repos (tree files (.json files)) (all branches): <b>{totalTreeFilesIsBackup}</b><p>" +
@@ -1954,7 +1956,7 @@ namespace AzureDevOpsBackup
                 $"<td style=\"width: 33%; height: 18px;\">Processed Git project(s) in Azure DevOps (total):</td>" +
                 $"<td style=\"width: 10%; height: 18px;\"><b>{repoCount}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{repoCountStatusText}</td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 33%; height: 18px;\">Processed Git repos a backup is made of from Azure DevOps (all branches):</td>" +
+                $"<td style=\"width: 33%; height: 18px;\">Processed Git repos in project(s) a backup is made of from Azure DevOps (all branches):</td>" +
                 $"<td style=\"width: 10%; height: 18px;\"><b>{repoItemsCount}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{repoItemsCountStatusText}</td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 33%; height: 18px;\">Processed files to backup from Git repos (total unzipped if specified):</td>" +
