@@ -975,7 +975,7 @@ namespace AzureDevOpsBackup
 
                             // Stop timer
                             stopWatch.Stop();
-                            DateTime endTime = DateTime.Now; // get current time as end time
+                            //DateTime endTime = DateTime.Now; // get current time as end time
                         }
 
                         // If user set to delete downloaded files (.zip and .json) after unzipped
