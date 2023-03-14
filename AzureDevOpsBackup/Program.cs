@@ -131,8 +131,12 @@ namespace AzureDevOpsBackup
             _vData = Assembly.GetEntryAssembly()?.GetName().Version.ToString();
             var attributes = typeof(Program).GetTypeInfo().Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute));
             var assemblyTitleAttribute = attributes.SingleOrDefault() as AssemblyTitleAttribute;
-            var versionInfo = FileVersionInfo.GetVersionInfo(Assembly.GetEntryAssembly()?.Location);
-            _companyName = versionInfo.CompanyName;
+            var fileName = Assembly.GetEntryAssembly()?.Location;
+            if (fileName != null)
+            {
+                var versionInfo = FileVersionInfo.GetVersionInfo(fileName);
+                _companyName = versionInfo.CompanyName;
+            }
 
             // Start timer for runtime
             Stopwatch stopWatch = new Stopwatch();
@@ -205,7 +209,8 @@ namespace AzureDevOpsBackup
                         // Base GET API
                         //const string version = "api-version=5.1-preview.1";
                         const string version = "api-version=7.0";
-                        string auth = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(string.Format("{0}:{1}", "", args[Array.IndexOf(args, "--token") + 1])));
+                        string auth = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(
+                            $"{""}:{args[Array.IndexOf(args, "--token") + 1]}"));
                         string baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
 
                         _orgName = args[Array.IndexOf(args, "--org") + 1];
@@ -948,14 +953,7 @@ namespace AzureDevOpsBackup
                             if (isBackupOk)
                             {
                                 // If unzipped or not
-                                if (isBackupOkAndUnZip)
-                                {
-                                    emailStatusMessage = "Success and unzipped";
-                                }
-                                else
-                                {
-                                    emailStatusMessage = "Success, not unzipped";
-                                }
+                                emailStatusMessage = isBackupOkAndUnZip ? "Success and unzipped" : "Success, not unzipped";
                             }
                             else
                             {
@@ -1219,14 +1217,7 @@ namespace AzureDevOpsBackup
                             }
                             else
                             {
-                                if (isBackupOk)
-                                {
-                                    totalFilesIsDeletedAfterUnZippedStatusText = "Good - not set to cleanup!";
-                                }
-                                else
-                                {
-                                    totalFilesIsDeletedAfterUnZippedStatusText = "Warning - nothing to backup!";
-                                }
+                                totalFilesIsDeletedAfterUnZippedStatusText = isBackupOk ? "Good - not set to cleanup!" : "Warning - nothing to backup!";
 
                                 // Log
                                 Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
@@ -1448,15 +1439,7 @@ namespace AzureDevOpsBackup
                         Console.ResetColor();
 
                         // If args is set to old mail report layout
-                        bool useSimpleMailReportLayout;
-                        if (Array.Exists(args, argument => argument == "--simpelreport"))
-                        {
-                            useSimpleMailReportLayout = true;
-                        }
-                        else
-                        {
-                            useSimpleMailReportLayout = false;
-                        }
+                        var useSimpleMailReportLayout = Array.Exists(args, argument => argument == "--simpelreport");
 
                         // Send status email and parse data to function
                         SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements,
@@ -1914,7 +1897,7 @@ namespace AzureDevOpsBackup
             int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep, string repoCountStatusText, string repoItemsCountStatusText,
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
             string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText,
-            bool useSimpleMailReportLayout, string isOutputFolderContainFilesStatusText, string isDaysToKeepNotDefaultStatusText, string _startTime, string _endTime)
+            bool useSimpleMailReportLayout, string isOutputFolderContainFilesStatusText, string isDaysToKeepNotDefaultStatusText, string startTime, string endTime)
         {
             var serverPortStr = serverPort;
             var mailBody = "";
@@ -1958,8 +1941,8 @@ namespace AzureDevOpsBackup
                     $"Processed files to backup from Git repos (tree files (.json files)) (all branches): <b>{totalTreeFilesIsBackup}</b><p>" +
                     $"See the attached logfile for the backup(s) today: <b>{AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log</b>.<p>" +
                     $"Total Run Time is: \"{elapsedTime}\"<br>" +
-                    $"Backup start Time: \"{_startTime}\"<br>" +
-                    $"Backup end Time: \"{_endTime}\"<br>" +
+                    $"Backup start Time: \"{startTime}\"<br>" +
+                    $"Backup end Time: \"{endTime}\"<br>" +
                     "<h3>Download cleanup (if specified):</h3><p>" +
                     $"Deleted original downloaded <b>.zip</b> and <b>.json</b> files in backup folder: <b>{totalFilesIsDeletedAfterUnZipped}</b><br>" +
                     $"Leftovers for original downloaded <b>.zip</b> files in backup folder (error(s) when try to delete): <b>{letOverZipFiles}</b><br>" +
@@ -2026,8 +2009,8 @@ namespace AzureDevOpsBackup
                 $"<td style=\"width: 33.3333%; height: 18px;\">{totalBackupsIsDeletedStatusText}</td></tr></table>" +
                 $"<p>See the attached logfile for the backup(s) today: <b>{AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log</b>.<o:p></o:p></p>" +
                 $"<p>Total Run Time is: \"{elapsedTime}\"<br>" +
-                $"Backup start Time: \"{_startTime}\"<br>" +
-                $"Backup end Time: \"{_endTime}\"</p><hr/>" +
+                $"Backup start Time: \"{startTime}\"<br>" +
+                $"Backup end Time: \"{endTime}\"</p><hr/>" +
                 listrepocountelements + "<br>" +
                 listitemscountelements + "</p><br><hr>" +
                 $"<h3>From Your {AppName} tool!<o:p></o:p></h3>" + copyrightData + ", v." + vData;
