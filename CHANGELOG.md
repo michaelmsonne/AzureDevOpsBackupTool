@@ -1,3 +1,8 @@
+## [1.0.4.2] - 15-2-2023
+
+### Changed
+- Small changes and optimization
+
 ## [1.0.4.1] - 25-2-2023
 
 ### Add
