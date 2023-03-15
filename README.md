@@ -48,7 +48,7 @@ However, it’s a good starting point to backup your Azure DevOps projects and k
 
 There is send an email report to the specified email address when the backup is done with status and usefull information about the backup job and more information.
 
-Check out the examples her:
+Check out the examples here:
 
 # Email report sample:
 
