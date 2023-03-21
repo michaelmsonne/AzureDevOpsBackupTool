@@ -11,7 +11,7 @@
     <WorkingDirectory>.</WorkingDirectory>
     <IsWindowsApplication>True</IsWindowsApplication>
     <AssemblyName>AI Setup Project - AzureDevOpsBackup</AssemblyName>
-    <Name>AI Setup Project</Name>
+    <Name>AdvancedInstaller</Name>
     <RootNamespace>AI Setup Project - AzureDevOpsBackup</RootNamespace>
     <LoadFromTemplate>
     </LoadFromTemplate>
