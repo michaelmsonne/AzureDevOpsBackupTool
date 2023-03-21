@@ -264,3 +264,5 @@ __pycache__/
 *.pyc
 /AI Setup Project/AzureDevOpsBackup Installer-cache
 /AI Setup Project/AzureDevOpsBackup Installer-SetupFiles
+/AdvancedInstaller/AzureDevOpsBackup Installer-cache
+/AdvancedInstaller/AzureDevOpsBackup Installer-SetupFiles
