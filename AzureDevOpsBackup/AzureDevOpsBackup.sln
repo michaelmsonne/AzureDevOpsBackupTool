@@ -5,7 +5,7 @@ VisualStudioVersion = 17.4.33205.214
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzureDevOpsBackup", "AzureDevOpsBackup.csproj", "{4795920A-5C87-48A0-9FCF-4641D68E9CB6}"
 EndProject
-Project("{840C416C-B8F3-42BC-B0DD-F6BB14C9F8CB}") = "AdvancedInstaller", "..\AI Setup Project\AdvancedInstaller.aiproj", "{24DA63B0-77D2-4861-8DC1-C47EB93E88EF}"
+Project("{840C416C-B8F3-42BC-B0DD-F6BB14C9F8CB}") = "AdvancedInstaller", "..\AdvancedInstaller\AdvancedInstaller.aiproj", "{24DA63B0-77D2-4861-8DC1-C47EB93E88EF}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
