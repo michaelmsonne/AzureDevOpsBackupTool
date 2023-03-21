@@ -1,0 +1,52 @@
+# Trigger the pipeline whenever a commit is made to the main branch
+trigger:
+  branches:
+    include:
+      #- main
+
+# Define variables that can be used in the pipeline tasks
+variables:
+  solution: 'AzureDevOpsBackup.sln'
+  buildPlatform: 'x64'
+  buildConfiguration: 'Release'
+  advancedInstallerPath: '$(System.DefaultWorkingDirectory)\AI Setup Project'
+
+# Define the pipeline steps
+steps:
+  # Checkout the source code from the Azure DevOps repository
+  - checkout: self
+  
+  # Build the solution using MSBuild
+  - task: VSBuild@1
+    inputs:
+      solution: '$(solution)'
+      platform: '$(buildPlatform)'
+      configuration: '$(buildConfiguration)'
+  
+  # Use Advanced Installer to create a release build
+  - task: CmdLine@2
+    inputs:
+      script: |
+        mkdir $(advancedInstallerPath)
+        copy "$(System.DefaultWorkingDirectory)\AzureDevOpsBackup\bin\$(buildConfiguration)\AzureDevOpsBackup.exe" "$(advancedInstallerPath)"
+        "C:\Program Files (x86)\Caphyon\Advanced Installer 18.5\bin\x86\AdvancedInstaller.com" /edit "$(System.DefaultWorkingDirectory)\AzureDevOpsBackup Installer.aip" /SetVersion "$(Build.BuildNumber)" /build "$(advancedInstallerPath)\AzureDevOpsBackup Installer.msi"
+  
+  # Publish the release build as an artifact
+  - task: PublishBuildArtifacts@1
+    inputs:
+      artifactName: 'MyProject'
+      pathToPublish: '$(advancedInstallerPath)'
+      publishLocation: 'Container'
+  
+  # Upload the release build to the GitHub repository
+  - task: GitHubRelease@1
+    inputs:
+      gitHubConnection: 'MyGitHubConnection'
+      repositoryName: 'MyGitHubRepo'
+      action: 'Create'
+      tagSource: 'build'
+      tag: '$(Build.BuildNumber)'
+      releaseName: '$(Build.BuildNumber)'
+      isPrerelease: false
+      assets: |
+        $(System.DefaultWorkingDirectory)\AdvancedInstaller\AzureDevOpsBackup Installer.msi
