@@ -71,7 +71,7 @@ artifacts/
 *.scc
 
 # Pipelines
-*.yml
+#*.yml
 
 # Chutzpah Test files
 _Chutzpah*
