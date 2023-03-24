@@ -8,6 +8,7 @@
 - Updated Newtonsoft.Json and System.Text.Json to the last versions
 - Renamed argument for backup folder from --outdir to --backup
 - Other Small changes and optimization
+- Upgraded to .Net 4.8
 
 ## [1.0.4.2] - 15-2-2023
 
