@@ -147,10 +147,10 @@ namespace AzureDevOpsBackup
             Message("Loaded log configuration into the program: " + Globals.AppName, EventType.Information, 1000);
 
             // Check for required Args for application will work
-            string[] requiredArgs = { "--token", "--org", "--outdir", "--server", "--port", "--from", "--to" };
+            string[] requiredArgs = { "--token", "--org", "--backup", "--server", "--port", "--from", "--to" };
 
             // Check if parameters have been provided
-            if (args.Length == 0 || args.Contains("--help") || args.Contains("/h") || args.Contains("/?"))
+            if (args.Length == 0 || args.Contains("--help") || args.Contains("/h") || args.Contains("/?") || args.Contains("/info") || args.Contains("/about"))
             {
                 // If none arguments
                 if (args.Length == 0)
@@ -161,7 +161,7 @@ namespace AzureDevOpsBackup
                     Console.WriteLine("ERROR: No arguments is provided - try again!\n");
                     Console.ResetColor();
 
-                    DisplayHelpToConsole.DisplayGuide(Globals._currentExeFileName, Globals.AppName, Globals._vData, Globals._companyName);
+                    DisplayHelpToConsole.DisplayGuide();
 
                     Message($"Showed help to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
                     Console.ForegroundColor = ConsoleColor.Yellow;
@@ -175,9 +175,22 @@ namespace AzureDevOpsBackup
                 // If wants help
                 if (args.Contains("--help") || args.Contains("/h") || args.Contains("/?"))
                 {
-                    DisplayHelpToConsole.DisplayGuide(Globals._currentExeFileName, Globals.AppName, Globals._vData, Globals._companyName);
+                    DisplayHelpToConsole.DisplayGuide();
 
                     Message($"Showed help to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
+
+                    Console.ResetColor();
+
+                    // End application
+                    Environment.Exit(1);
+                }
+
+                // If wants information about application
+                if (args.Contains("/info") || args.Contains("/about"))
+                {
+                    DisplayHelpToConsole.DisplayInfo();
+
+                    Message($"Showed information about application to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
 
                     Console.ResetColor();
 
@@ -187,9 +200,9 @@ namespace AzureDevOpsBackup
             }
 
             // Log
-            Message("Checking if the 7 required arguments is present (--token, --org, --outdir, --server, --port, --from, --to)", EventType.Information, 1000);
+            Message("Checking if the 7 required arguments is present (--token, --org, --backup, --server, --port, --from, --to)", EventType.Information, 1000);
             Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine("Checking if the 7 required arguments is present (--token, --org, --outdir, --server, --port, --from, --to)...");
+            Console.WriteLine("Checking if the 7 required arguments is present (--token, --org, --backup, --server, --port, --from, --to)...");
             Console.ResetColor();
 
             var i = args.Length > 1;
@@ -201,9 +214,9 @@ namespace AzureDevOpsBackup
                 case true when args.Intersect(requiredArgs).Count() == 7:
                     {
                         // Startup log entry
-                        Message("Checked if the 7 required arguments is present (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!", EventType.Information, 1000);
+                        Message("Checked if the 7 required arguments is present (--token, --org, --backup, --server, --port, --from, --to) - all is fine!", EventType.Information, 1000);
                         Console.ForegroundColor = ConsoleColor.Green;
-                        Console.WriteLine("Checked if the 7 required arguments is present (--token, --org, --outdir, --server, --port, --from, --to) - all is fine!");
+                        Console.WriteLine("Checked if the 7 required arguments is present (--token, --org, --backup, --server, --port, --from, --to) - all is fine!");
                         Console.ResetColor();
 
                         // Start URL parse to AIP access
@@ -224,7 +237,7 @@ namespace AzureDevOpsBackup
                         Console.WriteLine("Base URL is for Organization is: " + baseUrl);
 
                         // Get output folder to backup (not with date stamp for backup folder name)
-                        string outBackupDir = args[Array.IndexOf(args, "--outdir") + 1] + "\\";
+                        string outBackupDir = args[Array.IndexOf(args, "--backup") + 1] + "\\";
 
                         // Set output folder name
                         string todaysdate = DateTime.Now.ToString("dd-MM-yyyy-(HH-mm)");
@@ -1448,17 +1461,14 @@ namespace AzureDevOpsBackup
 
                         // Send status email and parse data to function
                         ReportSender.SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements,
-                            repoitemscountelements,
-                            repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup,
-                            totalTreeFilesIsBackup,
-                            outDir, elapsedTime, Globals._errors, Globals._totalFilesIsDeletedAfterUnZipped,
-                            Globals._totalBackupsIsDeleted, daysToKeepBackups,
-                            repoCountStatusText, repoItemsCountStatusText, totalFilesIsBackupUnZippedStatusText,
-                            totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
-                            totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText,
-                            letOverJsonFilesStatusText, totalBackupsIsDeletedStatusText, useSimpleMailReportLayout,
-                            isOutputFolderContainFilesStatusText, isDaysToKeepNotDefaultStatusText, Globals._startTime, Globals._endTime,
-                            Globals._deletedFilesAfterUnzip, Globals._checkForLeftoverFilesAfterCleanup, Globals._numJson, Globals._numZip, _fileAttachedIneMailReport); 
+                            repoitemscountelements, repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup,
+                            totalTreeFilesIsBackup, outDir, elapsedTime, Globals._errors, Globals._totalFilesIsDeletedAfterUnZipped,
+                            Globals._totalBackupsIsDeleted, daysToKeepBackups, repoCountStatusText, repoItemsCountStatusText,
+                            totalFilesIsBackupUnZippedStatusText, totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
+                            totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText,
+                            totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, isOutputFolderContainFilesStatusText,
+                            isDaysToKeepNotDefaultStatusText, Globals._startTime, Globals._endTime,
+                            Globals._deletedFilesAfterUnzip, Globals._checkForLeftoverFilesAfterCleanup, _fileAttachedIneMailReport); 
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Message($"Parsing, processing and collecting data for email report is done", EventType.Information, 1000);
@@ -1470,9 +1480,9 @@ namespace AzureDevOpsBackup
                 // Not do the work
                 case true:
                     // Log
-                    Message("Some of the 7 required arguments is missing: --token, --org, --outdir, --server, --port, --from and --to!", EventType.Error, 1001);
+                    Message("Some of the 7 required arguments is missing: --token, --org, --backup, --server, --port, --from and --to!", EventType.Error, 1001);
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("\nSome of the 7 required arguments is missing: --token, --org, --outdir, --server, --port, --from and --to!");
+                    Console.WriteLine("\nSome of the 7 required arguments is missing: --token, --org, --backup, --server, --port, --from and --to!");
                     Console.ResetColor();
                     break;
             }
@@ -1643,9 +1653,9 @@ namespace AzureDevOpsBackup
                 OrgName = args[args.IndexOf("--org") + 1];
             }
 
-            if (args.Contains("--outdir"))
+            if (args.Contains("--backup"))
             {
-                outFolder = args[args.IndexOf("--outdir") + 1];
+                outFolder = args[args.IndexOf("--backup") + 1];
             }
 
             if (args.Contains("-o"))

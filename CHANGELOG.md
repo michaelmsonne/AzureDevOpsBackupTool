@@ -1,3 +1,14 @@
+## [1.0.5.0] - xx-x-2023
+
+### Add
+- Added new parameter for information about the tool in console
+
+### Changed
+- Reorder the most of the code to Classes and
+- Updated Newtonsoft.Json and System.Text.Json to the last versions
+- Renamed argument for backup folder from --outdir to --backup
+- Other Small changes and optimization
+
 ## [1.0.4.2] - 15-2-2023
 
 ### Changed
