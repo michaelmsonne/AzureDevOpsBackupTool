@@ -7,33 +7,42 @@ namespace AzureDevOpsBackup.Class
 {
     internal class FileLogger
     {
+        // Control if saves log to logfile
         public static bool WriteToFile { get; set; } = true;
 
+        // Control if saves log to Windows eventlog
         public static bool WriteToEventLog { get; set; } = true;
 
         public static bool WriteOnlyErrorsToEventLog { get; set; } = true;
 
+        // Sets the App name for the log function
         public static string AppName { get; set; } = Globals.AppName; // "Unknown",;
 
+        // Set date format short
         public static string DateFormat { get; set; } = "dd-MM-yyyy";
 
+        // Set date format long
         public static string DateTimeFormat { get; set; } = "dd-MM-yyyy HH:mm:ss";
 
+        // Get logfile path
         public static string GetLogPath(string df)
         {
             return Files.LogFilePath + @"\" + AppName + " Log " + df + ".log";
         }
 
+        // Get datetime
         public static string GetDateTime(DateTime datetime)
         {
             return datetime.ToString(DateTimeFormat);
         }
 
+        // Get date
         public static string GetDate(DateTime datetime)
         {
             return datetime.ToString(DateFormat);
         }
 
+        // Set event type
         public enum EventType
         {
             Warning,
@@ -41,6 +50,7 @@ namespace AzureDevOpsBackup.Class
             Information,
         }
 
+        // Add message
         public static void Message(string logText, EventType type, int id)
         {
             var now = DateTime.Now;
@@ -48,6 +58,7 @@ namespace AzureDevOpsBackup.Class
             var dateTime = GetDateTime(now);
             var logPath = GetLogPath(date);
 
+            // Set where to save log message to
             if (WriteToFile)
                 AppendMessageToFile(logText, type, dateTime, logPath, id);
             if (!WriteToEventLog)
@@ -55,10 +66,12 @@ namespace AzureDevOpsBackup.Class
             AddMessageToEventLog(logText, type, dateTime, logPath, id);
         }
 
+        // Save message to logfile
         private static void AppendMessageToFile(string mess, EventType type, string dtf, string path, int id)
         {
             try
             {
+                // Check if file exists else create it
                 if (!Directory.Exists(Files.LogFilePath))
                     Directory.CreateDirectory(Files.LogFilePath);
 
@@ -86,6 +99,7 @@ namespace AzureDevOpsBackup.Class
             }
         }
 
+        // Save message to Windows event log
         private static void AddMessageToEventLog(string mess, EventType type, string dtf, string path, int id)
         {
             try
