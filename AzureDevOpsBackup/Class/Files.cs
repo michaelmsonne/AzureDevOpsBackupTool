@@ -22,7 +22,7 @@ namespace AzureDevOpsBackup.Class
             get
             {
                 // Root path for program data
-                var currentDirectory = System.IO.Directory.GetCurrentDirectory();
+                var currentDirectory = Directory.GetCurrentDirectory();
                 var programDataFilePathvar = currentDirectory;
                 return programDataFilePathvar;
             }

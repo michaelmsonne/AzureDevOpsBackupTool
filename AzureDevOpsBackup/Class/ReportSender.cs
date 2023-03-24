@@ -11,17 +11,17 @@ namespace AzureDevOpsBackup.Class
 {
     internal class ReportSender
     {
-        public static void SendEmail(string serveraddress, string serverPort, string emailFrom, string emailTo, string emailStatusMessage,
+        public static void SendEmail(string serverAddress, string serverPort, string emailFrom, string emailTo, string emailStatusMessage,
             List<string> repoCountElements, List<string> repoItemsCountElements, int repoCount, int repoItemsCount, int totalFilesIsBackupUnZipped,
             int totalBlobFilesIsBackup, int totalTreeFilesIsBackup, string outDir, string elapsedTime, int errors,
             int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep, string repoCountStatusText, string repoItemsCountStatusText,
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
             string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText,
             bool useSimpleMailReportLayout, string isOutputFolderContainFilesStatusText, string isDaysToKeepNotDefaultStatusText, string startTime, string endTime, bool _deletedFilesAfterUnzip,
-            bool _checkForLeftoverFilesAfterCleanup, int _numJson, int _numZip, string _fileAttachedIneMailReport)
+            bool _checkForLeftoverFilesAfterCleanup, string _fileAttachedIneMailReport)
         {
             var serverPortStr = serverPort;
-            var mailBody = "";
+            string mailBody;
             //if (mailBody == null) throw new ArgumentNullException(nameof(mailBody));
 
             //Parse data to list from list of repo.name
@@ -42,11 +42,11 @@ namespace AzureDevOpsBackup.Class
                 emailStatusMessage += " - but with warning(s)";
             }
 
-            // Get leftover files is needed (if had error(s)
+            // Get leftover files is needed (if had error(s))
             if (_checkForLeftoverFilesAfterCleanup)
             {
-                letOverJsonFiles = _numJson;
-                letOverZipFiles = _numZip;
+                letOverJsonFiles = Globals._numJson;
+                letOverZipFiles = Globals._numZip;
             }
 
             // If args is set to old mail report layout
@@ -152,7 +152,7 @@ namespace AzureDevOpsBackup.Class
 
             // ReSharper disable once UnusedVariable
             var isParsable = Int32.TryParse(serverPortStr, out var serverPortNumber);
-            using (var client = new SmtpClient(serveraddress, serverPortNumber) { EnableSsl = true, UseDefaultCredentials = true })
+            using (var client = new SmtpClient(serverAddress, serverPortNumber) { EnableSsl = true, UseDefaultCredentials = true })
             {
                 Message("Created email report and parsed data", EventType.Information, 1000);
                 Console.ForegroundColor = ConsoleColor.Green;
