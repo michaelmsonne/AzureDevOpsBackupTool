@@ -107,8 +107,13 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="FileLogger.cs" />
-    <Compile Include="Files.cs" />
+    <Compile Include="Class\Backups.cs" />
+    <Compile Include="Class\Folders.cs" />
+    <Compile Include="Class\DisplayHelp.cs" />
+    <Compile Include="Class\Globals.cs" />
+    <Compile Include="Class\ReportSender.cs" />
+    <Compile Include="Class\FileLogger.cs" />
+    <Compile Include="Class\Files.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
@@ -131,6 +136,7 @@
   <ItemGroup>
     <Content Include="Azure Dev Ops.ico" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release (

@@ -3,7 +3,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Security;
 
-namespace AzureDevOpsBackup
+namespace AzureDevOpsBackup.Class
 {
     internal class FileLogger
     {
@@ -13,7 +13,7 @@ namespace AzureDevOpsBackup
 
         public static bool WriteOnlyErrorsToEventLog { get; set; } = true;
 
-        public static string AppName { get; set; } = "Unknown";
+        public static string AppName { get; set; } = Globals.AppName; // "Unknown",;
 
         public static string DateFormat { get; set; } = "dd-MM-yyyy";
 
