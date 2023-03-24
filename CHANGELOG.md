@@ -1,4 +1,4 @@
-## [1.0.5.0] - xx-x-2023
+## [1.0.5.0] - 24-3-2023
 
 ### Add
 - Added new parameter for information about the tool in console
