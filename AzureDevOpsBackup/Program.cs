@@ -297,6 +297,7 @@ namespace AzureDevOpsBackup
                         var requestProjects = new RestRequest(Method.GET);
 
                         requestProjects.AddHeader("Authorization", auth);
+
                         IRestResponse responseProjects = clientProjects.Execute(requestProjects);
                         Projects projects = JsonConvert.DeserializeObject<Projects>(responseProjects.Content);
 
