@@ -1,10 +1,21 @@
+## [1.0.5.1] - 25-3-2023
+
+### Add
+- Added new parameter to set email priority
+
+### Fixed
+- Now the log is attathed to to e-mail report again
+
+### Changed
+- Reorder the backup cleanup of the code to Classes
+
 ## [1.0.5.0] - 24-3-2023
 
 ### Add
 - Added new parameter for information about the tool in console
 
 ### Changed
-- Reorder the most of the code to Classes and
+- Reorder the most of the code to Classes
 - Updated Newtonsoft.Json and System.Text.Json to the last versions
 - Renamed argument for backup folder from --outdir to --backup
 - Other Small changes and optimization

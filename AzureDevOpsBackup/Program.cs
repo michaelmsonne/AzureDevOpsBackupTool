@@ -70,7 +70,6 @@ namespace AzureDevOpsBackup
     {
         //private static int _totalBackupsIsDeleted;
         private static bool _cleanUpState;
-        public static string _fileAttachedIneMailReport;
 
         private static void Main(string[] args)
         {
@@ -116,6 +115,10 @@ namespace AzureDevOpsBackup
             
             var attributes = typeof(Program).GetTypeInfo().Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute));
             var assemblyTitleAttribute = attributes.SingleOrDefault() as AssemblyTitleAttribute;
+            // Set application name in code
+            Globals.AppName = assemblyTitleAttribute?.Title;
+            Globals._currentExeFileName = Path.GetFileName(Process.GetCurrentProcess().MainModule?.FileName);
+
             var fileName = Assembly.GetEntryAssembly()?.Location;
             if (fileName != null)
             {
@@ -127,10 +130,6 @@ namespace AzureDevOpsBackup
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
             DateTime startTime = DateTime.Now; // get current time as start time
-
-            // Set application name in code
-            Globals.AppName = assemblyTitleAttribute?.Title;
-            Globals._currentExeFileName = Path.GetFileName(Process.GetCurrentProcess().MainModule?.FileName);
 
             // Start of program
             Message($"Welcome to {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName, EventType.Information, 1000);
@@ -218,6 +217,30 @@ namespace AzureDevOpsBackup
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("Checked if the 7 required arguments is present (--token, --org, --backup, --server, --port, --from, --to) - all is fine!");
                         Console.ResetColor();
+
+                        // Set the email priority level based on command line argument
+                        int priorityIndex = Array.IndexOf(args, "--priority");
+                        if (priorityIndex != -1 && args.Length > priorityIndex + 1)
+                        {
+                            string priorityArg = args[priorityIndex + 1].ToLower();
+                            switch (priorityArg)
+                            {
+                                case "low":
+                                    Globals.EmailPriority = System.Net.Mail.MailPriority.Low;
+                                    break;
+                                case "high":
+                                    Globals.EmailPriority = System.Net.Mail.MailPriority.High;
+                                    break;
+                                default:
+                                    Message("Invalid email priority argument. Defaulting to normal Mail Priority.", EventType.Warning, 1000);
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                    Console.WriteLine("Invalid email priority argument. Defaulting to normal Mail Priority.");
+                                    break;
+                            }
+                            Message("Email report priority arguments is set to: " + Globals.EmailPriority, EventType.Information, 1000);
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("Email report priority arguments is set to: " + Globals.EmailPriority);
+                        }
 
                         // Start URL parse to AIP access
                         Message("Starting connection to Azure DevOps API from data provided from arguments", EventType.Information, 1000);
@@ -853,7 +876,7 @@ namespace AzureDevOpsBackup
                                         Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
 
                                         // Do work
-                                        DaysToKeepBackupsDefault(outBackupDir);
+                                        Backups.DaysToKeepBackupsDefault(outBackupDir);
                                     }
 
                                     // If --daystokeepbackup is not set to default 30 - show it and do work
@@ -872,13 +895,13 @@ namespace AzureDevOpsBackup
                                         Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
 
                                         // Do work
-                                        DaysToKeepBackups(outBackupDir, daysToKeepBackups);
+                                        Backups.DaysToKeepBackups(outBackupDir, daysToKeepBackups);
                                     }
                                 }
                                 else
                                 {
                                     // Set default
-                                    DaysToKeepBackupsDefault(outBackupDir);
+                                    Backups.DaysToKeepBackupsDefault(outBackupDir);
                                 }
                             }
                             else
@@ -890,7 +913,7 @@ namespace AzureDevOpsBackup
                                 Console.ResetColor();
 
                                 // Do work
-                                DaysToKeepBackupsDefault(outBackupDir);
+                                Backups.DaysToKeepBackupsDefault(outBackupDir);
                             }
 
                             // Cleanup old log files
@@ -1468,7 +1491,7 @@ namespace AzureDevOpsBackup
                             totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText,
                             totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, isOutputFolderContainFilesStatusText,
                             isDaysToKeepNotDefaultStatusText, Globals._startTime, Globals._endTime,
-                            Globals._deletedFilesAfterUnzip, Globals._checkForLeftoverFilesAfterCleanup, _fileAttachedIneMailReport); 
+                            Globals._deletedFilesAfterUnzip, Globals._checkForLeftoverFilesAfterCleanup); 
 
                         Console.ForegroundColor = ConsoleColor.Green;
                         Message($"Parsing, processing and collecting data for email report is done", EventType.Information, 1000);
@@ -1490,148 +1513,6 @@ namespace AzureDevOpsBackup
             // End of program
             Message($"End of application - {Globals.AppName}, v." + Globals._vData, EventType.Information, 1000);
             Console.WriteLine($"\nEnd of application - {Globals.AppName}, v. {Globals._vData}\n");
-        }
-
-        public static void DaysToKeepBackupsDefault(string outBackupDir)
-        {
-            // If default 30 days of backup
-            bool backupsToDelete = false;
-
-            // Loop in folder
-            foreach (string dir in Directory.GetDirectories(outBackupDir))
-            {
-                DateTime createdTime = new DirectoryInfo(dir).CreationTime;
-
-                // Find folders from days to keep
-                if (createdTime < DateTime.Now.AddDays(-30))
-                {
-                    try
-                    {
-                        // Do work
-                        Folders.DeleteDirectory(dir);
-
-                        // Count files
-                        Globals._totalBackupsIsDeleted++;
-
-                        // Log
-                        Message("Deleted old backup folder: " + dir, EventType.Information, 1000);
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("Deleted old backup folder: " + dir);
-                        Console.ResetColor();
-
-                        // Set state
-                        backupsToDelete = true;
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-                        Message("Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.");
-                        Console.ResetColor();
-
-                        // Count errors
-                        Globals._errors++;
-                    }
-                    catch (Exception e)
-                    {
-                        // Error if cant delete file(s)
-                        Message("Exception caught when trying to delete old backup folder: " + dir + " - error: " + e, EventType.Error, 1001);
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Exception caught when trying to delete old backup folder: " + dir + " - error: " + e);
-                        Console.ResetColor();
-
-                        // Add error to counter
-                        Globals._errors++;
-                        Console.WriteLine(e);
-                        throw;
-                    }
-                }
-            }
-
-            // If no backups to delete
-            if (backupsToDelete == false)
-            {
-                // Log
-                Message("No old backups (default 30 days) needed to be deleted from backup folder: " + outBackupDir, EventType.Information, 1000);
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("No old backups (default 30 days) needed to be deleted from backup folder: " + outBackupDir + "\n");
-                Console.ResetColor();
-            }
-        }
-
-        public static void DaysToKeepBackups(string outBackupDir, string daysToKeep)
-        {
-            // If other then 30 days of backup
-            bool backupsToDelete = false;
-            string input = daysToKeep;
-            int days = int.Parse(input);
-
-            // Log
-            Message($"Set to keep {daysToKeep} number of backups (day(s)) in backup folder: {outBackupDir}", EventType.Information, 1000);
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"\nSet to keep {daysToKeep} number of backups (day(s)) in backup folder: {outBackupDir}\n");
-            Console.ResetColor();
-
-            // Loop folders
-            foreach (string dir in Directory.GetDirectories(outBackupDir))
-            {
-                DateTime createdTime = new DirectoryInfo(dir).CreationTime;
-
-                // Find folders from days to keep
-                if (createdTime < DateTime.Now.AddDays(-days))
-                {
-                    try
-                    {
-                        // Do work
-                        Folders.DeleteDirectory(dir);
-
-                        // Count files
-                        Globals._totalBackupsIsDeleted++;
-
-                        // Log
-                        Message("Deleted old backup folder: " + dir + ".", EventType.Information, 1000);
-                        Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("Deleted old backup folder: " + dir + ".");
-                        Console.ResetColor();
-
-                        // Set state
-                        backupsToDelete = true;
-                    }
-                    catch (UnauthorizedAccessException)
-                    {
-                        Message("Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.");
-                        Console.ResetColor();
-
-                        // Count errors
-                        Globals._errors++;
-                    }
-                    catch (Exception e)
-                    {
-                        // Error if cant delete file(s)
-                        Message("Exception caught when trying to delete old backup folder: " + dir + " - error: " + e, EventType.Error, 1001);
-                        Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Exception caught when trying to delete old backup folder: " + dir + " - error: " + e);
-                        Console.ResetColor();
-
-                        // Add error to counter
-                        Globals._errors++;
-                        Console.WriteLine(e);
-                        throw;
-                    }
-                }
-            }
-
-            // If no backups to delete
-            if (backupsToDelete == false)
-            {
-                // Log
-                Message("No old backups needed to be deleted form backup folder: " + outBackupDir, EventType.Information, 1000);
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("No old backups needed to be deleted form backup folder: " + outBackupDir);
-                Console.ResetColor();
-            }
         }
 
         /*/// <summary>

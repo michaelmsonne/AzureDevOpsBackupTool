@@ -33,6 +33,10 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\t\t\t     be deleted (default is 30 dayes) (optional)");
             Console.WriteLine("\t--simpelreport:      If set the email report layout there is send is simple, if not set it use the default");
             Console.WriteLine("\t\t\t     report layout");
+            Console.WriteLine("\t--priority:          Set the email report priority to other then default (normal)");
+            Console.WriteLine("\t  high:              Set the email report priority to 'high'");
+            Console.WriteLine("\t  low:               Set the email report priority to 'low'");
+            Console.WriteLine();
             Console.WriteLine("\t--help, /h or /?:    Showing this help text for the tool");
             Console.WriteLine("\t--info or /about:    Showing information about the tool");
             Console.WriteLine();
