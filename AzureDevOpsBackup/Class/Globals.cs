@@ -1,4 +1,6 @@
-﻿namespace AzureDevOpsBackup.Class
+﻿using System.Net.Mail;
+
+namespace AzureDevOpsBackup.Class
 {
     public static class Globals
     {
@@ -17,5 +19,7 @@
         public static string AppName;
         public static string _copyrightData;
         public static int _totalBackupsIsDeleted;
+        public static string _fileAttachedIneMailReport;
+        public static MailPriority EmailPriority = MailPriority.Normal;
     }
 }

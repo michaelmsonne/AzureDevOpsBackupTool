@@ -18,7 +18,7 @@ namespace AzureDevOpsBackup.Class
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
             string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText,
             bool useSimpleMailReportLayout, string isOutputFolderContainFilesStatusText, string isDaysToKeepNotDefaultStatusText, string startTime, string endTime, bool _deletedFilesAfterUnzip,
-            bool _checkForLeftoverFilesAfterCleanup, string _fileAttachedIneMailReport)
+            bool _checkForLeftoverFilesAfterCleanup)
         {
             var serverPortStr = serverPort;
             string mailBody;
@@ -146,7 +146,9 @@ namespace AzureDevOpsBackup.Class
             message.Body = mailBody;
             message.BodyEncoding = Encoding.UTF8;
             message.IsBodyHtml = true;
-            message.Priority = MailPriority.Normal;
+            //message.Priority = MailPriority.Normal;
+            // Set email priority level based on command-line argument
+            message.Priority = Globals.EmailPriority;
             message.DeliveryNotificationOptions = DeliveryNotificationOptions.None;
             message.BodyTransferEncoding = TransferEncoding.QuotedPrintable;
 
@@ -176,7 +178,7 @@ namespace AzureDevOpsBackup.Class
                 // Loop through the files enumeration and attach each file in the mail.
                 foreach (var file in files)
                 {
-                    _fileAttachedIneMailReport = file;
+                    Globals._fileAttachedIneMailReport = file;
 
                     // Log
                     Message("Found logfile for today:", EventType.Information, 1000);
@@ -185,7 +187,7 @@ namespace AzureDevOpsBackup.Class
                     Console.ResetColor();
 
                     // Full file name
-                    var fileName = _fileAttachedIneMailReport;
+                    var fileName = Globals._fileAttachedIneMailReport;
                     var fi = new FileInfo(fileName);
 
                     // Get File Name
@@ -254,9 +256,9 @@ namespace AzureDevOpsBackup.Class
                     // TODO logfile is not locked from here - you can add logs to logfile again from here!
 
                     // Log
-                    Message("Email notification is send to " + emailTo + " at " + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + "!", EventType.Information, 1000);
+                    Message("Email notification is send to " + emailTo + " at " + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + " with priority " + Globals.EmailPriority + "!", EventType.Information, 1000);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Email notification is send to " + emailTo + " at " + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + "!");
+                    Console.WriteLine("Email notification is send to " + emailTo + " at " + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + " with priority " + Globals.EmailPriority + "!");
                     Console.ResetColor();
                 }
                 catch (Exception ex)
