@@ -137,7 +137,9 @@
     <Content Include="Azure Dev Ops.ico" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="CHANGELOG.md" />
     <None Include="packages.config" />
+    <None Include="README.md" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
