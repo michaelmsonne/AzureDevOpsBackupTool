@@ -16,7 +16,7 @@ namespace AzureDevOpsBackup.Class
         public static bool WriteOnlyErrorsToEventLog { get; set; } = true;
 
         // Sets the App name for the log function
-        public static string AppName { get; set; } = Globals.AppName; // "Unknown",;
+        //public static string AppName { get; set; } = Globals.AppName; // "Unknown",;
 
         // Set date format short
         public static string DateFormat { get; set; } = "dd-MM-yyyy";
@@ -27,7 +27,7 @@ namespace AzureDevOpsBackup.Class
         // Get logfile path
         public static string GetLogPath(string df)
         {
-            return Files.LogFilePath + @"\" + AppName + " Log " + df + ".log";
+            return Files.LogFilePath + @"\" + Globals.AppName + " Log " + df + ".log";
         }
 
         // Get datetime
@@ -107,9 +107,9 @@ namespace AzureDevOpsBackup.Class
                 if (type != EventType.Error && WriteOnlyErrorsToEventLog)
                     return;
                 var eventLog = new EventLog("");
-                if (!EventLog.SourceExists(AppName))
-                    EventLog.CreateEventSource(AppName, "Application");
-                eventLog.Source = AppName;
+                if (!EventLog.SourceExists(Globals.AppName))
+                    EventLog.CreateEventSource(Globals.AppName, "Application");
+                eventLog.Source = Globals.AppName;
                 eventLog.EnableRaisingEvents = true;
                 var type1 = EventLogEntryType.Error;
                 switch (type)
