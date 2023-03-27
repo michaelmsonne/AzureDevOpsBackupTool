@@ -40,6 +40,8 @@ It looks at the backup folder, and see when last changed. If the days matches th
 
 If the **--simpelreportlayout** argument is present, the program will use the old email report layout, else it will use the new default.
 
+If the **--priority <priority> <high/low>** argument is present, the program will mark the send email with the specified priority, else it will use the default (normal).
+
 Logs for backup jobs is keept in the **.\Log** folder for **30 days** beside **AzureDevOpsBackup.exe**.
 
 # Final thoughts
@@ -67,7 +69,7 @@ Check out the examples here:
 - Get [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/) (Community Edition is fine)
 - Install ".NET desktop development" workload  
   ![dotnet-desktop-develoment.png](docs/dotnet-desktop-develoment.png)
-- Remember to select: Install .NET Framework 4.6.1 SDK
+- Remember to select: Install .NET Framework 4.8 SDK
 - Build the solution in Visual Studio
 
 ---
