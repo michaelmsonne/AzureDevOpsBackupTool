@@ -35,6 +35,7 @@
     <ROW Property="AI_UPGRADE" Value="No"/>
     <ROW Property="ALLUSERS" Value="1"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName] v. [|ProductVersion]" ValueLocId="*"/>
+    <ROW Property="AppVersion" Value="1.0.5.2"/>
     <ROW Property="IAgree" Value="No" Type="4"/>
     <ROW Property="Manufacturer" Value="Michael Morten Sonne"/>
     <ROW Property="ProductCode" Value="1033:{B82788FB-8D22-41B0-ACBE-4AE5E7B4502D} " Type="16"/>
@@ -118,6 +119,7 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DynamicPropertyComponent">
     <ROW Property="ProductVersion" Type="2" SourcePath="AzureDevOpsBackup.exe"/>
+    <ROW Property="AppVersion" Type="2" SourcePath="AzureDevOpsBackup.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.FragmentComponent">
     <ROW Fragment="CommonUI.aip" Path="&lt;AI_FRAGS&gt;CommonUI.aip"/>
@@ -139,6 +141,15 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiBinaryComponent">
     <ROW Name="SoftwareDetector.dll" SourcePath="&lt;AI_CUSTACTS&gt;SoftwareDetector.dll"/>
     <ROW Name="aicustact.dll" SourcePath="&lt;AI_CUSTACTS&gt;aicustact.dll"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiControlComponent">
+    <ROW Dialog_="ExitDialog" Control="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Attributes="196611" Text="Completing the [ProductName] [ProductVersion] [Wizard]" TextStyle="VerdanaBold13" Order="700" MsiKey="ExitDialog#Title"/>
+    <ROW Dialog_="ExitDialog" Control="LaunchProdText" Type="Text" X="148" Y="170" Width="220" Height="20" Attributes="196609" Text="Launch [ProductName]" Order="800" TextLocId="Control.Text.ExitDialog#LaunchProdText" MsiKey="ExitDialog#LaunchProdText"/>
+    <ROW Dialog_="PrepareDlg" Control="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Attributes="196611" Text="Welcome to the [ProductName] [ProductVersion] [Wizard]" TextStyle="VerdanaBold13" Order="300" MsiKey="PrepareDlg#Title"/>
+    <ROW Dialog_="ProgressDlg" Control="Text" Type="Text" X="35" Y="65" Width="300" Height="30" Attributes="196611" Text="Please wait while the [Wizard] [Progress2] [ProductName] [ProductVersion].  This may take several minutes." Order="1000" MsiKey="ProgressDlg#Text"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control="Title" Type="Text" X="15" Y="6" Width="200" Height="15" Attributes="196611" Text="Remove [ProductName] [ProductVersion]" TextStyle="DlgFontBold8" Order="700" MsiKey="VerifyRemoveDlg#Title"/>
+    <ROW Dialog_="VerifyRemoveDlg" Control="Text" Type="Text" X="25" Y="70" Width="320" Height="60" Attributes="3" Text="Click &quot;Remove&quot; to remove [ProductName] [ProductVersion] from your computer.  If you want to review or change any of your installation settings, click &quot;Back&quot;.  Click &quot;Cancel&quot; to exit the wizard." Order="800" MsiKey="VerifyRemoveDlg#Text"/>
+    <ROW Dialog_="WelcomeDlg" Control="Title" Type="Text" X="135" Y="20" Width="220" Height="60" Attributes="196611" Text="Welcome to the [ProductName] [ProductVersion] [Wizard]" TextStyle="VerdanaBold13" Order="500" MsiKey="WelcomeDlg#Title"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiControlEventComponent">
     <ROW Dialog_="WelcomeDlg" Control_="Next" Event="NewDialog" Argument="UpgradeDlg" Condition="AI_INSTALL" Ordering="1"/>
@@ -189,6 +200,36 @@
     <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[WindowsVolume][ProductName]\[ProductVersion]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
+  </COMPONENT>
+  <COMPONENT cid="caphyon.advinst.msicomp.MsiDialogComponent">
+    <ROW Dialog="AdminBrowseDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="OK" Control_Cancel="Cancel" MsiKey="AdminBrowseDlg"/>
+    <ROW Dialog="AdminInstallPointDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Next" Control_Cancel="Cancel" MsiKey="AdminInstallPointDlg"/>
+    <ROW Dialog="AdminWelcomeDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Next" Control_Cancel="Cancel" MsiKey="AdminWelcomeDlg"/>
+    <ROW Dialog="BrowseDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="OK" Control_Cancel="Cancel" MsiKey="BrowseDlg"/>
+    <ROW Dialog="CancelDlg" HCentering="50" VCentering="50" Width="260" Height="85" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="No" Control_Cancel="No" MsiKey="CancelDlg"/>
+    <ROW Dialog="CustomizeDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="35" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Next" Control_Cancel="Cancel" MsiKey="CustomizeDlg"/>
+    <ROW Dialog="DiskCostDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="OK" Control_Cancel="OK" MsiKey="DiskCostDlg"/>
+    <ROW Dialog="ExitDialog" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Finish" Control_Cancel="Finish" MsiKey="ExitDialog"/>
+    <ROW Dialog="FatalError" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Finish" Control_Cancel="Finish" MsiKey="FatalError"/>
+    <ROW Dialog="FilesInUse" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="19" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Retry" Control_Cancel="Retry" MsiKey="FilesInUse"/>
+    <ROW Dialog="InstallDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="39" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Next" Control_Cancel="Cancel" MsiKey="InstallDlg"/>
+    <ROW Dialog="LicenseAgreementDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Next" Control_Cancel="Cancel" MsiKey="LicenseAgreementDlg"/>
+    <ROW Dialog="MaintenanceTypeDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="ChangeButton" Control_Cancel="Cancel" MsiKey="MaintenanceTypeDlg"/>
+    <ROW Dialog="MaintenanceWelcomeDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Next" Control_Cancel="Cancel" MsiKey="MaintenanceWelcomeDlg"/>
+    <ROW Dialog="MsiRMFilesInUse" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="19" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="OK" Control_Cancel="Cancel" MsiKey="MsiRMFilesInUse"/>
+    <ROW Dialog="OutOfDiskDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="OK" Control_Cancel="OK" MsiKey="OutOfDiskDlg"/>
+    <ROW Dialog="OutOfRbDiskDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="No" Control_Cancel="No" MsiKey="OutOfRbDiskDlg"/>
+    <ROW Dialog="PatchWelcomeDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Next" Control_Cancel="Cancel" MsiKey="PatchWelcomeDlg"/>
+    <ROW Dialog="PrepareDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="1" Title="[ProductName] [Setup] [ProductVersion]" Control_Default="Cancel" Control_Cancel="Cancel" MsiKey="PrepareDlg"/>
+    <ROW Dialog="ProgressDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="1" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Cancel" Control_Cancel="Cancel" MsiKey="ProgressDlg"/>
+    <ROW Dialog="ResumeDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Install" Control_Cancel="Cancel" MsiKey="ResumeDlg"/>
+    <ROW Dialog="UpgradeDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Next" Control_Cancel="Cancel" MsiKey="UpgradeDlg"/>
+    <ROW Dialog="UserExit" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Finish" Control_Cancel="Finish" MsiKey="UserExit"/>
+    <ROW Dialog="VerifyReadyDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="35" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Install" Control_Cancel="Cancel" MsiKey="VerifyReadyDlg"/>
+    <ROW Dialog="VerifyRemoveDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="35" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Back" Control_Cancel="Cancel" MsiKey="VerifyRemoveDlg"/>
+    <ROW Dialog="VerifyRepairDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="35" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Repair" Control_Cancel="Cancel" MsiKey="VerifyRepairDlg"/>
+    <ROW Dialog="WaitForCostingDlg" HCentering="50" VCentering="50" Width="260" Height="85" Attributes="3" Title="[ProductName] [ProductVersion] [Setup]" Control_Default="Return" Control_Cancel="Return" MsiKey="WaitForCostingDlg"/>
+    <ROW Dialog="WelcomeDlg" HCentering="50" VCentering="50" Width="370" Height="270" Attributes="3" Title="[ProductName] [Setup] [ProductVersion]" Control_Default="Next" Control_Cancel="Cancel" MsiKey="WelcomeDlg"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatCompsComponent">
     <ROW Feature_="MainFeature" Component_="APPDIR"/>
