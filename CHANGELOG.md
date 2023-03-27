@@ -1,3 +1,8 @@
+## [1.0.5.2] - 26-3-2023
+
+### Fixed
+- Now the logfile is named correct again under some conditions
+
 ## [1.0.5.1] - 25-3-2023
 
 ### Add
