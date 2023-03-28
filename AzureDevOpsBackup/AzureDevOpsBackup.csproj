@@ -115,6 +115,7 @@
     <Compile Include="Class\ReportSender.cs" />
     <Compile Include="Class\FileLogger.cs" />
     <Compile Include="Class\Files.cs" />
+    <Compile Include="Class\SecureArgumentHandler.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

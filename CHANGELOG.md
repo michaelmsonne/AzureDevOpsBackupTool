@@ -1,3 +1,11 @@
+## [1.0.5.3] - xx-x-2023
+
+### Add
+- Added Class to secure the token for authentication to the Azure DevOps API
+
+### Changed
+- Small changes and optimization
+
 ## [1.0.5.2] - 26-3-2023
 
 ### Fixed
