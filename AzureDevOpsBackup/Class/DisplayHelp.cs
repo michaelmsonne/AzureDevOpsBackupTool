@@ -50,11 +50,13 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine($"\t{Globals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
             Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --daystokeepbackup 50\n");
             Console.WriteLine($"\t{Globals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
-            Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --simpelreport");
+            Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --simpelreport\n");
+            Console.WriteLine($"\t{Globals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
+            Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --simpelreport --priority high");
             Console.WriteLine();
             Console.WriteLine("Output:");
             Console.WriteLine("\tA timestamped folder containing the backup will be created within this directory unless --backup");
-            Console.WriteLine("\tis being specified for a custom output folder");
+            Console.WriteLine("\tis being specified for a custom output folder and then what you set from above parameters");
             Console.WriteLine();
             Console.WriteLine($"{Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName);
             Console.WriteLine();

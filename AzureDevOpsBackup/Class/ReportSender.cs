@@ -17,8 +17,8 @@ namespace AzureDevOpsBackup.Class
             int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep, string repoCountStatusText, string repoItemsCountStatusText,
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
             string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText,
-            bool useSimpleMailReportLayout, string isOutputFolderContainFilesStatusText, string isDaysToKeepNotDefaultStatusText, string startTime, string endTime, bool _deletedFilesAfterUnzip,
-            bool _checkForLeftoverFilesAfterCleanup)
+            bool useSimpleMailReportLayout, string isOutputFolderContainFilesStatusText, string isDaysToKeepNotDefaultStatusText, string startTime, string endTime, bool deletedFilesAfterUnzip,
+            bool checkForLeftoverFilesAfterCleanup)
         {
             var serverPortStr = serverPort;
             string mailBody;
@@ -31,7 +31,7 @@ namespace AzureDevOpsBackup.Class
             var letOverZipFiles = 0;
 
             // Add subject if cleanup after unzip is set
-            if (_deletedFilesAfterUnzip)
+            if (deletedFilesAfterUnzip)
             {
                 emailStatusMessage += " (and cleaned up downloaded files)";
             }
@@ -43,7 +43,7 @@ namespace AzureDevOpsBackup.Class
             }
 
             // Get leftover files is needed (if had error(s))
-            if (_checkForLeftoverFilesAfterCleanup)
+            if (checkForLeftoverFilesAfterCleanup)
             {
                 letOverJsonFiles = Globals._numJson;
                 letOverZipFiles = Globals._numZip;

@@ -247,12 +247,42 @@ namespace AzureDevOpsBackup
                         Console.WriteLine("Starting connection to Azure DevOps API from data provided from arguments");
 
                         // Base GET API
-                        //const string version = "api-version=5.1-preview.1";
                         const string version = "api-version=7.0";
-                        string auth = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes(
-                            $"{""}:{args[Array.IndexOf(args, "--token") + 1]}"));
                         string baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
+                        
+                        SecureArgumentHandler handler = new SecureArgumentHandler();
 
+                        // Get the values of the --token and --org arguments
+                        string token = args[Array.IndexOf(args, "--token") + 1];
+
+                        // Encrypt the value
+                        byte[] encryptedToken = handler.Encrypt(token);
+
+                        /*
+                         * Clear string token
+                         */
+                        // Get the length of the string
+                        int length = token.Length;
+
+                        // Create a byte array with the same length as the string
+                        byte[] tokenBytes = Encoding.UTF8.GetBytes(token);
+
+                        // Overwrite the bytes with zeros
+                        Array.Clear(tokenBytes, 0, length);
+
+                        // Set the string to null
+                        token = null;
+                        /*
+                         * End clear string token
+                         */
+
+                        // Convert the encrypted values to base64 strings
+                        string encryptedTokenString = Convert.ToBase64String(encryptedToken);
+
+                        // Build the auth and baseUrl strings using the encrypted values
+                        string auth = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes($"{""}:{handler.Decrypt(Convert.FromBase64String(encryptedTokenString))}"));
+
+                        // Set global value
                         Globals._orgName = args[Array.IndexOf(args, "--org") + 1];
 
                         // URL parse to API access done

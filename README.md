@@ -62,6 +62,16 @@ Check out the examples here:
 
 ![Screenshot](docs/email-report-simpel.png)
 
+# Console:
+
+**Help menu:**
+
+![Screenshot](docs/help-menu.png)
+
+**About menu:**
+
+![Screenshot](docs/help-about.png)
+
 ---
 
 ## How to build
