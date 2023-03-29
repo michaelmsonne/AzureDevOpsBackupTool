@@ -1,4 +1,4 @@
-## [1.0.5.3] - xx-x-2023
+## [1.0.5.3] - 29-3-2023
 
 ### Add
 - Added Class to secure the token for authentication to the Azure DevOps API
