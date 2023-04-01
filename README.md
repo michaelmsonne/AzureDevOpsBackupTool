@@ -9,7 +9,7 @@ We can download a repository from Azure DevOps as a Zip file, but this may not b
 
 [Version History](CHANGELOG.md)
 
-[![Github All Releases](https://img.shields.io/github/downloads/michaelmsonne/AzureDevOpsBackupTool/total.svg)]
+![Github All Releases](https://img.shields.io/github/downloads/michaelmsonne/AzureDevOpsBackupTool/total.svg)
 
 ## Usage Instructions on Windows
 
