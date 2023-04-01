@@ -3,6 +3,22 @@ Azure DevOps is a cloud service to manage source code and collaborate between de
 While your code is perfectly safe on the Azure infrastructure hosted by Microsoft, there are cases where a centralized local backup of all projects and repositories is needed. These might include Corporate Policies, Disaster Recovery and Business Continuity Plans.
 We can download a repository from Azure DevOps as a Zip file, but this may not be practical if we have a considerable amount of projects and repositories and need them backed up on a regular basis. To do this, we can use the Azure DevOps API, as explained here: https://learn.microsoft.com/en-us/rest/api/azure/devops/?view=azure-devops-rest-7.1 💪
 
+## Download
+
+[Download the latest version](../../releases/latest)
+
+[Version History](CHANGELOG.md)
+
+[![Github All Releases](https://img.shields.io/github/downloads/michaelmsonne/AzureDevOpsBackupTool/total.svg)]
+
+## Usage Instructions on Windows
+
+1. Downloaded the installer from releases to any location on a Windows machine where you want to use the tool
+2. Run the downloaded installer and select where you will install the tool
+3. When installed you need an access token to connect to Azure DevOps (read the guide under here)
+4. Then run the main AzureDevOpsBackup.exe with the appropriate command line options to connect to your Azure DevOps and download the backup use with command line options in CMD, PowerShell or Windows Terminal!
+5. You now have an local backup!
+
 # How to get a local backup of your repos on your backup/home server? 🤔
 
 ## 1. Get an Azure DevOps API personal access token
@@ -62,7 +78,7 @@ Check out the examples here:
 
 ![Screenshot](docs/email-report-simpel.png)
 
-# Console:
+# Console use:
 
 **Help menu:**
 
