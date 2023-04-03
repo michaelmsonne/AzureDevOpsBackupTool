@@ -125,6 +125,9 @@ namespace AzureDevOpsBackup.Class
                 $"<td style=\"width: 21%; height: 18px;\">Old backup(s) set to keep in backup folder (days):</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><b>{daysToKeep}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{isDaysToKeepNotDefaultStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 21%; height: 18px;\">Number of current backups in backup folder:</td>" +
+                $"<td style=\"width: 22%; height: 18px;\"><b>{Globals._currentBackupsInBackupFolderCount}</b></td>" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">Multiple backups can be created at the same day, so there can be more here then days set to keep</td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Old backup(s) deleted in backup folder:</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{totalBackupsIsDeletedStatusText}</td></tr></table>" +
@@ -142,11 +145,10 @@ namespace AzureDevOpsBackup.Class
             message.Subject = "[" + emailStatusMessage + $"] - {Globals.AppName} status - (" + totalBlobFilesIsBackup +
                               " Git projects backed up), " + errors + " issues(s) - (backups to keep (days): " + daysToKeep +
                               ", backup(s) deleted: " + totalBackupsIsDeleted + ")";
-
             message.Body = mailBody;
             message.BodyEncoding = Encoding.UTF8;
             message.IsBodyHtml = true;
-            //message.Priority = MailPriority.Normal;
+
             // Set email priority level based on command-line argument
             message.Priority = Globals.EmailPriority;
             message.DeliveryNotificationOptions = DeliveryNotificationOptions.None;
