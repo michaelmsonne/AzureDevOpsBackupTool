@@ -4,7 +4,7 @@
 - 
 
 ### Changed
-- 
+- Some changes to help text
 
 ## [1.0.5.4] - 03-4-2023
 
