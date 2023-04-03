@@ -22,5 +22,8 @@ namespace AzureDevOpsBackup.Class
         public static int _totalBackupsIsDeleted;
         public static string _fileAttachedIneMailReport;
         public static MailPriority EmailPriority = MailPriority.Normal;
+        public static int _currentBackupsInBackupFolderCount;
+        public static int _oldLogFilesToDeleteCount;
+        public static bool _oldLogfilesToDelete;
     }
 }

@@ -147,5 +147,22 @@ namespace AzureDevOpsBackup.Class
                 Console.ResetColor();
             }
         }
+
+
+        public static void CountCurrentNumersOfBackup(string outBackupDir)
+        {
+            //Count backups in folder
+            string searchPattern = "??-??-????-(??-??)";
+            int folderCount = 1;
+            foreach (var directory in Directory.GetDirectories(outBackupDir, searchPattern, SearchOption.TopDirectoryOnly))
+            {
+                if (Directory.GetFileSystemEntries(directory).Length > 0)
+                {
+                    folderCount++;
+                }
+            }
+            // Save count
+            Globals._currentBackupsInBackupFolderCount = folderCount;
+        }
     }
 }

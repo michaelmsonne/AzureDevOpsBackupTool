@@ -9,6 +9,16 @@ namespace AzureDevOpsBackup.Class
 {
     public class SecureArgumentHandlerToken
     {
+        // Decrypt and show data in .bin file
+        //byte[] data = File.ReadAllBytes(Files.TokenFilePath);
+        //string text = Encoding.UTF8.GetString(data);
+        //Console.WriteLine($"Encrypted string = {text}");
+        //Console.WriteLine($"Encrypted string = {SecureArgumentHandlerToken.DecryptFromFile(key)}");
+
+        // Read the token information from the -tokentofile
+        //var decryptedString = SecureArgumentHandlerToken.DecryptFromFile(key);
+        //Console.WriteLine($"Decrypted string = {decryptedString}");
+
         public static string EncryptAndSaveToFile(string key, string plainText)
         {
             byte[] iv = new byte[16];

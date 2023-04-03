@@ -110,6 +110,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Class\Backups.cs" />
+    <Compile Include="Class\CleanupLog.cs" />
     <Compile Include="Class\Folders.cs" />
     <Compile Include="Class\DisplayHelp.cs" />
     <Compile Include="Class\Globals.cs" />
