@@ -21,15 +21,15 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("  Mandatory:");
             Console.WriteLine("\t--token <token>:     Token to access the API in Azure DevOps (raw token data)");
             Console.WriteLine("\t--token token.bin:   Will use data to access the API in Azure DevOps from encrypted token.bin file");
-            Console.WriteLine("\t--tokenfile <token>: Save a token to access the API in Azure DevOps to an encrypted token.bin file");
-            Console.WriteLine("\t\t\t     (use before using the '--token token.bin' argument!)");
             Console.WriteLine("\t--org:               Name of the organization in Azure DevOps");
             Console.WriteLine("\t--backup:            Folder where to store the backup(s) - folder with timestamp will be created");
             Console.WriteLine("\t--server:            IP address or DNS name of the SMTP server");
             Console.WriteLine("\t--port:              The port for the SMTP server");
             Console.WriteLine("\t--from:              The email address the report is send from");
-            Console.WriteLine("\t--toemail:           The email address the report is send to");
+            Console.WriteLine("\t--toemail:           The email address the report is send to\n");
             Console.WriteLine("  Optional:");
+            Console.WriteLine("\t--tokenfile <token>: Save a token to access the API in Azure DevOps to an encrypted token.bin file");
+            Console.WriteLine("\t\t\t     (use this before using the '--token token.bin' argument!)");
             Console.WriteLine("\t--unzip:             Unzip downloaded .zip and .json files in --backup (optional)");
             Console.WriteLine("\t--cleanup:           Delete downloaded .zip and .json files in --backup after unzip (optional)");
             Console.WriteLine("\t--daystokeepbackup:  Number of days to keep backups for in --backup. Backups older than this will");
@@ -57,7 +57,7 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine($"\t{Globals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
             Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --simpelreport --priority high\n");
             Console.WriteLine($"\t{Globals._currentExeFileName} --token token.bin --org OrgName --backup C:\\Backup --server smtp.domain.local");
-            Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --simpelreport --priority high");
+            Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --simpelreport --priority low");
             Console.WriteLine();
             Console.WriteLine("Output:");
             Console.WriteLine("\tA timestamped folder containing the backup will be created within this directory unless --backup");
