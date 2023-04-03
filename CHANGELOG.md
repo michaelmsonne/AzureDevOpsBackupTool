@@ -1,7 +1,12 @@
+## [1.0.5.4] - xx-x-2023
+
+### Add
+- Added Class to secure the token for authentication to the Azure DevOps API form an encrypted .bin file based in hardware id for the hardware the .bin file is generated on
+
 ## [1.0.5.3] - 29-3-2023
 
 ### Add
-- Added Class to secure the token for authentication to the Azure DevOps API
+- Added Class to secure the token for authentication to the Azure DevOps API in console runtime
 
 ### Changed
 - Small changes and optimization

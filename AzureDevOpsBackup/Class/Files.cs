@@ -17,6 +17,7 @@ namespace AzureDevOpsBackup.Class
                 return logfilePathvar;
             }
         }
+
         public static string ProgramDataFilePath
         {
             get
@@ -25,6 +26,16 @@ namespace AzureDevOpsBackup.Class
                 var currentDirectory = Directory.GetCurrentDirectory();
                 var programDataFilePathvar = currentDirectory;
                 return programDataFilePathvar;
+            }
+        }
+
+        public static string TokenFilePath
+        {
+            get
+            {
+                // Root folder for log files
+                var tokenFilePathvar = ProgramDataFilePath + @"\token.bin";
+                return tokenFilePathvar;
             }
         }
 
@@ -95,11 +106,9 @@ namespace AzureDevOpsBackup.Class
                     Globals._totalFilesIsDeletedAfterUnZipped++;
 
                     // Log
-                    Message("Deleted downloaded file: " + filepath + " in backup folder: " + outDir,
-                        EventType.Information, 1000);
+                    Message("Deleted downloaded file: " + filepath + " in backup folder: " + outDir, EventType.Information, 1000);
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Deleted downloaded file: " + filepath + " in backup folder: " +
-                                      outDir);
+                    Console.WriteLine("Deleted downloaded file: " + filepath + " in backup folder: " + outDir);
                     Console.ResetColor();
                 }
                 catch (UnauthorizedAccessException)
