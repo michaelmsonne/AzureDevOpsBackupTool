@@ -107,6 +107,9 @@ namespace AzureDevOpsBackup
             bool noProjectsToBackup = false;
             bool isOutputFolderContainFiles = false;
 
+            // Get key to use
+            var key = SecureArgumentHandlerToken.GetComputerId();
+
             // Get application data to later use in tool
             AssemblyCopyrightAttribute copyright = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false)[0] as AssemblyCopyrightAttribute;
             // ReSharper disable once PossibleNullReferenceException
@@ -147,9 +150,9 @@ namespace AzureDevOpsBackup
 
             // Check for required Args for application will work
             string[] requiredArgs = { "--token", "--org", "--backup", "--server", "--port", "--from", "--to" };
-
-            // Check if parameters have been provided
-            if (args.Length == 0 || args.Contains("--help") || args.Contains("/h") || args.Contains("/?") || args.Contains("/info") || args.Contains("/about"))
+            
+            // Check if parameters have been provided and Contains one of
+            if (args.Length == 0 || args.Contains("--help") || args.Contains("/h") || args.Contains("/?") || args.Contains("/info") || args.Contains("/about") || args.Contains("--tokentofile") || args.Contains("/tokentofile"))
             {
                 // If none arguments
                 if (args.Length == 0)
@@ -196,6 +199,33 @@ namespace AzureDevOpsBackup
                     // End application
                     Environment.Exit(1);
                 }
+                
+                // If wants to save token data as file for encryption
+                if (args.Contains("--tokenfile") || args.Contains("/tokenfile"))
+                {
+                    // Get data fon console
+                    string tokentoencrypt = args[Array.IndexOf(args, "--tokenfile") + 1];
+                    
+                    // Encrypt data
+                    SecureArgumentHandlerToken.EncryptAndSaveToFile(key, tokentoencrypt);
+
+                    // Decrypt and show data in .bin file
+                    //byte[] data = File.ReadAllBytes(Files.TokenFilePath);
+                    //string text = Encoding.UTF8.GetString(data);
+                    //Console.WriteLine($"Encrypted string = {text}");
+                    //Console.WriteLine($"Encrypted string = {SecureArgumentHandlerToken.DecryptFromFile(key)}");
+
+                    // Read the token information from the -tokentofile
+                    //var decryptedString = SecureArgumentHandlerToken.DecryptFromFile(key);
+                    //Console.WriteLine($"Decrypted string = {decryptedString}");
+
+                    Message($"Saved information about token to file - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
+
+                    Console.ResetColor();
+
+                    // End application
+                    Environment.Exit(1);
+                }
             }
 
             // Log
@@ -211,6 +241,7 @@ namespace AzureDevOpsBackup
                 // ParseArguments(args);
                 // If okay do some work
                 case true when args.Intersect(requiredArgs).Count() == 7:
+                //case true when args.Intersect(requiredArgs).Count() == 6:
                     {
                         // Startup log entry
                         Message("Checked if the 7 required arguments is present (--token, --org, --backup, --server, --port, --from, --to) - all is fine!", EventType.Information, 1000);
@@ -255,9 +286,18 @@ namespace AzureDevOpsBackup
                         // Get the values of the --token and --org arguments
                         string token = args[Array.IndexOf(args, "--token") + 1];
 
+                        // If set to use token file
+                        if (token == "token.bin")
+                        {
+                            // Read the token information from the -tokentofile
+                            token = SecureArgumentHandlerToken.DecryptFromFile(key);
+                            Console.WriteLine($"Decrypted string for token = {token}");
+                            Console.ReadKey();
+                        }
+
                         // Encrypt the value
                         byte[] encryptedToken = handler.Encrypt(token);
-
+                        
                         /*
                          * Clear string token
                          */
