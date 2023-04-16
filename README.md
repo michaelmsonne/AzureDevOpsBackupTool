@@ -1,8 +1,9 @@
 # Azure DevOps Backup
 
 <p align="center">
-  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/languages/top/michaelmsonne/AzureDevOpsBackupTool.svg?style=flat-square"></a>
-  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/languages/code-size/michaelmsonne/AzureDevOpsBackupTool.svg?style=flat-square"></a>
+  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/languages/top/michaelmsonne/AzureDevOpsBackupTool.svg"></a>
+  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/languages/code-size/michaelmsonne/AzureDevOpsBackupTool.svg"></a>
+  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/downloads/michaelmsonne/AzureDevOpsBackupTool/total.svg"></a>
 </p>
 
 # Introduction
@@ -15,8 +16,6 @@ We can download a repository from Azure DevOps as a Zip file, but this may not b
 [Download the latest version](../../releases/latest)
 
 [Version History](CHANGELOG.md)
-
-![Github All Releases](https://img.shields.io/github/downloads/michaelmsonne/AzureDevOpsBackupTool/total.svg)
 
 ## Usage Instructions on Windows
 
