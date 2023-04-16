@@ -1,3 +1,10 @@
+# Azure DevOps Backup
+
+<p align="center">
+  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/languages/top/michaelmsonne/AzureDevOpsBackupTool.svg?style=flat-square"></a>
+  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/languages/code-size/michaelmsonne/AzureDevOpsBackupTool.svg?style=flat-square"></a>
+</p>
+
 # Introduction
 Azure DevOps is a cloud service to manage source code and collaborate between development teams. It integrates perfectly with both Visual Studio and Visual Studio Code and other IDE´s and tools there is using the "Git".
 While your code is perfectly safe on the Azure infrastructure hosted by Microsoft, there are cases where a centralized local backup of all projects and repositories is needed. These might include Corporate Policies, Disaster Recovery and Business Continuity Plans.
