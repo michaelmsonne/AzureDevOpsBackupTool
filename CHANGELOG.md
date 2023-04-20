@@ -2,6 +2,7 @@
 
 ### Add
 - Added function to count current numers of backups in backup folder and report to email report
+- Added function test connection to REST API - if not connected, show the error details.
 
 ### Changed
 - Some changes to help text
