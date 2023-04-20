@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="20.2" version="20.5" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{9B0F5C3A-F049-4A7F-A776-DAA7871CB253}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="20.2" version="20.4.1" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{9B0F5C3A-F049-4A7F-A776-DAA7871CB253}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
     <ROW Name="HiddenItems" Value="AppXProductDetailsComponent;AppXDependenciesComponent;AppXAppDetailsComponent;AppXVisualAssetsComponent;AppXCapabilitiesComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent;FixupComponent;MsiXDiffComponent;MsixManifestEditorComponent;ActSyncAppComponent;CPLAppletComponent;AutorunComponent;GameUxComponent;SilverlightSlnComponent;SharePointSlnComponent"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_PREDEF_LCONDS_PROPS" Value="AI_DETECTED_DOTNET_VERSION"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackup.exe" Value="..\AzureDevOpsBackup\bin\Release"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackup.exe" Value="..\AzureDevOpsBackup\bin\Debug"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll" Value="..\AzureDevOpsBackup\packages\Microsoft.Bcl.AsyncInterfaces.7.0.0\lib\net462"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll" Value="..\AzureDevOpsBackup\packages\Newtonsoft.Json.13.0.3\lib\net45"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_RestSharp.dll" Value="..\AzureDevOpsBackup\packages\RestSharp.106.15.0\lib\net452"/>
@@ -35,13 +35,13 @@
     <ROW Property="AI_UPGRADE" Value="No"/>
     <ROW Property="ALLUSERS" Value="1"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName] v. [|ProductVersion]" ValueLocId="*"/>
-    <ROW Property="AppVersion" Value="1.0.5.5"/>
+    <ROW Property="AppVersion" Value="1.0.5.3"/>
     <ROW Property="IAgree" Value="No" Type="4"/>
     <ROW Property="Manufacturer" Value="Michael Morten Sonne"/>
-    <ROW Property="ProductCode" Value="1033:{AC9929FD-4693-47B7-830B-AE484BD4C29B} " Type="16"/>
+    <ROW Property="ProductCode" Value="1033:{FFCAAE2C-4F7A-4525-BC72-36BE2F7D61D6} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Azure DevOps Backup"/>
-    <ROW Property="ProductVersion" Value="1.0.5.5" Options="16"/>
+    <ROW Property="ProductVersion" Value="1.0.5.3" Options="16"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{B5566068-564D-4227-A015-483DA03A0F0E}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
@@ -63,11 +63,11 @@
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
-    <ROW Component="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" ComponentId="{FEA8F3A9-FB6E-4E36-872F-869599DCECAD}" Directory_="APPDIR" Attributes="0" KeyPath="AzureDevOpsBackup.exe"/>
-    <ROW Component="AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll" ComponentId="{B0BBF82E-29C5-47B4-BA88-710043C8F44A}" Directory_="APPDIR" Attributes="0" KeyPath="Newtonsoft.Json.dll" Type="0"/>
-    <ROW Component="APPDIR" ComponentId="{77D06582-4D0E-4AA4-8DDF-6C6FD1D60BB4}" Directory_="APPDIR" Attributes="0"/>
-    <ROW Component="ProductInformation" ComponentId="{8F9875F9-59F3-4ED2-A15D-BEB8B99B2B1B}" Directory_="APPDIR" Attributes="260" KeyPath="Version"/>
-    <ROW Component="SHORTCUTDIR" ComponentId="{0021444A-BAA0-48C7-82DC-180BB59DB276}" Directory_="SHORTCUTDIR" Attributes="0"/>
+    <ROW Component="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" ComponentId="{457FDAF9-820A-4584-9A34-3DF7211DAB42}" Directory_="APPDIR" Attributes="0" KeyPath="AzureDevOpsBackup.exe"/>
+    <ROW Component="AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll" ComponentId="{B160751A-3DA4-4C0D-8BCE-ABBCE2C6569F}" Directory_="APPDIR" Attributes="0" KeyPath="Newtonsoft.Json.dll" Type="0"/>
+    <ROW Component="APPDIR" ComponentId="{56D6E2DE-4B39-4372-AA70-1A17FDDDE1E2}" Directory_="APPDIR" Attributes="0"/>
+    <ROW Component="ProductInformation" ComponentId="{C0C93354-34EA-4835-8DF4-4AEF688F43B6}" Directory_="APPDIR" Attributes="260" KeyPath="Version"/>
+    <ROW Component="SHORTCUTDIR" ComponentId="{17B23543-FCAF-4B78-A222-A673ADE8505E}" Directory_="SHORTCUTDIR" Attributes="0"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0"/>

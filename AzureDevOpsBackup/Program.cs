@@ -10,6 +10,10 @@ using System.Reflection;
 using System.Text;
 using AzureDevOpsBackup.Class;
 using static AzureDevOpsBackup.Class.FileLogger;
+using System.Net;
+using System.Net.Mime;
+using static System.Net.WebRequestMethods;
+using static System.Net.Mime.MediaTypeNames;
 
 // ReSharper disable RedundantAssignment
 // ReSharper disable NotAccessedVariable
@@ -382,6 +386,36 @@ namespace AzureDevOpsBackup
                             Console.WriteLine("Output folder exists (will not create it again): " + outDir);
                             Console.ResetColor();
                         }
+                        
+                        // Get connection status from REST API
+                        var checkConnectionToAzureDevOps = new RestClient(baseUrl + "_apis/projects?" + version);
+                        var checkConnectionToAzureDevOpsGet = new RestRequest(Method.GET);
+
+                        checkConnectionToAzureDevOpsGet.AddHeader("Authorization", auth);
+
+                        IRestResponse responsecheckConnectionToAzureDevOpsGet = checkConnectionToAzureDevOps.Execute(checkConnectionToAzureDevOpsGet);
+
+                        if (responsecheckConnectionToAzureDevOpsGet.StatusCode == HttpStatusCode.OK)
+                        {
+                            Message("Connected successfully to Azure DevOps organization '" + Globals._orgName + "'...", EventType.Information, 1000);
+                            Console.WriteLine("Connected successfully to Azure DevOps organization '" + Globals._orgName + "'...");
+                        }
+                        else
+                        {
+                            // Handle error cases
+                            Console.WriteLine("Failed to connected successfully to the Azure DevOps organization '" + Globals._orgName + "' via REST API");
+                            Console.WriteLine("Response Status: " + responsecheckConnectionToAzureDevOpsGet.StatusCode);
+                            Console.WriteLine("Response Content: " + responsecheckConnectionToAzureDevOpsGet.Content);
+
+                            Message("Failed to connected successfully to the Azure DevOps organization '" + Globals._orgName + "' via REST API", EventType.Error, 1001);
+                            Message("Response Status: " + responsecheckConnectionToAzureDevOpsGet.StatusCode, EventType.Error, 1001);
+                            Message("Response Content: " + responsecheckConnectionToAzureDevOpsGet.Content, EventType.Error, 1001);
+
+                            Message("Exiting...", EventType.Information, 1000);
+                            Console.WriteLine("Exiting...");
+
+                            Environment.Exit(1);
+                        }
 
                         // Save log entry
                         Message("Getting information form Azure DevOps organization " + Globals._orgName + "...", EventType.Information, 1000);
@@ -543,7 +577,7 @@ namespace AzureDevOpsBackup
                                             {
                                                 // Save file to disk
                                                 //File.WriteAllText(outDir + project.Name + "_" + repo.Name + "_tree.json", responseItems.Content);
-                                                File.WriteAllText(outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json", responseItems.Content);
+                                                System.IO.File.WriteAllText(outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json", responseItems.Content);
                                                 
                                                 // Log
                                                 Message("Saved file to disk: " + outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json", EventType.Information, 1000);
