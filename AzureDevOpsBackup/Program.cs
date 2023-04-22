@@ -11,9 +11,6 @@ using System.Text;
 using AzureDevOpsBackup.Class;
 using static AzureDevOpsBackup.Class.FileLogger;
 using System.Net;
-using System.Net.Mime;
-using static System.Net.WebRequestMethods;
-using static System.Net.Mime.MediaTypeNames;
 
 // ReSharper disable RedundantAssignment
 // ReSharper disable NotAccessedVariable
@@ -111,6 +108,9 @@ namespace AzureDevOpsBackup
             bool noProjectsToBackup = false;
             bool isOutputFolderContainFiles = false;
 
+            // Check requirements for tool
+            Requirements.SystemCheck();
+
             // Get key to use for encryption
             var key = SecureArgumentHandlerToken.GetComputerId();
 
@@ -138,9 +138,10 @@ namespace AzureDevOpsBackup
             stopWatch.Start();
             DateTime startTime = DateTime.Now; // get current time as start time
 
-            // Start of program
-            Message($"Welcome to {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName, EventType.Information, 1000);
-            Console.WriteLine($"\nWelcome to {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "\n");
+            // Log start of program
+            Globals.ApplicationStartMessage();
+            // Message($"Welcome to {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName, EventType.Information, 1000);
+            // Console.WriteLine($"\nWelcome to {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "\n");
 
             // Set Global Logfile properties
             FileLogger.DateFormat = "dd-MM-yyyy";
@@ -330,7 +331,7 @@ namespace AzureDevOpsBackup
 
                         // Set output folder name
                         string todaysdate = DateTime.Now.ToString("dd-MM-yyyy-(HH-mm)");
-                        string outDir = outBackupDir + todaysdate + "\\";
+                        string outDir = $"{outBackupDir}{todaysdate}\\";
 
                         // Output folder to backup to (without date stamp for backup) done
                         Message("Output folder is: " + outDir, EventType.Information, 1000);
@@ -1422,7 +1423,58 @@ namespace AzureDevOpsBackup
                         Message("Checking if directory " + outDir + " contains files", EventType.Information, 1000);
 
                         // Check if done for status in mail report
-                        if (Directory.Exists(outDir) && (Directory.EnumerateFiles(outDir, "*.zip", SearchOption.AllDirectories).FirstOrDefault() != null))
+                        /*
+                        if (Directory.Exists(outDir))
+                        {
+                            var zipFiles = Directory.EnumerateFiles(outDir, "*.zip");
+
+                            if (zipFiles.Any())
+                            {
+                                // Log
+                                Console.ForegroundColor = ConsoleColor.Green;
+                                Console.WriteLine($"Directory " + outDir + " contains files");
+                                Console.ResetColor();
+                                Message("Directory " + outDir + " contains files", EventType.Information, 1000);
+
+                                // Set status
+                                isOutputFolderContainFiles = true;
+                            }
+                            else
+                            {
+                                if (_cleanUpState)
+                                {
+                                    // Log
+                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                    Console.WriteLine($"Directory " + outDir + " contains no files - set to cleanup downloaded files - see logs for more information");
+                                    Console.ResetColor();
+                                    Message("Directory " + outDir + " contains no files - set to cleanup downloaded files - see logs for more information", EventType.Information, 1000);
+
+                                    // Set status
+                                    isOutputFolderContainFiles = false;
+                                }
+                                else
+                                {
+                                    // Log
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine($"Directory " + outDir + " is not created successfully and contains no files - see logs for more information");
+                                    Console.ResetColor();
+                                    Message("Directory " + outDir + " is not created successfully and contains no files - see logs for more information", EventType.Error, 1001);
+
+                                    // Set status
+                                    isOutputFolderContainFiles = false;
+
+                                    // Count errors
+                                    Globals._errors++;
+                                }
+                            }
+                        }
+                        else
+                        {
+                            // The folder does not exist.
+                            Console.WriteLine("The folder does not exist.");
+                        }*/
+
+                        if (Directory.Exists(outDir) && (Directory.EnumerateFiles(outDir, "*.zip").FirstOrDefault() != null))
                         {
                             // Log
                             Console.ForegroundColor = ConsoleColor.Green;
@@ -1486,8 +1538,7 @@ namespace AzureDevOpsBackup
                         Console.WriteLine(isOutputFolderContainFilesStatusText);
                         Console.ResetColor();
                         Message(isOutputFolderContainFilesStatusText, EventType.Information, 1000);
-
-
+                        
                         // Count backups in backup folder
                         Backups.CountCurrentNumersOfBackup(outBackupDir);
 
@@ -1532,9 +1583,11 @@ namespace AzureDevOpsBackup
                     break;
             }
 
-            // End of program
-            Message($"End of application - {Globals.AppName}, v." + Globals._vData, EventType.Information, 1000);
-            Console.WriteLine($"\nEnd of application - {Globals.AppName}, v. {Globals._vData}\n");
+            // Log end of program
+            Globals.ApplicationEndMessage();
+
+            // Message($"End of application - {Globals.AppName}, v." + Globals._vData, EventType.Information, 1000);
+            // Console.WriteLine($"\nEnd of application - {Globals.AppName}, v. {Globals._vData}\n");
         }
 
         /*/// <summary>
@@ -1620,5 +1673,6 @@ namespace AzureDevOpsBackup
             BackupStatisticsData = !args.Contains("-norrd");
             BackupPackageInfo = !args.Contains("-nopackage");
         }*/
+
     }
 }

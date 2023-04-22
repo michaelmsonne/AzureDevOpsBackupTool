@@ -153,7 +153,7 @@ namespace AzureDevOpsBackup.Class
         {
             //Count backups in folder
             string searchPattern = "??-??-????-(??-??)";
-            int folderCount = 1;
+            int folderCount = 0;
             foreach (var directory in Directory.GetDirectories(outBackupDir, searchPattern, SearchOption.TopDirectoryOnly))
             {
                 if (Directory.GetFileSystemEntries(directory).Length > 0)

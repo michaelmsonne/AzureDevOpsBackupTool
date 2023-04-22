@@ -2,10 +2,15 @@
 
 ### Add
 - Added function to count current numers of backups in backup folder and report to email report
-- Added function test connection to REST API - if not connected, show the error details.
+- Added function test connection to REST API - if not connected, it will show the error details
+- Added function to test if needed system requrements is set
 
 ### Changed
 - Some changes to help text
+
+## Fixed
+- Fixed report status check for original .zip files letover in backup (if clenup parameter is set)
+- Fixed wrong number of current backups in backup folder in email report
 
 ## [1.0.5.4] - 03-4-2023
 
