@@ -69,7 +69,6 @@ namespace AzureDevOpsBackup
 
     internal class Program
     {
-        //private static int _totalBackupsIsDeleted;
         private static bool _cleanUpState;
 
         private static void Main(string[] args)
@@ -578,7 +577,7 @@ namespace AzureDevOpsBackup
                                             {
                                                 // Save file to disk
                                                 //File.WriteAllText(outDir + project.Name + "_" + repo.Name + "_tree.json", responseItems.Content);
-                                                System.IO.File.WriteAllText(outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json", responseItems.Content);
+                                                File.WriteAllText(outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json", responseItems.Content);
                                                 
                                                 // Log
                                                 Message("Saved file to disk: " + outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json", EventType.Information, 1000);
