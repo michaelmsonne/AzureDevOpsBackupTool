@@ -1584,9 +1584,6 @@ namespace AzureDevOpsBackup
 
             // Log end of program
             Globals.ApplicationEndMessage();
-
-            // Message($"End of application - {Globals.AppName}, v." + Globals._vData, EventType.Information, 1000);
-            // Console.WriteLine($"\nEnd of application - {Globals.AppName}, v. {Globals._vData}\n");
         }
 
         /*/// <summary>
