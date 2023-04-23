@@ -63,8 +63,6 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\tA timestamped folder containing the backup will be created within this directory unless --backup");
             Console.WriteLine("\tis being specified for a custom output folder and then what you set from above parameters");
             Console.WriteLine();
-            Console.WriteLine($"{Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName);
-            Console.WriteLine();
         }
 
         public static void DisplayInfo()
