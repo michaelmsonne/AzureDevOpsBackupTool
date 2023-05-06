@@ -1,4 +1,4 @@
-## [1.0.5.5] - xx-x-2023
+## [1.0.5.5] - 06-05-2023
 
 ### Add
 - Added function to count current numers of backups in backup folder and report to email report
