@@ -127,7 +127,7 @@ namespace AzureDevOpsBackup.Class
                 $"<td style=\"width: 33.3333%; height: 18px;\">{isDaysToKeepNotDefaultStatusText}</td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Number of current backups in backup folder:</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><b>{Globals._currentBackupsInBackupFolderCount}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">Multiple backups can be created at the same day, so there can be more here then days set to keep</td></tr><tr style=\"height: 18px;\">" +
+                $"<td style=\"width: 33.3333%; height: 18px;\">Multiple backups can be created at the same day, so there can be more backups then days set to keep</td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Old backup(s) deleted in backup folder:</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{totalBackupsIsDeletedStatusText}</td></tr></table>" +
