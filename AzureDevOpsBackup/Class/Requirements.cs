@@ -19,6 +19,7 @@ namespace AzureDevOpsBackup.Class
             {
                 // Check if the LongPathsEnabled registry key exists and is set to 1
                 Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.LocalMachine.OpenSubKey("SYSTEM\\CurrentControlSet\\Control\\FileSystem");
+                // ReSharper disable once PossibleNullReferenceException
                 int value = (int)key.GetValue("LongPathsEnabled", 0);
                 return value == 1;
             }
