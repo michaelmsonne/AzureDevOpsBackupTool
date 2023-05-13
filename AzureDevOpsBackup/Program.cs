@@ -119,6 +119,7 @@ namespace AzureDevOpsBackup
             
             var attributes = typeof(Program).GetTypeInfo().Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute));
             var assemblyTitleAttribute = attributes.SingleOrDefault() as AssemblyTitleAttribute;
+
             // Set application name in code
             Globals.AppName = assemblyTitleAttribute?.Title;
             Globals._currentExeFileName = Path.GetFileName(Process.GetCurrentProcess().MainModule?.FileName);
@@ -137,8 +138,6 @@ namespace AzureDevOpsBackup
 
             // Log start of program
             Globals.ApplicationStartMessage();
-            // Message($"Welcome to {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName, EventType.Information, 1000);
-            // Console.WriteLine($"\nWelcome to {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "\n");
 
             // Set Global Logfile properties
             FileLogger.DateFormat = "dd-MM-yyyy";
@@ -389,8 +388,8 @@ namespace AzureDevOpsBackup
                         var checkConnectionToAzureDevOps = new RestClient(baseUrl + "_apis/projects?" + version);
                         var checkConnectionToAzureDevOpsGet = new RestRequest(Method.GET);
 
+                        // Connect
                         checkConnectionToAzureDevOpsGet.AddHeader("Authorization", auth);
-
                         IRestResponse responsecheckConnectionToAzureDevOpsGet = checkConnectionToAzureDevOps.Execute(checkConnectionToAzureDevOpsGet);
 
                         if (responsecheckConnectionToAzureDevOpsGet.StatusCode == HttpStatusCode.OK)
@@ -1616,6 +1615,5 @@ namespace AzureDevOpsBackup
             BackupStatisticsData = !args.Contains("-norrd");
             BackupPackageInfo = !args.Contains("-nopackage");
         }*/
-
     }
 }
