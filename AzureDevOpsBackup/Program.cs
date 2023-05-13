@@ -80,7 +80,6 @@ namespace AzureDevOpsBackup
             int totalTreeFilesIsBackup = 0;
             int repoItemsCount = 0;
             int repoCount = 0;
-            //int oldLogFilesToDeleteCount = 0;
             var emailStatusMessage = "";
             string server = null;
             string serverPort = null;
@@ -103,7 +102,6 @@ namespace AzureDevOpsBackup
             // Set default status for backup job
             bool isBackupOk = false;
             bool isBackupOkAndUnZip = false;
-            //bool oldLogfilesToDelete = false;
             bool noProjectsToBackup = false;
             bool isOutputFolderContainFiles = false;
 
