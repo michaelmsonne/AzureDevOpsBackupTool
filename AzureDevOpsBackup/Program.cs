@@ -1420,57 +1420,6 @@ namespace AzureDevOpsBackup
                         Message("Checking if directory " + outDir + " contains files", EventType.Information, 1000);
 
                         // Check if done for status in mail report
-                        /*
-                        if (Directory.Exists(outDir))
-                        {
-                            var zipFiles = Directory.EnumerateFiles(outDir, "*.zip");
-
-                            if (zipFiles.Any())
-                            {
-                                // Log
-                                Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine($"Directory " + outDir + " contains files");
-                                Console.ResetColor();
-                                Message("Directory " + outDir + " contains files", EventType.Information, 1000);
-
-                                // Set status
-                                isOutputFolderContainFiles = true;
-                            }
-                            else
-                            {
-                                if (_cleanUpState)
-                                {
-                                    // Log
-                                    Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Directory " + outDir + " contains no files - set to cleanup downloaded files - see logs for more information");
-                                    Console.ResetColor();
-                                    Message("Directory " + outDir + " contains no files - set to cleanup downloaded files - see logs for more information", EventType.Information, 1000);
-
-                                    // Set status
-                                    isOutputFolderContainFiles = false;
-                                }
-                                else
-                                {
-                                    // Log
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine($"Directory " + outDir + " is not created successfully and contains no files - see logs for more information");
-                                    Console.ResetColor();
-                                    Message("Directory " + outDir + " is not created successfully and contains no files - see logs for more information", EventType.Error, 1001);
-
-                                    // Set status
-                                    isOutputFolderContainFiles = false;
-
-                                    // Count errors
-                                    Globals._errors++;
-                                }
-                            }
-                        }
-                        else
-                        {
-                            // The folder does not exist.
-                            Console.WriteLine("The folder does not exist.");
-                        }*/
-
                         if (Directory.Exists(outDir) && (Directory.EnumerateFiles(outDir, "*.zip").FirstOrDefault() != null))
                         {
                             // Log
