@@ -8,9 +8,9 @@ using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Net;
 using AzureDevOpsBackup.Class;
 using static AzureDevOpsBackup.Class.FileLogger;
-using System.Net;
 
 // ReSharper disable RedundantAssignment
 // ReSharper disable NotAccessedVariable
