@@ -28,6 +28,7 @@ if ($AzureDevOpsBackupFile) {
     $OutputFolderPath = $OutputFolderPath.TrimEnd("\")
     Get-ChildItem -Path $OutputFolderPath -Filter $SearchPattern -File | Where-Object CreationTime -lt (Get-Date).AddSeconds(-2) | Remove-Item -Force
 
+    # Get the version of the AzureDevOpsBackup.exe file
     $FileVersion = [System.Diagnostics.FileVersionInfo]::GetVersionInfo($AzureDevOpsBackupFile.FullName).FileVersion
 
     # Rename the file to include version and build time
@@ -41,6 +42,8 @@ if ($AzureDevOpsBackupFile) {
         Write-Host "Creating .\old folder..."
         New-Item -Path $OldFolderPath -ItemType Directory
     }
+
+    # Copy old files to the .\old folder while keeping the original filenames
     $OldFiles = Get-ChildItem -Path $OutputFolderPath -Filter $SearchPattern -Recurse | Where-Object { $_.DirectoryName -ne $OldFolderPath }
     foreach ($OldFile in $OldFiles) {
         $OldFileDestinationPath = Join-Path -Path $OldFolderPath -ChildPath $OldFile.Name
