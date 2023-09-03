@@ -1,3 +1,8 @@
+## [1.0.5.6] - 03-09-2023
+
+### Changed
+- Upgraded System.Text.Json to 7.0.3
+
 ## [1.0.5.5] - 06-05-2023
 
 ### Add
