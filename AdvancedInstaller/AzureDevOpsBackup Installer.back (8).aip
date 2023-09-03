@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="20.2" version="20.9.1" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{9B0F5C3A-F049-4A7F-A776-DAA7871CB253}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="20.2" version="20.6" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{9B0F5C3A-F049-4A7F-A776-DAA7871CB253}">
   <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
     <ROW Name="HiddenItems" Value="AppXProductDetailsComponent;AppXDependenciesComponent;AppXAppDetailsComponent;AppXVisualAssetsComponent;AppXCapabilitiesComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent;FixupComponent;MsiXDiffComponent;MsixManifestEditorComponent;ActSyncAppComponent;CPLAppletComponent;AutorunComponent;GameUxComponent;SilverlightSlnComponent;SharePointSlnComponent"/>
   </COMPONENT>
@@ -15,7 +15,7 @@
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Numerics.Vectors.dll" Value="..\AzureDevOpsBackup\packages\System.Numerics.Vectors.4.5.0\lib\net46"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Runtime.CompilerServices.Unsafe.dll" Value="..\AzureDevOpsBackup\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Encodings.Web.dll" Value="..\AzureDevOpsBackup\packages\System.Text.Encodings.Web.7.0.0\lib\net462"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Json.dll" Value="..\AzureDevOpsBackup\packages\System.Text.Json.7.0.3\lib\net462"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Json.dll" Value="..\AzureDevOpsBackup\packages\System.Text.Json.7.0.2\lib\net462"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Threading.Tasks.Extensions.dll" Value="..\AzureDevOpsBackup\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.ValueTuple.dll" Value="..\AzureDevOpsBackup\packages\System.ValueTuple.4.5.0\lib\net47"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe" Value="AzureDevOpsBackup.exe"/>
@@ -35,13 +35,13 @@
     <ROW Property="AI_UPGRADE" Value="No"/>
     <ROW Property="ALLUSERS" Value="1"/>
     <ROW Property="ARPCOMMENTS" Value="This installer database contains the logic and data required to install [|ProductName] v. [|ProductVersion]" ValueLocId="*"/>
-    <ROW Property="AppVersion" Value="1.0.5.6"/>
+    <ROW Property="AppVersion" Value="1.0.5.5"/>
     <ROW Property="IAgree" Value="No" Type="4"/>
     <ROW Property="Manufacturer" Value="Michael Morten Sonne"/>
     <ROW Property="ProductCode" Value="1033:{AC9929FD-4693-47B7-830B-AE484BD4C29B} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Azure DevOps Backup"/>
-    <ROW Property="ProductVersion" Value="1.0.5.6" Options="24"/>
+    <ROW Property="ProductVersion" Value="1.0.5.5" Options="16"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{B5566068-564D-4227-A015-483DA03A0F0E}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
@@ -115,7 +115,7 @@
     <ROW Path="&lt;AI_DICTS&gt;ui_en.ail"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DigCertStoreComponent">
-    <ROW TimeStampUrl="http://timestamp.sectigo.com" SignerDescription="[|ProductName]" SignOptions="7" SignTool="0" UseSha256="1" Thumbprint="d6a630b8f65c473c19f8b694491130073fccdb32 Subject: Michael Morten Sonne&#10;Issuer: Sectigo Public Code Signing CA R36&#10;Valid from 02/19/2023 to 05/19/2026" Subject="CN=Michael Morten Sonne, O=Michael Morten Sonne, S=Hovedstaden, C=DK" Store="User\MY"/>
+    <ROW TimeStampUrl="http://timestamp.sectigo.com" SignerDescription="[|ProductName]" SignOptions="7" SignTool="0" UseSha256="1" Thumbprint="d6a630b8f65c473c19f8b694491130073fccdb32 Subject: Michael Morten Sonne&#10;Issuer: Sectigo Public Code Signing CA R36&#10;Valid from 02/19/2023 to 05/19/2026&#10;User\MY" Subject="CN=Michael Morten Sonne, O=Michael Morten Sonne, S=Hovedstaden, C=DK"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DynamicPropertyComponent">
     <ROW Property="ProductVersion" Type="2" SourcePath="AzureDevOpsBackup.exe"/>
