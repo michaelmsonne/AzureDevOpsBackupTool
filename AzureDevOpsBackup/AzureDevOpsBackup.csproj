@@ -155,10 +155,11 @@
   "C:\Program Files (x86)\Windows Kits\10\App Certification Kit\signtool.exe" sign /n "Michael Morten Sonne" /fd sha256 /tr http://timestamp.sectigo.com /td sha256 /as /v $(TargetDir)*.exe
   echo "Release build - signing output file(s) done!".
   echo "Release build - rename output file!".
-  powershell -command $(SolutionDir)\Scripts\RenameOutputRelease.ps1
+  powershell -ExecutionPolicy Bypass -File "$(SolutionDir)\Scripts\RenameOutputRelease.ps1" "$(TargetDir)"
 ) ELSE (
   echo "Debug build - rename output file!".
-  powershell -command $(SolutionDir)\Scripts\RenameOutputDebug .ps1
-)</PostBuildEvent>
+  powershell -ExecutionPolicy Bypass -File "$(SolutionDir)\Scripts\RenameOutputDebug.ps1" "$(TargetDir)"
+)
+</PostBuildEvent>
   </PropertyGroup>
 </Project>
