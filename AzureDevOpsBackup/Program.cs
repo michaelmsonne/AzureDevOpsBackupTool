@@ -1546,6 +1546,84 @@ namespace AzureDevOpsBackup
         }
 
         /*
+
+        /// <summary>
+        /// Parses all provided arguments
+        /// </summary>
+        /// <param name="args">String array with arguments passed to this console application</param>
+        private static void ParseArguments(IList<string> args)
+        {
+            // Initialize optional argument values to their defaults
+            unZip = false;
+            cleanUp = false;
+            BackupDaysToKeep = 0;
+            UseHttps = false;
+            BackupStatisticsData = true;
+            BackupPackageInfo = true;
+
+            // Iterate through the arguments and parse them
+            for (int i = 0; i < args.Length; i++)
+            {
+                string arg = args[i].ToLower();
+                        switch (arg)
+                {
+                    case "--token":
+                        Token = args[++i];
+                        break;
+                    case "--org":
+                        OrgName = args[++i];
+                        break;
+                    case "--backup":
+                        outFolder = args[++i];
+                        break;
+                    case "--server":
+                        server = args[++i];
+                        break;
+                    case "--port":
+                        if (int.TryParse(args[++i], out int portValue))
+                        {
+                            Port = portValue;
+                        }
+                        break;
+                    case "--from":
+                        from = args[++i];
+                        break;
+                    case "--toemail":
+                        toEmail = args[++i];
+                        break;
+                    case "--tokenfile":
+                                // Save a token to access the API in Azure DevOps to an encrypted token.bin file
+                                // You can handle this case as needed
+                        break;
+                    case "--unzip":
+                        unZip = true;
+                        break;
+                    case "--cleanup":
+                        cleanUp = true;
+                        break;
+                    case "--daystokeepbackup":
+                        if (int.TryParse(args[++i], out int daysValue))
+                        {
+                            BackupDaysToKeep = daysValue;
+                        }
+                        break;
+                    case "--simpelreport":
+                        // Handle this optional argument as needed
+                        break;
+                    case "--priority":
+                        // Handle this optional argument as needed
+                        break;
+                    default:
+                        WriteOutput($"WARNING: Ignoring unknown argument '{arg}'");
+                        break;
+                }
+            }
+        }
+
+        */
+
+
+        /*
         
         private static void Main(string[] args)
         {
