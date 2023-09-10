@@ -1545,7 +1545,60 @@ namespace AzureDevOpsBackup
             Globals.ApplicationEndMessage();
         }
 
-        /*/// <summary>
+        /*
+        
+        private static void Main(string[] args)
+        {
+            // Parse the provided arguments
+            if (args.Length > 0)
+            {
+                ParseArguments(args);
+            }
+
+            WriteOutput();
+
+            var appVersion = Assembly.GetExecutingAssembly().GetName().Version;
+
+            // Check if parameters have been provided
+            if (args.Length == 0)
+            {
+                // No arguments have been provided
+                WriteOutput("ERROR: No arguments provided");
+                WriteOutput();
+
+                DisplayHelp();
+
+                Environment.Exit(1);
+            }
+
+            // Make sure the provided arguments have been provided
+            if (string.IsNullOrEmpty(PfSenseServerDetails.Username) ||
+                string.IsNullOrEmpty(PfSenseServerDetails.Password) ||
+                string.IsNullOrEmpty(PfSenseServerDetails.ServerAddress))
+            {
+                WriteOutput("ERROR: Not all required options have been provided");
+
+                DisplayHelp();
+
+                Environment.Exit(1);
+            }
+
+            // Check if the output filename parsed resulted in an error
+            if (!string.IsNullOrEmpty(OutputFileName) && OutputFileName.Equals("ERROR", StringComparison.InvariantCultureIgnoreCase))
+            {
+                WriteOutput("ERROR: Provided output filename contains illegal characters");
+
+                Environment.Exit(1);
+            }
+
+            // Retrieve the backup file
+            RetrieveBackupFile();
+
+            Environment.Exit(0);
+        }
+
+
+        /// <summary>
         /// Parses all provided arguments
         /// </summary>
         /// <param name="args">String array with arguments passed to this console application</param>
