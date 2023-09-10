@@ -73,7 +73,7 @@ namespace AzureDevOpsBackup
 
         private static void Main(string[] args)
         {
-            // Global variabels
+            // Global variabels for tool
             int projectCount = 0;
             int totalFilesIsBackupUnZipped = 0;
             int totalBlobFilesIsBackup = 0;
@@ -105,25 +105,29 @@ namespace AzureDevOpsBackup
             bool noProjectsToBackup = false;
             bool isOutputFolderContainFiles = false;
 
-            // Check requirements for tool
+            // Check requirements for tool to work
             Requirements.SystemCheck();
 
-            // Get key to use for encryption
+            // Get key to use for encryption and decryption
             var key = SecureArgumentHandlerToken.GetComputerId();
 
-            // Get application data to later use in tool
+            // Get application data to later use in tool and log
             AssemblyCopyrightAttribute copyright = Assembly.GetExecutingAssembly().GetCustomAttributes(typeof(AssemblyCopyrightAttribute), false)[0] as AssemblyCopyrightAttribute;
             // ReSharper disable once PossibleNullReferenceException
             Globals._copyrightData = copyright.Copyright;
+
+            // Get application data to later use in tool and log
             Globals._vData = Assembly.GetEntryAssembly()?.GetName().Version.ToString();
-            
             var attributes = typeof(Program).GetTypeInfo().Assembly.GetCustomAttributes(typeof(AssemblyTitleAttribute));
             var assemblyTitleAttribute = attributes.SingleOrDefault() as AssemblyTitleAttribute;
 
-            // Set application name in code
+            // Set application name in code and log
             Globals.AppName = assemblyTitleAttribute?.Title;
+
+            // Set exe file name in code and log
             Globals._currentExeFileName = Path.GetFileName(Process.GetCurrentProcess().MainModule?.FileName);
 
+            // Set company name in code and log
             var fileName = Assembly.GetEntryAssembly()?.Location;
             if (fileName != null)
             {
@@ -131,22 +135,22 @@ namespace AzureDevOpsBackup
                 Globals._companyName = versionInfo.CompanyName;
             }
 
-            // Start timer for runtime
+            // Start timer for runtime of tool
             Stopwatch stopWatch = new Stopwatch();
             stopWatch.Start();
-            DateTime startTime = DateTime.Now; // get current time as start time
+            DateTime startTime = DateTime.Now; // get current time as start time for tool
 
-            // Log start of program
+            // Log start of program to log
             Globals.ApplicationStartMessage();
 
-            // Set Global Logfile properties
+            // Set Global Logfile properties for log
             FileLogger.DateFormat = "dd-MM-yyyy";
             DateTimeFormat = "dd-MM-yyyy HH:mm:ss";
             WriteOnlyErrorsToEventLog = false;
             WriteToEventLog = false;
             WriteToFile = true;
             
-            // Log
+            // Log start of program to log
             Message("Loaded log configuration into the program: " + Globals.AppName, EventType.Information, 1000);
 
             // Check for required Args for application will work
@@ -219,10 +223,14 @@ namespace AzureDevOpsBackup
                 }
             }
 
-            // Log
+            // Log checking if the 7 required arguments is present to log
             Message("Checking if the 7 required arguments is present (--token, --org, --backup, --server, --port, --from, --to)", EventType.Information, 1000);
+
+            // Log to console checking if the 7 required arguments is present to log
             Console.ForegroundColor = ConsoleColor.Yellow;
             Console.WriteLine("Checking if the 7 required arguments is present (--token, --org, --backup, --server, --port, --from, --to)...");
+
+            // Reset color
             Console.ResetColor();
 
             var i = args.Length > 1;
@@ -1520,15 +1528,20 @@ namespace AzureDevOpsBackup
 
                 // Not do the work
                 case true:
-                    // Log
+                    // Log checking of arguments required for this console application is missing
                     Message("Some of the 7 required arguments is missing: --token, --org, --backup, --server, --port, --from and --to!", EventType.Error, 1001);
+
+                    // Log checking of arguments required for this application is missing to console
                     Console.ForegroundColor = ConsoleColor.Red;
                     Console.WriteLine("\nSome of the 7 required arguments is missing: --token, --org, --backup, --server, --port, --from and --to!");
+
+                    // Reset color
                     Console.ResetColor();
+
                     break;
             }
 
-            // Log end of program
+            // Log end of program to console
             Globals.ApplicationEndMessage();
         }
 
