@@ -756,7 +756,7 @@ namespace AzureDevOpsBackup
                                                 // Get files from .zip folder to unzip
                                                 //ZipArchive archive = ZipFile.OpenRead(outDir + project.Name + "_" + repo.Name + "_blob.zip");
                                                 ZipArchive archive = ZipFile.OpenRead(outDir + project.Name + "_" + repo.Name + $"_{branchName}_blob.zip");
-                                                
+
                                                 foreach (Item item in items.Value)
                                                 {
                                                     // Work on all files/folders
@@ -841,8 +841,17 @@ namespace AzureDevOpsBackup
                                                         {
                                                             // Error
                                                             Message("Exception caught when trying to create data on disk: " + localRepoDirectory + item.Path + " - error: " + e, EventType.Error, 1001);
-                                                            Console.ForegroundColor = ConsoleColor.Green;
+                                                            Console.ForegroundColor = ConsoleColor.Red;
                                                             Console.WriteLine("Exception caught when trying to create data on disk: " + localRepoDirectory + item.Path + " - error: " + e);
+
+                                                            string combinedPath = Path.Combine(localRepoDirectory, item.Path);
+                                                            int combinedPathLength = combinedPath.Length;
+
+                                                            Message($"Combined Path Length: {combinedPathLength}", EventType.Error, 1000);
+                                                            Console.WriteLine($"Combined Path Length: {combinedPathLength}");
+
+                                                            Console.ReadKey();
+
                                                             Console.ResetColor();
 
                                                             // Set backup status
