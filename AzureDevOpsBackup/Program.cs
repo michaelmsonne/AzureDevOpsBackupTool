@@ -335,7 +335,12 @@ namespace AzureDevOpsBackup
 
                         // Set output folder name
                         string todaysdate = DateTime.Now.ToString("dd-MM-yyyy-(HH-mm)");
-                        string outDir = $"{outBackupDir}{todaysdate}\\";
+
+                        string outDir = outBackupDir + todaysdate + "\\";
+
+                        outDir = Path.GetFullPath(outDir);
+
+                        //string outDir = $"{outBackupDir}{todaysdate}\\";
 
                         // Output folder to backup to (without date stamp for backup) done
                         Message("Output folder is: " + outDir, EventType.Information, 1000);
@@ -756,7 +761,7 @@ namespace AzureDevOpsBackup
                                                 // Get files from .zip folder to unzip
                                                 //ZipArchive archive = ZipFile.OpenRead(outDir + project.Name + "_" + repo.Name + "_blob.zip");
                                                 ZipArchive archive = ZipFile.OpenRead(outDir + project.Name + "_" + repo.Name + $"_{branchName}_blob.zip");
-                                                
+
                                                 foreach (Item item in items.Value)
                                                 {
                                                     // Work on all files/folders
@@ -813,7 +818,7 @@ namespace AzureDevOpsBackup
                                                         try
                                                         {
                                                             //Try to save data to disk
-                                                            archive.GetEntry(item.ObjectId).ExtractToFile(localRepoDirectory + item.Path, true);
+                                                            archive.GetEntry(item.ObjectId).ExtractToFile(Path.GetFullPath(localRepoDirectory + item.Path), true);
 
                                                             // Log
                                                             Console.ForegroundColor = ConsoleColor.Yellow;
@@ -841,8 +846,17 @@ namespace AzureDevOpsBackup
                                                         {
                                                             // Error
                                                             Message("Exception caught when trying to create data on disk: " + localRepoDirectory + item.Path + " - error: " + e, EventType.Error, 1001);
-                                                            Console.ForegroundColor = ConsoleColor.Green;
+                                                            Console.ForegroundColor = ConsoleColor.Red;
                                                             Console.WriteLine("Exception caught when trying to create data on disk: " + localRepoDirectory + item.Path + " - error: " + e);
+
+                                                            string combinedPath = Path.Combine(localRepoDirectory, item.Path);
+                                                            int combinedPathLength = combinedPath.Length;
+
+                                                            //Message($"Combined Path Length: {combinedPathLength}", EventType.Error, 1000);
+                                                            //Console.WriteLine($"Combined Path Length: {combinedPathLength}");
+
+                                                            Console.ReadKey();
+
                                                             Console.ResetColor();
 
                                                             // Set backup status
@@ -1545,7 +1559,138 @@ namespace AzureDevOpsBackup
             Globals.ApplicationEndMessage();
         }
 
-        /*/// <summary>
+        /*
+
+        /// <summary>
+        /// Parses all provided arguments
+        /// </summary>
+        /// <param name="args">String array with arguments passed to this console application</param>
+        private static void ParseArguments(IList<string> args)
+        {
+            // Initialize optional argument values to their defaults
+            unZip = false;
+            cleanUp = false;
+            BackupDaysToKeep = 0;
+            UseHttps = false;
+            BackupStatisticsData = true;
+            BackupPackageInfo = true;
+
+            // Iterate through the arguments and parse them
+            for (int i = 0; i < args.Length; i++)
+            {
+                string arg = args[i].ToLower();
+                        switch (arg)
+                {
+                    case "--token":
+                        Token = args[++i];
+                        break;
+                    case "--org":
+                        OrgName = args[++i];
+                        break;
+                    case "--backup":
+                        outFolder = args[++i];
+                        break;
+                    case "--server":
+                        server = args[++i];
+                        break;
+                    case "--port":
+                        if (int.TryParse(args[++i], out int portValue))
+                        {
+                            Port = portValue;
+                        }
+                        break;
+                    case "--from":
+                        from = args[++i];
+                        break;
+                    case "--toemail":
+                        toEmail = args[++i];
+                        break;
+                    case "--tokenfile":
+                                // Save a token to access the API in Azure DevOps to an encrypted token.bin file
+                                // You can handle this case as needed
+                        break;
+                    case "--unzip":
+                        unZip = true;
+                        break;
+                    case "--cleanup":
+                        cleanUp = true;
+                        break;
+                    case "--daystokeepbackup":
+                        if (int.TryParse(args[++i], out int daysValue))
+                        {
+                            BackupDaysToKeep = daysValue;
+                        }
+                        break;
+                    case "--simpelreport":
+                        // Handle this optional argument as needed
+                        break;
+                    case "--priority":
+                        // Handle this optional argument as needed
+                        break;
+                    default:
+                        WriteOutput($"WARNING: Ignoring unknown argument '{arg}'");
+                        break;
+                }
+            }
+        }
+
+        */
+
+
+        /*
+        
+        private static void Main(string[] args)
+        {
+            // Parse the provided arguments
+            if (args.Length > 0)
+            {
+                ParseArguments(args);
+            }
+
+            WriteOutput();
+
+            var appVersion = Assembly.GetExecutingAssembly().GetName().Version;
+
+            // Check if parameters have been provided
+            if (args.Length == 0)
+            {
+                // No arguments have been provided
+                WriteOutput("ERROR: No arguments provided");
+                WriteOutput();
+
+                DisplayHelp();
+
+                Environment.Exit(1);
+            }
+
+            // Make sure the provided arguments have been provided
+            if (string.IsNullOrEmpty(PfSenseServerDetails.Username) ||
+                string.IsNullOrEmpty(PfSenseServerDetails.Password) ||
+                string.IsNullOrEmpty(PfSenseServerDetails.ServerAddress))
+            {
+                WriteOutput("ERROR: Not all required options have been provided");
+
+                DisplayHelp();
+
+                Environment.Exit(1);
+            }
+
+            // Check if the output filename parsed resulted in an error
+            if (!string.IsNullOrEmpty(OutputFileName) && OutputFileName.Equals("ERROR", StringComparison.InvariantCultureIgnoreCase))
+            {
+                WriteOutput("ERROR: Provided output filename contains illegal characters");
+
+                Environment.Exit(1);
+            }
+
+            // Retrieve the backup file
+            RetrieveBackupFile();
+
+            Environment.Exit(0);
+        }
+
+
+        /// <summary>
         /// Parses all provided arguments
         /// </summary>
         /// <param name="args">String array with arguments passed to this console application</param>
