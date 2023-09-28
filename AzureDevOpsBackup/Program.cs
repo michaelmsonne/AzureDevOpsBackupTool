@@ -852,8 +852,8 @@ namespace AzureDevOpsBackup
                                                             string combinedPath = Path.Combine(localRepoDirectory, item.Path);
                                                             int combinedPathLength = combinedPath.Length;
 
-                                                            Message($"Combined Path Length: {combinedPathLength}", EventType.Error, 1000);
-                                                            Console.WriteLine($"Combined Path Length: {combinedPathLength}");
+                                                            //Message($"Combined Path Length: {combinedPathLength}", EventType.Error, 1000);
+                                                            //Console.WriteLine($"Combined Path Length: {combinedPathLength}");
 
                                                             Console.ReadKey();
 
