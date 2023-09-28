@@ -335,7 +335,12 @@ namespace AzureDevOpsBackup
 
                         // Set output folder name
                         string todaysdate = DateTime.Now.ToString("dd-MM-yyyy-(HH-mm)");
-                        string outDir = $"{outBackupDir}{todaysdate}\\";
+
+                        string outDir = outBackupDir + todaysdate + "\\";
+
+                        outDir = Path.GetFullPath(outDir);
+
+                        //string outDir = $"{outBackupDir}{todaysdate}\\";
 
                         // Output folder to backup to (without date stamp for backup) done
                         Message("Output folder is: " + outDir, EventType.Information, 1000);
@@ -813,7 +818,7 @@ namespace AzureDevOpsBackup
                                                         try
                                                         {
                                                             //Try to save data to disk
-                                                            archive.GetEntry(item.ObjectId).ExtractToFile(localRepoDirectory + item.Path, true);
+                                                            archive.GetEntry(item.ObjectId).ExtractToFile(Path.GetFullPath(localRepoDirectory + item.Path), true);
 
                                                             // Log
                                                             Console.ForegroundColor = ConsoleColor.Yellow;
