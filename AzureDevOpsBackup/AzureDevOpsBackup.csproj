@@ -115,6 +115,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Class\ApplicationEndStatus.cs" />
     <Compile Include="Class\ApplicationInfo.cs" />
     <Compile Include="Class\Backups.cs" />
     <Compile Include="Class\CleanupLog.cs" />
@@ -126,6 +127,7 @@
     <Compile Include="Class\ReportSender.cs" />
     <Compile Include="Class\FileLogger.cs" />
     <Compile Include="Class\Files.cs" />
+    <Compile Include="Class\ReportSenderOptions.cs" />
     <Compile Include="Class\Requirements.cs" />
     <Compile Include="Class\SecureArgumentHandler.cs" />
     <Compile Include="Class\SecureArgumentHandlerToken.cs" />
