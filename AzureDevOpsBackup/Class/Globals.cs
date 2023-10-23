@@ -30,14 +30,14 @@ namespace AzureDevOpsBackup.Class
         public static void ApplicationStartMessage()
         {
             // Log start of program
-            Message($"Welcome to {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName, EventType.Information, 1000);
-            Console.WriteLine($"\nWelcome to {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "\n");
+            Message($"Welcome to {AppName}, v." + _vData + " by " + _companyName, EventType.Information, 1000);
+            Console.WriteLine($"\nWelcome to {AppName}, v." + _vData + " by " + _companyName + "\n");
         }
         public static void ApplicationEndMessage()
         {
             // Log end of program
-            Message($"End of application - {Globals.AppName}, v." + Globals._vData, EventType.Information, 1000);
-            Console.WriteLine($"\nEnd of application - {Globals.AppName}, v. {Globals._vData}\n");
+            Message($"End of application - {AppName}, v." + _vData, EventType.Information, 1000);
+            Console.WriteLine($"\nEnd of application - {AppName}, v. {_vData}\n");
         }
     }
 }
