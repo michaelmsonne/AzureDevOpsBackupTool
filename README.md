@@ -104,6 +104,8 @@ Check out the examples here:
 - Remember to select: Install .NET Framework 4.8 SDK
 - Build the solution in Visual Studio
 
+**N.B:** Cant use a newer v. of RestSharp - for now, as there is major changes to that.
+
 ---
 
 # Sponsors
