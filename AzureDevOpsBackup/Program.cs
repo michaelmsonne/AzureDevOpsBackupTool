@@ -119,7 +119,7 @@ namespace AzureDevOpsBackup
             DateTime startTime = DateTime.Now; // get current time as start time for tool
 
             // Log start of program to log
-            Globals.ApplicationStartMessage();
+            ApplicationEndStatus.ApplicationStartMessage();
 
             // Set Global Logfile properties for log
             FileLogger.DateFormat = "dd-MM-yyyy";
@@ -231,23 +231,9 @@ namespace AzureDevOpsBackup
                         if (priorityIndex != -1 && args.Length > priorityIndex + 1)
                         {
                             string priorityArg = args[priorityIndex + 1].ToLower();
-                            switch (priorityArg)
-                            {
-                                case "low":
-                                    Globals.EmailPriority = System.Net.Mail.MailPriority.Low;
-                                    break;
-                                case "high":
-                                    Globals.EmailPriority = System.Net.Mail.MailPriority.High;
-                                    break;
-                                default:
-                                    Message("Invalid email priority argument. Defaulting to normal Mail Priority.", EventType.Warning, 1000);
-                                    Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine("Invalid email priority argument. Defaulting to normal Mail Priority.");
-                                    break;
-                            }
-                            Message("Email report priority arguments is set to: " + Globals.EmailPriority, EventType.Information, 1000);
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine("Email report priority arguments is set to: " + Globals.EmailPriority);
+
+                            // Convert the string to MailPriority enum using a function
+                            Globals.EmailPriority = ReportSenderOptions.ParseEmailPriority(priorityArg);
                         }
 
                         // Start URL parse to AIP access
@@ -1534,7 +1520,7 @@ namespace AzureDevOpsBackup
             }
 
             // Log end of program to console
-            Globals.ApplicationEndMessage();
+            ApplicationEndStatus.ApplicationEndMessage();
         }
 
         /*

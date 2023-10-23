@@ -26,18 +26,5 @@ namespace AzureDevOpsBackup.Class
         public static int _currentBackupsInBackupFolderCount;
         public static int _oldLogFilesToDeleteCount;
         public static bool _oldLogfilesToDelete;
-
-        public static void ApplicationStartMessage()
-        {
-            // Log start of program
-            Message($"Welcome to {AppName}, v." + _vData + " by " + _companyName, EventType.Information, 1000);
-            Console.WriteLine($"\nWelcome to {AppName}, v." + _vData + " by " + _companyName + "\n");
-        }
-        public static void ApplicationEndMessage()
-        {
-            // Log end of program
-            Message($"End of application - {AppName}, v." + _vData, EventType.Information, 1000);
-            Console.WriteLine($"\nEnd of application - {AppName}, v. {_vData}\n");
-        }
     }
 }
