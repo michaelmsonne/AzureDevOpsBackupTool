@@ -1,3 +1,8 @@
+## [1.0.5.7] - xx-xx-2023 - net released
+
+### Changed
+- Typo in simpel report layout
+
 ## [1.0.5.6] - 03-09-2023
 
 ### Changed
