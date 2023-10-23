@@ -1,4 +1,4 @@
-## [1.0.5.7] - xx-xx-2023 - net released
+## [1.0.5.7] - xx-xx-2023 - not released
 
 ### Changed
 - Typo in simpel report layout
