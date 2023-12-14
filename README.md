@@ -6,10 +6,74 @@
   <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/downloads/michaelmsonne/AzureDevOpsBackupTool/total.svg"></a>
 </p>
 
+<div align="center">
+  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool/issues/new?assignees=&labels=bug&template=01_BUG_REPORT.md&title=bug%3A+">Report a Bug</a>
+  ·
+  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool/issues/new?assignees=&labels=enhancement&template=02_FEATURE_REQUEST.md&title=feat%3A+">Request a Feature</a>
+  .
+  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool/discussions">Ask a Question</a>
+</div>
+
+<div align="center">
+<br />
+
+</div>
+
+## Table of Contents
+- [Introduction](#introduction)
+- [Contents](#contents)
+- [Features](#features)
+- [Download](#download)
+- [Getting Started](#getting-started)
+  - [Prerequisites](#prerequisites)
+  - [Installation](#installation)
+- [Usage](#usage)
+- [Examples](#examples)
+- [Contributing](#contributing)
+- [Support](#support)
+- [License](#license)
+
 # Introduction
 Azure DevOps is a cloud service to manage source code and collaborate between development teams. It integrates perfectly with both Visual Studio and Visual Studio Code and other IDE´s and tools there is using the "Git".
 While your code is perfectly safe on the Azure infrastructure hosted by Microsoft, there are cases where a centralized local backup of all projects and repositories is needed. These might include Corporate Policies, Disaster Recovery and Business Continuity Plans.
 We can download a repository from Azure DevOps as a Zip file, but this may not be practical if we have a considerable amount of projects and repositories and need them backed up on a regular basis. To do this, we can use the Azure DevOps API, as explained here: https://learn.microsoft.com/en-us/rest/api/azure/devops/?view=azure-devops-rest-7.1 💪
+
+## Contents
+
+Outline the file contents of the repository. It helps users navigate the codebase, build configuration and any related assets.
+
+| File/folder        | Description                                 |
+|--------------------|---------------------------------------------|
+| `AzureDevOpsBackup`| Source code.                                |
+| `docs`             | Documents/pictures.                         |
+| `.gitignore`       | Define what to ignore at commit time.       |
+| `CHANGELOG.md`     | List of changes to the sample.              |
+| `CONTRIBUTING.md`  | Guidelines for contributing to the TEMPLATE.|
+| `README.md`        | This README file.                           |
+| `SECURITY.md`      | This README file.                           |
+| `LICENSE`          | The license for the AzureDevOpsBackupTool.  |
+
+## Features
+
+### Overall:
+- Asynchronous Resolution: Utilizes asynchronous processing for improved performance and responsiveness, allowing users to continue working while backups are being created.
+- Simplicity and Ease of Use: Provides a straightforward and user-friendly method for creating backups from Azure DevOps repositories.
+
+### List:
+- Backup Functionality:
+  - Repository Backup: Enables users to create local backups of Azure DevOps repositories.
+  - Customizable Backup Options: Offers various command-line options to tailor the backup process, including specifying backup directories, token authentication, cleanup, backup retention period, and more.
+  - Zip File Handling: Ability to download repository items as ZIP files and organize them locally, optionally extracting them into a directory structure using the --unzip argument.
+  - Automated Cleanup: Supports cleanup functionality to manage the disk space occupied by the backup files.
+  - Backup Retention: Allows users to specify the number of days to retain backups, automatically removing older backups based on the set retention period using the --daystokeepbackup argument.
+
+- Email Reporting:
+  - Email Notifications: Sends detailed email reports upon backup completion, providing status updates, backup job information, and relevant details.
+  - Email Customization: Offers different email layouts (--simpelreportlayout) to cater to varying preferences or requirements.
+  - Priority Configuration: Provides the option to set email priority (--priority) for the backup completion notification.
+ 
+- Logging:
+  - Job Logging: Stores logs for backup jobs in a designated folder (.\Log) for a defined period (default: 30 days) beside the AzureDevOpsBackup.exe executable.
 
 ## Download
 
@@ -17,7 +81,7 @@ We can download a repository from Azure DevOps as a Zip file, but this may not b
 
 [Version History](CHANGELOG.md)
 
-## Usage Instructions on Windows
+## Getting Started
 
 1. Downloaded the installer from releases to any location on a Windows machine where you want to use the tool
 2. Run the downloaded installer and select where you will install the tool
@@ -50,6 +114,8 @@ When we get to the repository level we don’t need to make individual API calls
 
 Note we are also saving the original JSON item list we got from the repository call. This will be needed to map the files inside the Zip package, because these are presented in a single flat directory and their names are the object ids and not their actual names and extension. This is where the --unzip argument enters. If it’s omitted, the process does not go further and we get a simple backup: for every repository of each project we get a Zip file with the content and a JSON file to map it.
 
+## Usage
+
 Mandatory arguments is: **`--token, --org, --outdir, --server, --port, --from and --to`**
 
 If the **--unzip** argument is present, the program will create a directory for each repository based on the information provided by each Zip/JSON file pair. In this directory, we will get the original file and folder structure with real file names and extensions. Looping through all the items on the JSON list file, we consider a simple condition: if the item is a folder we create the directory according to the item.path property. Otherwise, we assume it’s a blob and we extract it from the Zip archive into the corresponding directory assigning the original file name and extension.
@@ -71,6 +137,8 @@ This is not an exhaustive method to retrieve every artifact on Azure DevOps. The
 However, it’s a good starting point to backup your Azure DevOps projects and keep a local repository of these like I do! 😜😉
 
 There is send an email report to the specified email address when the backup is done with status and usefull information about the backup job and more information.
+
+## Examples
 
 Check out the examples here:
 
@@ -96,7 +164,7 @@ Check out the examples here:
 
 ---
 
-## How to build
+## Building
 
 - Get [Visual Studio 2022](https://visualstudio.microsoft.com/vs/community/) (Community Edition is fine)
 - Install ".NET desktop development" workload  
@@ -107,6 +175,39 @@ Check out the examples here:
 **N.B:** Cant use a newer v. of RestSharp - for now, as there is major changes to that.
 
 ---
+
+# Contributing
+If you want to contribute to this project, please open an issue or submit a pull request. I welcome contributions :)
+
+See [CONTRIBUTING](CONTRIBUTING) for more information.
+
+First off, thanks for taking the time to contribute! Contributions are what makes the open-source community such an amazing place to learn, inspire, and create. Any contributions you make will benefit everybody else and are **greatly appreciated**.
+Feel free to send pull requests or fill out issues when you encounter them. I'm also completely open to adding direct maintainers/contributors and working together! :)
+
+Please try to create bug reports that are:
+
+- _Reproducible._ Include steps to reproduce the problem.
+- _Specific._ Include as much detail as possible: which version, what environment, etc.
+- _Unique._ Do not duplicate existing opened issues.
+- _Scoped to a Single Bug._ One bug per report.´´
+
+# Support
+
+Commercial support
+
+This project is open-source and I invite everybody who can and will to contribute, but I cannot provide any support because I only created this as a "hobby project" ofc. with tbe best in mind. For commercial support, please contact me on LinkedIn so we can discuss the possibilities. It’s my choice to work on this project in my spare time, so if you have commercial gain from this project you should considering sponsoring me.
+
+Thanks.
+
+Reach out to the maintainer at one of the following places:
+
+- [GitHub discussions](https://github.com/michaelmsonne/TEMPLATE/discussions)
+- The email which is located [in GitHub profile](https://github.com/michaelmsonne)
+
+# License
+This project is licensed under the **MIT License** - see the LICENSE file for details.
+
+See [LICENSE](LICENSE) for more information.
 
 # Sponsors
 ## Advanced Installer
