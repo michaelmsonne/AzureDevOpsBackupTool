@@ -73,7 +73,7 @@ Outline the file contents of the repository. It helps users navigate the codebas
   - Priority Configuration: Provides the option to set email priority (--priority) for the backup completion notification.
  
 - Logging:
-  - Job Logging: Stores logs for backup jobs in a designated folder (.\Log) for a defined period (default: 30 days) beside the AzureDevOpsBackup.exe executable.
+  - Job Logging: Stores logs for backup jobs in a designated folder (.\Log) for a defined period (default: 30 days) beside the **AzureDevOpsBackup.exe** executable.
 
 ## Download
 
