@@ -1,4 +1,4 @@
-## [1.0.5.7] - 11-03-2024 - not released
+## [1.0.5.7] - 11-03-2024
 
 ### Add
 - Add link to blog in about
