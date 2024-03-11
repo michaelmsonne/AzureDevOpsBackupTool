@@ -36,7 +36,7 @@ namespace AzureDevOpsBackup.Class
                         Globals._totalBackupsIsDeleted++;
 
                         // Log
-                        Message("Deleted old backup folder: " + dir + ".", EventType.Information, 1000);
+                        Message("> Deleted old backup folder: " + dir + ".", EventType.Information, 1000);
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("Deleted old backup folder: " + dir + ".");
                         Console.ResetColor();
@@ -46,7 +46,7 @@ namespace AzureDevOpsBackup.Class
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        Message("Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
+                        Message("! Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.");
                         Console.ResetColor();
@@ -103,7 +103,7 @@ namespace AzureDevOpsBackup.Class
                         Globals._totalBackupsIsDeleted++;
 
                         // Log
-                        Message("Deleted old backup folder: " + dir, EventType.Information, 1000);
+                        Message("> Deleted old backup folder: " + dir, EventType.Information, 1000);
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         Console.WriteLine("Deleted old backup folder: " + dir);
                         Console.ResetColor();
@@ -113,7 +113,7 @@ namespace AzureDevOpsBackup.Class
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        Message("Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
+                        Message("! Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("Unable to delete old backup folder: " + dir + ". Make sure the account you use to run this tool has delete rights to this location.");
                         Console.ResetColor();

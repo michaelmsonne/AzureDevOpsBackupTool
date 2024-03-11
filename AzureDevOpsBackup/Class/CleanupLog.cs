@@ -31,9 +31,9 @@ namespace AzureDevOpsBackup.Class
                         fi.Delete();
 
                         // Log
-                        Message("Deleted old log file: " + fi, EventType.Information, 1000);
+                        Message("> Deleted old log file: '" + fi + "'", EventType.Information, 1000);
                         Console.ForegroundColor = ConsoleColor.Yellow;
-                        Console.WriteLine("Deleted old log file: " + fi);
+                        Console.WriteLine("Deleted old log file: '" + fi + "'");
                         Console.ResetColor();
 
                         // Set status
@@ -42,9 +42,9 @@ namespace AzureDevOpsBackup.Class
                     }
                     catch (UnauthorizedAccessException)
                     {
-                        Message("Unable to delete old log file: " + fi + ". Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
+                        Message("! Unable to delete old log file: '" + fi + "'. Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Unable to delete old log file: " + fi + ". Make sure the account you use to run this tool has delete rights to this location.");
+                        Console.WriteLine("Unable to delete old log file: '" + fi + "'. Make sure the account you use to run this tool has delete rights to this location.");
                         Console.ResetColor();
 
                         // Count errors
@@ -53,9 +53,9 @@ namespace AzureDevOpsBackup.Class
                     catch (Exception ex)
                     {
                         // Log
-                        Message("Sorry, we are unable to delete old log file: " + fi + "Error: " + ex, EventType.Error, 1001);
+                        Message("Sorry, we are unable to delete old log file: '" + fi + "' - Error: " + ex, EventType.Error, 1001);
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("Sorry, we are unable to delete old log file: " + fi + "Error: " + ex);
+                        Console.WriteLine("Sorry, we are unable to delete old log file: '" + fi + "' - Error: " + ex);
                         Console.ResetColor();
 
                         // Count errors
@@ -68,9 +68,9 @@ namespace AzureDevOpsBackup.Class
             if (Globals._oldLogfilesToDelete)
             {
                 // Log
-                Message($"There was {Globals._oldLogFilesToDeleteCount} old log files to delete (-30 days)", EventType.Information, 1000);
+                Message($"There was '{Globals._oldLogFilesToDeleteCount}' old log files to delete (-30 days)", EventType.Information, 1000);
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"There was {Globals._oldLogFilesToDeleteCount} old log files to delete (-30 days)");
+                Console.WriteLine($"There was '{Globals._oldLogFilesToDeleteCount}' old log files to delete (-30 days)");
                 Console.ResetColor();
             }
             else

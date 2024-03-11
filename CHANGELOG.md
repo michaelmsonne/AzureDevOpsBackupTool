@@ -1,7 +1,11 @@
-## [1.0.5.7] - xx-xx-2023 - not released
+## [1.0.5.7] - 11-03-2024 - not released
+
+### Add
+- Add link to blog in about
 
 ### Changed
-- Typo in simpel report layout
+- Typos in report layout
+- Changes for better logfile layout/formatting
 
 ## [1.0.5.6] - 03-09-2023
 

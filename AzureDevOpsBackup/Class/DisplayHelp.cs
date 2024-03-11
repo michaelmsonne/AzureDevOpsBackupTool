@@ -78,6 +78,9 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\tIt integrates perfectly with both Visual Studio and Visual Studio Code and other IDE´s and tools");
             Console.WriteLine("\tthere is using the 'Git'.");
             Console.WriteLine();
+            Console.WriteLine("My blog:");
+            Console.WriteLine("\thttps://blog.sonnes.cloud");
+            Console.WriteLine();
             Console.WriteLine("My Website:");
             Console.WriteLine("\thttps://sonnes.cloud");
             Console.WriteLine();

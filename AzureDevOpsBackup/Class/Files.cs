@@ -106,16 +106,16 @@ namespace AzureDevOpsBackup.Class
                     Globals._totalFilesIsDeletedAfterUnZipped++;
 
                     // Log
-                    Message("Deleted downloaded file: " + filepath + " in backup folder: " + outDir, EventType.Information, 1000);
+                    Message("Deleted downloaded file: '" + filepath + "' in backup folder: '" + outDir + "'", EventType.Information, 1000);
                     Console.ForegroundColor = ConsoleColor.Yellow;
-                    Console.WriteLine("Deleted downloaded file: " + filepath + " in backup folder: " + outDir);
+                    Console.WriteLine("Deleted downloaded file: '" + filepath + "' in backup folder: '" + outDir + "'");
                     Console.ResetColor();
                 }
                 catch (UnauthorizedAccessException)
                 {
-                    Message("Unable to delete downloaded file: " + filepath + " in backup folder: " + outDir + ". Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                    Message("! Unable to delete downloaded file: '" + filepath + "' in backup folder: '" + outDir + "'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine("Unable to delete downloaded file: " + filepath + " in backup folder: " + outDir + ". Make sure the account you use to run this tool has write rights to this location.");
+                    Console.WriteLine("Unable to delete downloaded file: '" + filepath + "' in backup folder: '" + outDir + "'. Make sure the account you use to run this tool has write rights to this location.");
                     Console.ResetColor();
 
                     // Count errors
