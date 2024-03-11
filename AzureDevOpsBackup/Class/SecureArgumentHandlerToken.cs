@@ -51,26 +51,26 @@ namespace AzureDevOpsBackup.Class
                 File.WriteAllBytes(Files.TokenFilePath, encryptedBytes);
                 
                 // Log
-                Message("Saved encrypted token to file: " + Files.TokenFilePath + " in application folder: " + Files.ProgramDataFilePath,
+                Message("Saved encrypted token to file: '" + Files.TokenFilePath + "' in application folder: " + Files.ProgramDataFilePath + "'",
                     EventType.Information, 1000);
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("Saved encrypted token to file: " + Files.TokenFilePath + " in application folder: " + Files.ProgramDataFilePath + Environment.NewLine);
+                Console.WriteLine("Saved encrypted token to file: '" + Files.TokenFilePath + "' in application folder: " + Files.ProgramDataFilePath + "'" + Environment.NewLine);
                 Console.ResetColor();
             }
             catch (UnauthorizedAccessException)
             {
-                Message("Unable to save encrypted token to file: " + Files.TokenFilePath + " in application folder: " + Files.ProgramDataFilePath + ". Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                Message("Unable to save encrypted token to file: '" + Files.TokenFilePath + "' in application folder: '" + Files.ProgramDataFilePath + "'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Unable to save encrypted token to file: " + Files.TokenFilePath + " in application folder: " + Files.ProgramDataFilePath + ". Make sure the account you use to run this tool has write rights to this location.");
+                Console.WriteLine("Unable to save encrypted token to file: '" + Files.TokenFilePath + "' in application folder: '" + Files.ProgramDataFilePath + "'. Make sure the account you use to run this tool has write rights to this location.");
                 Console.ResetColor();
             }
             catch (Exception e)
             {
                 // Error if cant delete file(s)
                 Message(
-                    "Exception caught when trying to save encrypted token to file: " + Files.TokenFilePath + " in application folder: " + Files.ProgramDataFilePath + " - error: " + e, EventType.Error, 1001);
+                    "Exception caught when trying to save encrypted token to file: '" + Files.TokenFilePath + "' in application folder: '" + Files.ProgramDataFilePath + "' - error: " + e, EventType.Error, 1001);
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine("Exception caught when trying to save encrypted token to file: " + Files.TokenFilePath + " in application folder: " + Files.ProgramDataFilePath + " - error: " + e);
+                Console.WriteLine("Exception caught when trying to save encrypted token to file: '" + Files.TokenFilePath + "' in application folder: '" + Files.ProgramDataFilePath + "' - error: " + e);
                 Console.ResetColor();
             }
 

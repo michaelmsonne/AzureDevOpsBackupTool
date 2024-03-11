@@ -60,7 +60,7 @@ namespace AzureDevOpsBackup.Class
                     $"Processed files to backup from Git repos (total unzipped if specified): <b>{totalFilesIsBackupUnZipped}</b><br>" +
                     $"Processed files to backup from Git repos (blob files (.zip files)) (all branches): <b>{totalBlobFilesIsBackup}</b><br>" +
                     $"Processed files to backup from Git repos (tree files (.json files)) (all branches): <b>{totalTreeFilesIsBackup}</b><p>" +
-                    $"See the attached logfile for the backup(s) today: <b>{Globals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log</b>.<p>" +
+                    $"See the attached logfile for the backup(s) today: <b>'{Globals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log'</b>.<p>" +
                     $"Total Run Time is: \"{elapsedTime}\"<br>" +
                     $"Backup start Time: \"{startTime}\"<br>" +
                     $"Backup end Time: \"{endTime}\"<br>" +
@@ -130,7 +130,7 @@ namespace AzureDevOpsBackup.Class
                 $"<td style=\"width: 21%; height: 18px;\">Old backup(s) deleted in backup folder:</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{totalBackupsIsDeletedStatusText}</td></tr></table>" +
-                $"<p>See the attached logfile for the backup(s) today: <b>{Globals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log</b>.<o:p></o:p></p>" +
+                $"<p>See the attached logfile for the backup(s) today: <b>'{Globals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log'</b>.<o:p></o:p></p>" +
                 $"<p>Total Run Time is: \"{elapsedTime}\"<br>" +
                 $"Backup start Time: \"{startTime}\"<br>" +
                 $"Backup end Time: \"{endTime}\"</p><hr/>" +
@@ -257,9 +257,9 @@ namespace AzureDevOpsBackup.Class
                     // TODO logfile is not locked from here - you can add logs to logfile again from here!
 
                     // Log
-                    Message("Email notification is send to " + emailTo + " at " + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + " with priority " + Globals.EmailPriority + "!", EventType.Information, 1000);
+                    Message("Email notification is send to '" + emailTo + "' at '" + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + "' with priority " + Globals.EmailPriority + "!", EventType.Information, 1000);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Email notification is send to " + emailTo + " at " + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + " with priority " + Globals.EmailPriority + "!");
+                    Console.WriteLine("Email notification is send to '" + emailTo + "' at '" + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + "' with priority " + Globals.EmailPriority + "!");
                     Console.ResetColor();
                 }
                 catch (Exception ex)
