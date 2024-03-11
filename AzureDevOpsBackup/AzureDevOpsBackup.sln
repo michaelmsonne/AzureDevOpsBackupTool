@@ -11,6 +11,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		..\CHANGELOG.md = ..\CHANGELOG.md
 		..\README.md = ..\README.md
+		Scripts\RenameOutputDebug.ps1 = Scripts\RenameOutputDebug.ps1
+		Scripts\RenameOutputRelease.ps1 = Scripts\RenameOutputRelease.ps1
 	EndProjectSection
 EndProject
 Global
@@ -32,6 +34,7 @@ Global
 		{24DA63B0-77D2-4861-8DC1-C47EB93E88EF}.All|Any CPU.ActiveCfg = DefaultBuild
 		{24DA63B0-77D2-4861-8DC1-C47EB93E88EF}.All|Any CPU.Build.0 = DefaultBuild
 		{24DA63B0-77D2-4861-8DC1-C47EB93E88EF}.Debug|Any CPU.ActiveCfg = DefaultBuild
+		{24DA63B0-77D2-4861-8DC1-C47EB93E88EF}.Debug|Any CPU.Build.0 = DefaultBuild
 		{24DA63B0-77D2-4861-8DC1-C47EB93E88EF}.DefaultBuild|Any CPU.ActiveCfg = DefaultBuild
 		{24DA63B0-77D2-4861-8DC1-C47EB93E88EF}.DefaultBuild|Any CPU.Build.0 = DefaultBuild
 		{24DA63B0-77D2-4861-8DC1-C47EB93E88EF}.Release|Any CPU.ActiveCfg = DefaultBuild
