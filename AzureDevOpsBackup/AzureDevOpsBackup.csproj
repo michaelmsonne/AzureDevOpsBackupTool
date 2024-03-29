@@ -117,10 +117,10 @@
   <ItemGroup>
     <Compile Include="Class\ApplicationEndStatus.cs" />
     <Compile Include="Class\ApplicationInfo.cs" />
-    <Compile Include="Class\Backups.cs" />
-    <Compile Include="Class\CleanupLog.cs" />
+    <Compile Include="Class\LocalBackupsTasks.cs" />
+    <Compile Include="Class\LocalLogCleanup.cs" />
     <Compile Include="Class\CommandLineParser.cs" />
-    <Compile Include="Class\Folders.cs" />
+    <Compile Include="Class\LocalFolderTasks.cs" />
     <Compile Include="Class\DisplayHelp.cs" />
     <Compile Include="Class\Globals.cs" />
     <Compile Include="Class\Options.cs" />

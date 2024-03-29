@@ -299,7 +299,7 @@ namespace AzureDevOpsBackup
                         string outBackupDir = args[Array.IndexOf(args, "--backup") + 1] + "\\";
 
                         // Sanitize the backup directory name to remove any potentially malicious characters
-                        string sanitizedBackupDir = Folders.SanitizeDirectoryName(outBackupDir);
+                        string sanitizedBackupDir = LocalFolderTasks.SanitizeDirectoryName(outBackupDir);
 
                         // Set output folder name
                         string todaysdate = DateTime.Now.ToString("dd-MM-yyyy-(HH-mm)");
@@ -971,7 +971,7 @@ namespace AzureDevOpsBackup
                                         Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
 
                                         // Do work
-                                        Backups.DaysToKeepBackupsDefault(outBackupDir);
+                                        LocalBackupsTasks.DaysToKeepBackupsDefault(outBackupDir);
                                     }
 
                                     // If --daystokeepbackup is not set to default 30 - show it and do work
@@ -990,13 +990,13 @@ namespace AzureDevOpsBackup
                                         Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
 
                                         // Do work
-                                        Backups.DaysToKeepBackups(outBackupDir, daysToKeepBackups);
+                                        LocalBackupsTasks.DaysToKeepBackups(outBackupDir, daysToKeepBackups);
                                     }
                                 }
                                 else
                                 {
                                     // Set default
-                                    Backups.DaysToKeepBackupsDefault(outBackupDir);
+                                    LocalBackupsTasks.DaysToKeepBackupsDefault(outBackupDir);
                                 }
                             }
                             else
@@ -1008,11 +1008,11 @@ namespace AzureDevOpsBackup
                                 Console.ResetColor();
 
                                 // Do work
-                                Backups.DaysToKeepBackupsDefault(outBackupDir);
+                                LocalBackupsTasks.DaysToKeepBackupsDefault(outBackupDir);
                             }
 
                             // Cleanup old log files
-                            CleanupLog.CleanupLogs();
+                            LocalLogCleanup.CleanupLogs();
 
                             // Get email status text from job status
                             if (isBackupOk)
@@ -1473,7 +1473,7 @@ namespace AzureDevOpsBackup
                         {
                             isOutputFolderContainFilesStatusText = "Checked - folder is containing original downloaded files";
 
-                            if (Folders.CheckIfHaveSubfolders(outDir))
+                            if (LocalFolderTasks.CheckIfHaveSubfolders(outDir))
                             {
                                 isOutputFolderContainFilesStatusText += ", but has also subfolders with unzipped backup(s)";
                             }
@@ -1481,7 +1481,7 @@ namespace AzureDevOpsBackup
                         else
                         {
                             isOutputFolderContainFilesStatusText = "Checked - folder is NOT containing original downloaded files";
-                            if (Folders.CheckIfHaveSubfolders(outDir))
+                            if (LocalFolderTasks.CheckIfHaveSubfolders(outDir))
                             {
                                 isOutputFolderContainFilesStatusText += ", but has subfolders with unzipped backup(s)";
                             }
@@ -1494,7 +1494,7 @@ namespace AzureDevOpsBackup
                         Message(isOutputFolderContainFilesStatusText, EventType.Information, 1000);
                         
                         // Count backups in backup folder
-                        Backups.CountCurrentNumersOfBackup(outBackupDir);
+                        LocalBackupsTasks.CountCurrentNumersOfBackup(outBackupDir);
 
                         // Log
                         Message($"Getting status for tasks for email report is done", EventType.Information, 1000);

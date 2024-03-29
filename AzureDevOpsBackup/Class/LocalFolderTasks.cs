@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace AzureDevOpsBackup.Class
 {
-    internal class Folders
+    internal class LocalFolderTasks
     {
         public static bool CheckIfHaveSubfolders(string path)
         {
