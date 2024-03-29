@@ -1,6 +1,4 @@
-﻿using System;
-using System.Net.Mail;
-using static AzureDevOpsBackup.Class.FileLogger;
+﻿using System.Net.Mail;
 
 namespace AzureDevOpsBackup.Class
 {
