@@ -1,8 +1,5 @@
 ## [1.0.5.8] - xx-03-2024
 
-### Add
-- Add link to blog in about
-
 ### Fixed
 - Fix special characters in branch name to avoid path error
 - 
