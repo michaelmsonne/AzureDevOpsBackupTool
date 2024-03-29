@@ -22,7 +22,7 @@ namespace AzureDevOpsBackup.Class
             // Loop folders
             foreach (string dir in Directory.GetDirectories(outBackupDir))
             {
-                DateTime createdTime = new DirectoryInfo(dir).CreationTime;
+                var createdTime = new DirectoryInfo(dir).CreationTime;
 
                 // Find folders from days to keep
                 if (createdTime < DateTime.Now.AddDays(-days))
@@ -89,7 +89,7 @@ namespace AzureDevOpsBackup.Class
             // Loop in folder
             foreach (string dir in Directory.GetDirectories(outBackupDir))
             {
-                DateTime createdTime = new DirectoryInfo(dir).CreationTime;
+                var createdTime = new DirectoryInfo(dir).CreationTime;
 
                 // Find folders from days to keep
                 if (createdTime < DateTime.Now.AddDays(-30))
@@ -148,7 +148,6 @@ namespace AzureDevOpsBackup.Class
             }
         }
 
-
         public static void CountCurrentNumersOfBackup(string outBackupDir)
         {
             //Count backups in folder
@@ -161,6 +160,7 @@ namespace AzureDevOpsBackup.Class
                     folderCount++;
                 }
             }
+
             // Save count
             Globals._currentBackupsInBackupFolderCount = folderCount;
         }
