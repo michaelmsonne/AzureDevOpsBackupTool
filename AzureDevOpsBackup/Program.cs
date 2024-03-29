@@ -831,8 +831,8 @@ namespace AzureDevOpsBackup
                                                             Console.ForegroundColor = ConsoleColor.Red;
                                                             Console.WriteLine("Exception caught when trying to create data on disk: '" + localRepoDirectory + item.Path + "' - error: " + e);
 
-                                                            string combinedPath = Path.Combine(localRepoDirectory, item.Path);
-                                                            int combinedPathLength = combinedPath.Length;
+                                                            //string combinedPath = Path.Combine(localRepoDirectory, item.Path);
+                                                            //int combinedPathLength = combinedPath.Length;
 
                                                             //Message($"Combined Path Length: {combinedPathLength}", EventType.Error, 1000);
                                                             //Console.WriteLine($"Combined Path Length: {combinedPathLength}");
