@@ -2,6 +2,7 @@
 
 ### Changed
 - Typos in logging
+- Sanitize directory name
 
 ### Fixed
 - Fix special characters in branch name to avoid path error
