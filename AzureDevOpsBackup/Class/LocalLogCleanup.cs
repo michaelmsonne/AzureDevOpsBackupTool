@@ -4,7 +4,7 @@ using static AzureDevOpsBackup.Class.FileLogger;
 
 namespace AzureDevOpsBackup.Class
 {
-    internal class CleanupLog
+    internal class LocalLogCleanup
     {
         public static void CleanupLogs()
         {

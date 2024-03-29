@@ -4,7 +4,7 @@ using static AzureDevOpsBackup.Class.FileLogger;
 
 namespace AzureDevOpsBackup.Class
 {
-    internal class Backups
+    internal class LocalBackupsTasks
     {
         public static void DaysToKeepBackups(string outBackupDir, string daysToKeep)
         {
@@ -30,7 +30,7 @@ namespace AzureDevOpsBackup.Class
                     try
                     {
                         // Do work
-                        Folders.DeleteDirectory(dir);
+                        LocalFolderTasks.DeleteDirectory(dir);
 
                         // Count files
                         Globals._totalBackupsIsDeleted++;
@@ -97,7 +97,7 @@ namespace AzureDevOpsBackup.Class
                     try
                     {
                         // Do work
-                        Folders.DeleteDirectory(dir);
+                        LocalFolderTasks.DeleteDirectory(dir);
 
                         // Count files
                         Globals._totalBackupsIsDeleted++;
