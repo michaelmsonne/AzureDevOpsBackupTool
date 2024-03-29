@@ -452,11 +452,11 @@ namespace AzureDevOpsBackup
                                     foreach (var branch in branchResponse.Value)
                                     {
                                         // Get branch name
-                                        string branchName = branch.Name.Replace("refs/heads/", "");
+                                        var branchName = branch.Name.Replace("refs/heads/", "");
 
                                         // Fix special characters to avoid path errors in Windows OS when saving files to disk - replace with "-"
-                                        Regex regex = new Regex(@"[<>|/]");
-                                        string branchNameFormatted = regex.Replace(branchName, "-");
+                                        var regex = new Regex(@"[<>|/]");
+                                        var branchNameFormatted = regex.Replace(branchName, "-");
 
                                         // Get data to find in specific branch
                                         var clientItems = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/items?recursionlevel=full&" + version + "&versionDescriptor.versionType=Branch&versionDescriptor.version=" + branchName);
