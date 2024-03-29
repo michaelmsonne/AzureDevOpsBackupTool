@@ -294,17 +294,22 @@ namespace AzureDevOpsBackup
                         // URL parse to API access done
                         Message("Base URL is for Organization is: '" + baseUrl + "'", EventType.Information, 1000);
                         Console.WriteLine("Base URL is for Organization is: '" + baseUrl + "'");
-
+                        
                         // Get output folder to backup (not with date stamp for backup folder name)
                         string outBackupDir = args[Array.IndexOf(args, "--backup") + 1] + "\\";
+
+                        // Sanitize the backup directory name to remove any potentially malicious characters
+                        string sanitizedBackupDir = Folders.SanitizeDirectoryName(outBackupDir);
 
                         // Set output folder name
                         string todaysdate = DateTime.Now.ToString("dd-MM-yyyy-(HH-mm)");
 
-                        string outDir = outBackupDir + todaysdate + "\\";
+                        // Combine sanitized directory names to construct the output directory path
+                        string outDir = Path.Combine(sanitizedBackupDir, todaysdate);
 
+                        // Get the full path
                         outDir = Path.GetFullPath(outDir);
-
+                        
                         //string outDir = $"{outBackupDir}{todaysdate}\\";
 
                         // Output folder to backup to (without date stamp for backup) done

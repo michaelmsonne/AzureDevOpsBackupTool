@@ -1,5 +1,6 @@
 ﻿using System;
 using System.IO;
+using System.Linq;
 
 namespace AzureDevOpsBackup.Class
 {
@@ -35,6 +36,13 @@ namespace AzureDevOpsBackup.Class
             {
                 Directory.Delete(path, true);
             }
+        }
+
+        // Function to sanitize directory name
+        public static string SanitizeDirectoryName(string directoryName)
+        {
+            // Remove any potentially dangerous characters from the directory name
+            return Path.GetInvalidPathChars().Aggregate(directoryName, (current, c) => current.Replace(c.ToString(), string.Empty));
         }
     }
 }
