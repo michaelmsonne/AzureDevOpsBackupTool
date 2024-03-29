@@ -130,7 +130,7 @@ namespace AzureDevOpsBackup.Class
             {
                 if (WriteToFile)
                 {
-                    AppendMessageToFile($"Security Exeption: {ex.Message}", EventType.Error, dtf, path, id);
+                    AppendMessageToFile($"Security exception: {ex.Message}", EventType.Error, dtf, path, id);
                     AppendMessageToFile("Run this software as Administrator once to solve the problem.", EventType.Information, dtf, path, id);
                     AppendMessageToFile("Event log entries have been disabled.", EventType.Information, dtf, path, id);
                     WriteToEventLog = false;
