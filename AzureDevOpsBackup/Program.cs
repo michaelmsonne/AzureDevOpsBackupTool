@@ -120,7 +120,7 @@ namespace AzureDevOpsBackup
             DateTime startTime = DateTime.Now; // get current time as start time for tool
 
             // Log start of program to log
-            ApplicationEndStatus.ApplicationStartMessage();
+            ApplicationStatus.ApplicationStartMessage();
 
             // Set Global Logfile properties for log
             FileLogger.DateFormat = "dd-MM-yyyy";
@@ -1543,7 +1543,7 @@ namespace AzureDevOpsBackup
             }
 
             // Log end of program to console
-            ApplicationEndStatus.ApplicationEndMessage();
+            ApplicationStatus.ApplicationEndMessage();
         }
 
         /*
