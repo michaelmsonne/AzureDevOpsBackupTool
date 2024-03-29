@@ -1,4 +1,4 @@
-## [1.0.5.8] - xx-03-2024
+## [1.0.5.8] - xx-03-2024 - DEV
 
 ### Fixed
 - Fix special characters in branch name to avoid path error
