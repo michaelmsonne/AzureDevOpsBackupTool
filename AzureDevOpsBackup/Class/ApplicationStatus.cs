@@ -3,7 +3,7 @@ using static AzureDevOpsBackup.Class.FileLogger;
 
 namespace AzureDevOpsBackup.Class
 {
-    internal class ApplicationEndStatus
+    internal class ApplicationStatus
     {
         public static void ApplicationStartMessage()
         {

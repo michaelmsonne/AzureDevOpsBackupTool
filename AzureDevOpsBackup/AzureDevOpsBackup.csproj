@@ -115,7 +115,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class\ApplicationEndStatus.cs" />
+    <Compile Include="Class\ApplicationStatus.cs" />
     <Compile Include="Class\ApplicationInfo.cs" />
     <Compile Include="Class\LocalBackupsTasks.cs" />
     <Compile Include="Class\LocalLogCleanup.cs" />
