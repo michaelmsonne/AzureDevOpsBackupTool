@@ -1,8 +1,10 @@
 ## [1.0.5.8] - xx-03-2024 - DEV
 
+### Changed
+- Typos in logging
+
 ### Fixed
 - Fix special characters in branch name to avoid path error
-- 
 
 ## [1.0.5.7] - 11-03-2024
 
