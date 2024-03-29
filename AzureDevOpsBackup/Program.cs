@@ -9,6 +9,7 @@ using System.Linq;
 using System.Text;
 using System.Net;
 using AzureDevOpsBackup.Class;
+using System.Text.RegularExpressions;
 using static AzureDevOpsBackup.Class.FileLogger;
 
 // ReSharper disable RedundantAssignment
@@ -453,6 +454,10 @@ namespace AzureDevOpsBackup
                                         // Get branch name
                                         string branchName = branch.Name.Replace("refs/heads/", "");
 
+                                        // Fix special characters to avoid path errors in Windows OS when saving files to disk - replace with "-"
+                                        Regex regex = new Regex(@"[<>|/]");
+                                        string branchNameFormatted = regex.Replace(branchName, "-");
+
                                         // Get data to find in specific branch
                                         var clientItems = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/items?recursionlevel=full&" + version + "&versionDescriptor.versionType=Branch&versionDescriptor.version=" + branchName);
                                         var requestItems = new RestRequest(Method.GET);
@@ -502,15 +507,15 @@ namespace AzureDevOpsBackup
                                                 // Save file to disk
                                                 byte[] data = clientBlob.DownloadData(requestBlob);
                                                 //using (FileStream fs = new FileStream(outDir + project.Name + "_" + repo.Name + "_blob.zip", FileMode.Create))
-                                                using (FileStream fs = new FileStream(outDir + project.Name + "_" + repo.Name + $"_{branchName}_blob.zip", FileMode.Create))
+                                                using (FileStream fs = new FileStream(outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip", FileMode.Create))
                                                 {
                                                     fs.Write(data, 0, data.Length);
                                                 }
 
                                                 // Log
-                                                Message("Saved file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchName}_blob.zip'", EventType.Information, 1000);
+                                                Message("Saved file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip'", EventType.Information, 1000);
                                                 Console.ForegroundColor = ConsoleColor.Green;
-                                                Console.WriteLine("Saved file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchName}_blob.zip'");
+                                                Console.WriteLine("Saved file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip'");
                                                 Console.ResetColor();
 
                                                 // Count files there is downloaded
@@ -522,9 +527,9 @@ namespace AzureDevOpsBackup
                                             }
                                             catch (UnauthorizedAccessException)
                                             {
-                                                Message("! Unable to write the backup file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchName}_blob.zip'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                Message("! Unable to write the backup file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
                                                 Console.ForegroundColor = ConsoleColor.Red;
-                                                Console.WriteLine("Unable to write the backup file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchName}_blob.zip'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                Console.WriteLine("Unable to write the backup file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
                                                 Console.ResetColor();
 
                                                 // Count errors
@@ -533,9 +538,9 @@ namespace AzureDevOpsBackup
                                             catch (Exception e)
                                             {
                                                 // Error
-                                                Message("Exception caught when trying to save file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchName}_blob.zip' - error: " + e, EventType.Error, 1001);
+                                                Message("Exception caught when trying to save file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip' - error: " + e, EventType.Error, 1001);
                                                 Console.ForegroundColor = ConsoleColor.Red;
-                                                Console.WriteLine("Exception caught when trying to save file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchName}_blob.zip' - error: " + e);
+                                                Console.WriteLine("Exception caught when trying to save file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip' - error: " + e);
                                                 Console.ResetColor();
 
                                                 // Set backup status
@@ -551,12 +556,12 @@ namespace AzureDevOpsBackup
                                             {
                                                 // Save file to disk
                                                 //File.WriteAllText(outDir + project.Name + "_" + repo.Name + "_tree.json", responseItems.Content);
-                                                File.WriteAllText(outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json", responseItems.Content);
+                                                File.WriteAllText(outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json", responseItems.Content);
                                                 
                                                 // Log
-                                                Message("Saved file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json'", EventType.Information, 1000);
+                                                Message("Saved file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json'", EventType.Information, 1000);
                                                 Console.ForegroundColor = ConsoleColor.Green;
-                                                Console.WriteLine("Saved file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json'");
+                                                Console.WriteLine("Saved file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json'");
                                                 Console.ResetColor();
 
                                                 // Count files there is downloaded
@@ -568,9 +573,9 @@ namespace AzureDevOpsBackup
                                             }
                                             catch (UnauthorizedAccessException)
                                             {
-                                                Message("! Unable to write the backup file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                Message("! Unable to write the backup file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
                                                 Console.ForegroundColor = ConsoleColor.Red;
-                                                Console.WriteLine("Unable to write the backup file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                Console.WriteLine("Unable to write the backup file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
                                                 Console.ResetColor();
 
                                                 // Count errors
@@ -579,9 +584,9 @@ namespace AzureDevOpsBackup
                                             catch (Exception e)
                                             {
                                                 // Error
-                                                Message("Exception caught when trying to save file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json' - error: " + e, EventType.Error, 1001);
+                                                Message("Exception caught when trying to save file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json' - error: " + e, EventType.Error, 1001);
                                                 Console.ForegroundColor = ConsoleColor.Red;
-                                                Console.WriteLine("Exception caught when trying to save file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchName}_tree.json' - error: " + e);
+                                                Console.WriteLine("Exception caught when trying to save file to disk: '" + outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json' - error: " + e);
                                                 Console.ResetColor();
 
                                                 // Set backup status
@@ -601,7 +606,7 @@ namespace AzureDevOpsBackup
 
                                                 // Check if folder to unzip exists
 
-                                                string localRepoDirectory = outDir + project.Name + "_" + repo.Name + $"_{branchName}";
+                                                string localRepoDirectory = outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}";
 
                                                 //if (Directory.Exists(outDir + project.Name + "_" + repo.Name))
                                                 if (Directory.Exists(localRepoDirectory))
@@ -731,7 +736,7 @@ namespace AzureDevOpsBackup
 
                                                 // Get files from .zip folder to unzip
                                                 //ZipArchive archive = ZipFile.OpenRead(outDir + project.Name + "_" + repo.Name + "_blob.zip");
-                                                ZipArchive archive = ZipFile.OpenRead(outDir + project.Name + "_" + repo.Name + $"_{branchName}_blob.zip");
+                                                ZipArchive archive = ZipFile.OpenRead(outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip");
 
                                                 foreach (Item item in items.Value)
                                                 {
