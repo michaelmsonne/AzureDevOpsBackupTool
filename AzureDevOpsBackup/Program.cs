@@ -305,7 +305,7 @@ namespace AzureDevOpsBackup
                         string todaysdate = DateTime.Now.ToString("dd-MM-yyyy-(HH-mm)");
 
                         // Combine sanitized directory names to construct the output directory path
-                        string outDir = Path.Combine(sanitizedBackupDir, todaysdate);
+                        string outDir = Path.Combine(sanitizedBackupDir, todaysdate + "\\");
 
                         // Get the full path
                         outDir = Path.GetFullPath(outDir);
