@@ -116,7 +116,7 @@ Note we are also saving the original JSON item list we got from the repository c
 
 ## Usage
 
-Paramenters (**NOT FINAL**):
+Paramenters:
 
 - --token
     - token.bin: Use an encrypted .bin file (based on hardware ID´s) with your personal access token in. 
