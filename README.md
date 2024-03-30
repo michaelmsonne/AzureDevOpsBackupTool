@@ -132,11 +132,13 @@ Paramenters:
 - --cleanup: Use this option to cleanup the blob files downloaded from the API in the backup folder.
 - --daystokeepbackup: Set the number of days to retain backup files before automatic removal (default is 30 days if not specified).
 - --simpelreportlayout: Use this option to use the old email report layout.
-- --priority 'type': Specify the email priority for notifications (e.g., high, normal, low).
+- --priority <priority> <high/low>: Specify the email priority for notifications (e.g., high, normal, low). Default (normal) if not set.
 - --help, /h or /?: Show the help menu
 - --info or /about: Show the about menu
 
 Mandatory arguments is: **`--token, --org, --outdir, --server, --port, --from and --to`**
+
+**A bit more information about some arguments:**
 
 If the **--unzip** argument is present, the program will create a directory for each repository based on the information provided by each Zip/JSON file pair. In this directory, we will get the original file and folder structure with real file names and extensions. Looping through all the items on the JSON list file, we consider a simple condition: if the item is a folder we create the directory according to the item.path property. Otherwise, we assume it’s a blob and we extract it from the Zip archive into the corresponding directory assigning the original file name and extension.
 
@@ -148,7 +150,7 @@ It looks at the backup folder, and see when last changed. If the days matches th
 
 If the **--simpelreportlayout** argument is present, the program will use the old email report layout, else it will use the new default.
 
-If the **--priority <priority> <high/low>** argument is present, the program will mark the send email with the specified priority, else it will use the default (normal).
+## Logs
 
 Logs for backup jobs is keept in the **.\Log** folder for **30 days** beside **AzureDevOpsBackup.exe**.
 
