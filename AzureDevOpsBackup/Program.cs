@@ -508,14 +508,16 @@ namespace AzureDevOpsBackup
                                             try
                                             {
                                                 // Save file to disk
-                                                //clientBlob.DownloadData(requestBlob).SaveAs(outDir + project.Name + "_" + repo.Name + "_blob.zip");
-
-                                                // Save file to disk
-                                                byte[] data = clientBlob.DownloadData(requestBlob);
-                                                //using (FileStream fs = new FileStream(outDir + project.Name + "_" + repo.Name + "_blob.zip", FileMode.Create))
+                                                Stream inputStream = clientBlob.DownloadStream(requestBlob);
                                                 using (FileStream fs = new FileStream(outDir + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip", FileMode.Create))
                                                 {
-                                                    fs.Write(data, 0, data.Length);
+                                                    int bufferSize = 4096;
+                                                    byte[] buffer = new byte[bufferSize];
+                                                    int bytesRead;
+                                                    while ((bytesRead = inputStream.Read(buffer, 0, bufferSize)) > 0)
+                                                    {
+                                                        fs.Write(buffer, 0, bytesRead);
+                                                    }
                                                 }
 
                                                 // Log
