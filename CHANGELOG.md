@@ -3,9 +3,14 @@
 ### Changed
 - Typos in logging
 - Sanitize directory name
+- Microsoft.Bcl.AsyncInterfaces.7.0.0 -> Microsoft.Bcl.AsyncInterfaces.8.0.0
+- System.Text.Encodings.Web.7.0.0 -> System.Text.Encodings.Web.8.0.0
+- System.Text.Json.7.0.3 -> System.Text.Json.8.0.3
+- RestSharp from 106.15.0.0 to 110.2.0
 
 ### Fixed
 - Fix special characters in branch name to avoid path error
+- The program now saves files using the DownloadStream method, allowing large files to download without crash and useing async.
 
 ## [1.0.5.7] - 11-03-2024
 
