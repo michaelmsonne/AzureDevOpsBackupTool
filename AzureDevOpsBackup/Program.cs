@@ -308,16 +308,16 @@ namespace AzureDevOpsBackup
                         
                         // Get output folder to backup (not with date stamp for backup folder name)
                         Globals._backupFolder = args[Array.IndexOf(args, "--backup") + 1] + "\\";
-                        //string outBackupDir = args[Array.IndexOf(args, "--backup") + 1] + "\\";
 
                         // Sanitize the backup directory name to remove any potentially malicious characters
-                        string sanitizedBackupDir = LocalFolderTasks.SanitizeDirectoryName(Globals._backupFolder);
+                        //string sanitizedBackupDir = LocalFolderTasks.SanitizeDirectoryName(Globals._backupFolder);
+                        Globals._sanitizedbackupFolder = LocalFolderTasks.SanitizeDirectoryName(Globals._backupFolder);
 
                         // Set output folder name
                         string todaysdate = DateTime.Now.ToString("dd-MM-yyyy-(HH-mm)");
 
                         // Combine sanitized directory names to construct the output directory path
-                        string outDir = Path.Combine(sanitizedBackupDir, todaysdate + "\\");
+                        string outDir = Path.Combine(Globals._sanitizedbackupFolder, todaysdate + "\\");
 
                         // Get the full path
                         outDir = Path.GetFullPath(outDir);
