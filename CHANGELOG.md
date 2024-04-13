@@ -3,6 +3,7 @@
 ### Changed
 - Typos in logging
 - Sanitize directory name
+- Some code cleanup
 - Microsoft.Bcl.AsyncInterfaces.7.0.0 -> Microsoft.Bcl.AsyncInterfaces.8.0.0
 - System.Text.Encodings.Web.7.0.0 -> System.Text.Encodings.Web.8.0.0
 - System.Text.Json.7.0.3 -> System.Text.Json.8.0.3
