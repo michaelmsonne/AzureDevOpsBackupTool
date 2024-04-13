@@ -148,8 +148,10 @@ namespace AzureDevOpsBackup
                     Console.WriteLine("ERROR: No arguments is provided - try again!\n");
                     Console.ResetColor();
 
+                    // Show help to console
                     DisplayHelpToConsole.DisplayGuide();
 
+                    // Log
                     Message($"Showed help to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"Showed help to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!\n");
@@ -162,10 +164,13 @@ namespace AzureDevOpsBackup
                 // If wants help
                 if (args.Contains("--help") || args.Contains("/h") || args.Contains("/?"))
                 {
+                    // Show help to console
                     DisplayHelpToConsole.DisplayGuide();
 
+                    // Log
                     Message($"Showed help to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
 
+                    // Reset color
                     Console.ResetColor();
 
                     // End application
@@ -175,10 +180,13 @@ namespace AzureDevOpsBackup
                 // If wants information about application
                 if (args.Contains("/info") || args.Contains("/about"))
                 {
+                    // Show information about application to console
                     DisplayHelpToConsole.DisplayInfo();
 
+                    // Log
                     Message($"Showed information about application to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
 
+                    // Reset color
                     Console.ResetColor();
 
                     // End application
@@ -194,8 +202,10 @@ namespace AzureDevOpsBackup
                     // Encrypt data
                     SecureArgumentHandlerToken.EncryptAndSaveToFile(key, tokentoencrypt);
 
+                    // Log
                     Message($"Saved information about token to file - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
 
+                    // Reset color
                     Console.ResetColor();
 
                     // End application
@@ -220,7 +230,6 @@ namespace AzureDevOpsBackup
                 // ParseArguments(args);
                 // If okay do some work
                 case true when args.Intersect(requiredArgs).Count() == 7:
-                //case true when args.Intersect(requiredArgs).Count() == 6:
                     {
                         // Startup log entry
                         Message("Checked if the 7 required arguments is present (--token, --org, --backup, --server, --port, --from, --to) - all is fine!", EventType.Information, 1000);
@@ -243,7 +252,7 @@ namespace AzureDevOpsBackup
                         Console.WriteLine("Starting connection to Azure DevOps API from data provided from arguments");
 
                         // Base GET API
-                        const string version = "api-version=7.0";
+                        //const string version = "api-version=7.0";
                         string baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
                         
                         SecureArgumentHandler handler = new SecureArgumentHandler();
@@ -369,7 +378,7 @@ namespace AzureDevOpsBackup
                         }
                         
                         // Get connection status from REST API
-                        var checkConnectionToAzureDevOps = new RestClient(baseUrl + "_apis/projects?" + version);
+                        var checkConnectionToAzureDevOps = new RestClient(baseUrl + "_apis/projects?" + Globals.APIversion);
                         var checkConnectionToAzureDevOpsGet = new RestRequest { Method = Method.Get };
 
                         // Connect
@@ -406,7 +415,7 @@ namespace AzureDevOpsBackup
                         Console.WriteLine("Getting information about Git projects...");
 
                         // Get Git projects from REST API
-                        var clientProjects = new RestClient(baseUrl + "_apis/projects?" + version);
+                        var clientProjects = new RestClient(baseUrl + "_apis/projects?" + Globals.APIversion);
                         var requestProjects = new RestRequest { Method = Method.Get };
 
                         requestProjects.AddHeader("Authorization", auth);
@@ -432,7 +441,7 @@ namespace AzureDevOpsBackup
                                 Console.WriteLine("Getting information about Git project: '" + project.Name + "'...");
 
                                 // Repos
-                                var clientRepos = new RestClient(baseUrl + project.Name + "/_apis/git/repositories?" + version);
+                                var clientRepos = new RestClient(baseUrl + project.Name + "/_apis/git/repositories?" + Globals.APIversion);
                                 var requestRepos = new RestRequest { Method = Method.Get };
                                 requestRepos.AddHeader("Authorization", auth);
                                 var responseRepos = await clientRepos.GetAsync(requestRepos);
@@ -449,7 +458,7 @@ namespace AzureDevOpsBackup
                                     Console.WriteLine("Getting information about Git repository in project: '" + repo.Name + "'...");
                                     
                                     // Branches
-                                    var branches = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/refs?" + version);
+                                    var branches = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/refs?" + Globals.APIversion);
                                     var requestBranches = new RestRequest { Method = Method.Get };
                                     requestBranches.AddHeader("Authorization", auth);
                                     var responseBranches = await branches.GetAsync(requestBranches);
@@ -465,7 +474,7 @@ namespace AzureDevOpsBackup
                                         var branchNameFormatted = regex.Replace(branchName, "-");
 
                                         // Get data to find in specific branch
-                                        var clientItems = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/items?recursionlevel=full&" + version + "&versionDescriptor.versionType=Branch&versionDescriptor.version=" + branchName);
+                                        var clientItems = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/items?recursionlevel=full&" + Globals.APIversion + "&versionDescriptor.versionType=Branch&versionDescriptor.version=" + branchName);
                                         var requestItems = new RestRequest { Method = Method.Get };
 
                                         // List name for projects to list for email report list
@@ -489,7 +498,7 @@ namespace AzureDevOpsBackup
                                             // Count files
                                             repoItemsCount++;
 
-                                            var clientBlob = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/blobs?" + version);
+                                            var clientBlob = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/blobs?" + Globals.APIversion);
                                             var requestBlob = new RestRequest { Method = Method.Post };
 
                                             // List data about repos in projects
