@@ -24,5 +24,6 @@ namespace AzureDevOpsBackup.Class
         public static int _currentBackupsInBackupFolderCount;
         public static int _oldLogFilesToDeleteCount;
         public static bool _oldLogfilesToDelete;
+        public const string APIversion = "api-version=7.0";
     }
 }
