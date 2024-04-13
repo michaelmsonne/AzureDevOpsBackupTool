@@ -37,5 +37,14 @@ namespace AzureDevOpsBackup.Class
         public static string _letOverJsonFilesStatusText;
         public static string _totalBackupsIsDeletedStatusText;
         public static string _isOutputFolderContainFilesStatusText;
+        public static string _repoItemsCountStatusText;
+        public static string _isDaysToKeepNotDefaultStatusText;
+        public static int _projectCount;
+        public static int _totalFilesIsBackupUnZipped;
+        public static int _totalBlobFilesIsBackup;
+        public static int _totalTreeFilesIsBackup;
+        public static int _repoItemsCount;
+        public static int _repoCount;
+        public static string _emailStatusMessage;
     }
 }
