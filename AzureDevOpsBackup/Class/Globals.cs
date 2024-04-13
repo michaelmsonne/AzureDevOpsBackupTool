@@ -27,5 +27,6 @@ namespace AzureDevOpsBackup.Class
         public const string APIversion = "api-version=7.0"; // https://learn.microsoft.com/en-us/rest/api/azure/devops/
         public static string _backupFolder;
         public static string _sanitizedbackupFolder;
+        public static string _dateOfToday;
     }
 }
