@@ -50,7 +50,7 @@ Outline the file contents of the repository. It helps users navigate the codebas
 | `CHANGELOG.md`     | List of changes to the sample.              |
 | `CONTRIBUTING.md`  | Guidelines for contributing to the TEMPLATE.|
 | `README.md`        | This README file.                           |
-| `SECURITY.md`      | This README file.                           |
+| `SECURITY.md`      | Security file.                              |
 | `LICENSE`          | The license for the AzureDevOpsBackupTool.  |
 
 ## Features
