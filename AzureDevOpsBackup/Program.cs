@@ -46,7 +46,7 @@ namespace AzureDevOpsBackup
         // public string CommitId;
         public string Path;
         public bool IsFolder;
-        public string Url;
+        //public string Url;
     }
 
     internal struct Items
@@ -58,13 +58,13 @@ namespace AzureDevOpsBackup
     struct Branch
     {
         public string Name;
-        public string ObjectId;
-        public string Url;
+        //public string ObjectId;
+        //public string Url;
     }
 
     struct Branches
     {
-        public int Count;
+        //public int Count;
         public List<Branch> Value;
     }
 
@@ -75,21 +75,12 @@ namespace AzureDevOpsBackup
         private static async Task Main(string[] args)
         {
             // Global variabels for tool
-            int projectCount = 0;
-            int totalFilesIsBackupUnZipped = 0;
-            int totalBlobFilesIsBackup = 0;
-            int totalTreeFilesIsBackup = 0;
-            int repoItemsCount = 0;
-            int repoCount = 0;
-            var emailStatusMessage = "";
             string server = null;
             string serverPort = null;
             string emailFrom = null;
             string emailTo = null;
             string elapsedTime = null;
             string daysToKeepBackups = null;
-            string repoItemsCountStatusText = "";
-            string isDaysToKeepNotDefaultStatusText = null;
 
             // Set default status for backup job
             bool isBackupOk = false;
@@ -107,9 +98,9 @@ namespace AzureDevOpsBackup
             ApplicationInfo.GetExeInfo();
 
             // Start timer for runtime of tool
-            Stopwatch stopWatch = new Stopwatch();
+            var stopWatch = new Stopwatch();
             stopWatch.Start();
-            DateTime startTime = DateTime.Now; // get current time as start time for tool
+            var startTime = DateTime.Now; // get current time as start time for tool
 
             // Log start of program to log
             ApplicationStatus.ApplicationStartMessage();
@@ -432,7 +423,7 @@ namespace AzureDevOpsBackup
                                 foreach (Project project in projects.Value)
                                 {
                                     // Count projects
-                                    projectCount++;
+                                    Globals._projectCount++;
 
                                     // Log
                                     Message("Getting information about Git project: '" + project.Name + "'...", EventType.Information, 1000);
@@ -449,7 +440,7 @@ namespace AzureDevOpsBackup
                                     foreach (var repo in repos.Value)
                                     {
                                         // Count total repos got
-                                        repoCount++;
+                                        Globals._repoCount++;
 
                                         // Log
                                         Message("Getting information about Git repository is project: '" + repo.Name + "'...", EventType.Information, 1000);
@@ -494,7 +485,7 @@ namespace AzureDevOpsBackup
                                                 // If repos have files, get it
 
                                                 // Count files
-                                                repoItemsCount++;
+                                                Globals._repoItemsCount++;
 
                                                 var clientBlob = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/blobs?" + Globals.APIversion);
                                                 var requestBlob = new RestRequest { Method = Method.Post };
@@ -534,7 +525,7 @@ namespace AzureDevOpsBackup
                                                     Console.ResetColor();
 
                                                     // Count files there is downloaded
-                                                    totalBlobFilesIsBackup++;
+                                                    Globals._totalBlobFilesIsBackup++;
 
                                                     //Set backup status
                                                     isBackupOk = true;
@@ -580,7 +571,7 @@ namespace AzureDevOpsBackup
                                                     Console.ResetColor();
 
                                                     // Count files there is downloaded
-                                                    totalTreeFilesIsBackup++;
+                                                    Globals._totalTreeFilesIsBackup++;
 
                                                     // Set backup status
                                                     isBackupOk = true;
@@ -824,7 +815,7 @@ namespace AzureDevOpsBackup
                                                                 Message("Unzipped Git repository file data on disk: '" + localRepoDirectory + item.Path + "'", EventType.Information, 1000);
 
                                                                 // Count
-                                                                totalFilesIsBackupUnZipped++;
+                                                                Globals._totalFilesIsBackupUnZipped++;
 
                                                                 // Set backup status
                                                                 isBackupOkAndUnZip = true;
@@ -887,20 +878,20 @@ namespace AzureDevOpsBackup
 
                                 // When done backup
                                 Message("No projects to work with for now...", EventType.Information, 1000);
-                                Message("Done with '" + repoCount + "' project(s) in Azure DevOps", EventType.Information, 1000);
-                                Message("Done with '" + repoItemsCount + "' repositories to backup in folder: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'", EventType.Information, 1000);
-                                Message("Processed files to backup from Git repos (total unzipped if specified): '" + totalFilesIsBackupUnZipped + "'", EventType.Information, 1000);
-                                Message("Processed files to backup from Git repos (blob files (.zip files)) (all branches): " + totalBlobFilesIsBackup + "'", EventType.Information, 1000);
-                                Message("Processed files to backup from Git repos (tree files (.json files)) (all branches): " + totalTreeFilesIsBackup + "'", EventType.Information, 1000);
+                                Message("Done with '" + Globals._repoCount + "' project(s) in Azure DevOps", EventType.Information, 1000);
+                                Message("Done with '" + Globals._repoItemsCount + "' repositories to backup in folder: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'", EventType.Information, 1000);
+                                Message("Processed files to backup from Git repos (total unzipped if specified): '" + Globals._totalFilesIsBackupUnZipped + "'", EventType.Information, 1000);
+                                Message("Processed files to backup from Git repos (blob files (.zip files)) (all branches): " + Globals._totalBlobFilesIsBackup + "'", EventType.Information, 1000);
+                                Message("Processed files to backup from Git repos (tree files (.json files)) (all branches): " + Globals._totalTreeFilesIsBackup + "'", EventType.Information, 1000);
 
                                 // Show in console
                                 Console.ForegroundColor = ConsoleColor.Green;
                                 Console.WriteLine("== No projects to work with for now ==\n");
-                                Console.WriteLine("Done with '" + repoCount + "' project(s) in Azure DevOps");
-                                Console.WriteLine("Done with '" + repoItemsCount + "' repositories to backup in folder: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'");
-                                Console.WriteLine("Processed files to backup from Git repos (total unzipped if specified): '" + totalFilesIsBackupUnZipped + "'");
-                                Console.WriteLine("Processed files to backup from Git repos (blob files (.zip files)) (all branches): '" + totalBlobFilesIsBackup + "'");
-                                Console.WriteLine("Processed files to backup from Git repos (tree files (.json files)) (all branches): '" + totalTreeFilesIsBackup + "'");
+                                Console.WriteLine("Done with '" + Globals._repoCount + "' project(s) in Azure DevOps");
+                                Console.WriteLine("Done with '" + Globals._repoItemsCount + "' repositories to backup in folder: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'");
+                                Console.WriteLine("Processed files to backup from Git repos (total unzipped if specified): '" + Globals._totalFilesIsBackupUnZipped + "'");
+                                Console.WriteLine("Processed files to backup from Git repos (blob files (.zip files)) (all branches): '" + Globals._totalBlobFilesIsBackup + "'");
+                                Console.WriteLine("Processed files to backup from Git repos (tree files (.json files)) (all branches): '" + Globals._totalTreeFilesIsBackup + "'");
 
                                 // Reset colors
                                 Console.ResetColor();
@@ -969,10 +960,10 @@ namespace AzureDevOpsBackup
                                             Console.ResetColor();
 
                                             // Set status text for email
-                                            isDaysToKeepNotDefaultStatusText = "Default number of old backup(s) set to keep in backup folder (days)";
+                                            Globals._isDaysToKeepNotDefaultStatusText = "Default number of old backup(s) set to keep in backup folder (days)";
 
                                             // Log
-                                            Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
+                                            Message(Globals._isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
 
                                             // Do work
                                             LocalBackupsTasks.DaysToKeepBackupsDefault(Globals._backupFolder);
@@ -988,10 +979,10 @@ namespace AzureDevOpsBackup
                                             Console.ResetColor();
 
                                             // Set status text for email
-                                            isDaysToKeepNotDefaultStatusText = "Custom number of old backup(s) set to keep in backup folder (days)";
+                                            Globals._isDaysToKeepNotDefaultStatusText = "Custom number of old backup(s) set to keep in backup folder (days)";
 
                                             // Log
-                                            Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
+                                            Message(Globals._isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
 
                                             // Do work
                                             LocalBackupsTasks.DaysToKeepBackups(Globals._backupFolder, daysToKeepBackups);
@@ -1022,17 +1013,17 @@ namespace AzureDevOpsBackup
                                 if (isBackupOk)
                                 {
                                     // If unzipped or not
-                                    emailStatusMessage = isBackupOkAndUnZip ? "Success and unzipped" : "Success, not unzipped";
+                                    Globals._emailStatusMessage = isBackupOkAndUnZip ? "Success and unzipped" : "Success, not unzipped";
                                 }
                                 else
                                 {
-                                    emailStatusMessage = "Failed!";
+                                    Globals._emailStatusMessage = "Failed!";
                                 }
 
                                 // Text if no Git projects to backup
                                 if (noProjectsToBackup)
                                 {
-                                    emailStatusMessage = "No projects to backup!";
+                                    Globals._emailStatusMessage = "No projects to backup!";
                                 }
                             }
                             else
@@ -1095,7 +1086,7 @@ namespace AzureDevOpsBackup
                             Console.ResetColor();
 
                             // Processed Git repos in Azure DevOps (total):
-                            if (repoCount == 0)
+                            if (Globals._repoCount == 0)
                             {
                                 Globals._repoCountStatusText = "Warning - nothing to backup!";
 
@@ -1130,42 +1121,42 @@ namespace AzureDevOpsBackup
                             }
 
                             // Processed Git repos a backup is made of from Azure DevOps:
-                            if (repoItemsCount == 0)
+                            if (Globals._repoItemsCount == 0)
                             {
-                                repoItemsCountStatusText = "Warning - nothing to backup!";
+                                Globals._repoItemsCountStatusText = "Warning - nothing to backup!";
 
                                 // Log
-                                Message($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Warning, 1001);
+                                Message($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + Globals._repoItemsCountStatusText, EventType.Warning, 1001);
                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
+                                Console.WriteLine($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + Globals._repoItemsCountStatusText);
                                 Console.ResetColor();
                             }
                             else
                             {
                                 if (isBackupOk)
                                 {
-                                    repoItemsCountStatusText = "Good";
+                                    Globals._repoItemsCountStatusText = "Good";
 
                                     // Log
-                                    Message($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Information, 1000);
+                                    Message($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + Globals._repoItemsCountStatusText, EventType.Information, 1000);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
+                                    Console.WriteLine($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + Globals._repoItemsCountStatusText);
                                     Console.ResetColor();
                                 }
                                 else
                                 {
-                                    repoItemsCountStatusText = "Warning!";
+                                    Globals._repoItemsCountStatusText = "Warning!";
 
                                     // Log
-                                    Message($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText, EventType.Warning, 1001);
+                                    Message($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + Globals._repoItemsCountStatusText, EventType.Warning, 1001);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + repoItemsCountStatusText);
+                                    Console.WriteLine($"Processed Git repos in project(s) a backup is made of from Azure DevOps status: " + Globals._repoItemsCountStatusText);
                                     Console.ResetColor();
                                 }
                             }
 
                             // Processed files to backup from Git repos (total unzipped if specified):
-                            if (totalFilesIsBackupUnZipped == 0)
+                            if (Globals._totalFilesIsBackupUnZipped == 0)
                             {
                                 Globals._totalFilesIsBackupUnZippedStatusText = "Good - nothing to unzip!";
 
@@ -1200,7 +1191,7 @@ namespace AzureDevOpsBackup
                             }
 
                             // Processed files to backup from Git repos (blob files (.zip files)):
-                            if (totalBlobFilesIsBackup == 0)
+                            if (Globals._totalBlobFilesIsBackup == 0)
                             {
                                 Globals._totalBlobFilesIsBackupStatusText = "Warning - nothing to backup!";
 
@@ -1235,7 +1226,7 @@ namespace AzureDevOpsBackup
                             }
 
                             // Processed files to backup from Git repos (tree files (.json files)):
-                            if (totalTreeFilesIsBackup == 0)
+                            if (Globals._totalTreeFilesIsBackup == 0)
                             {
                                 Globals._totalTreeFilesIsBackupStatusText = "Warning - nothing to backup!";
 
@@ -1270,7 +1261,7 @@ namespace AzureDevOpsBackup
                             }
 
                             // Deleted original downloaded .zip and .json files in backup folder:
-                            int totalFilesThereShouldBeDeleted = totalBlobFilesIsBackup + totalTreeFilesIsBackup;
+                            int totalFilesThereShouldBeDeleted = Globals._totalBlobFilesIsBackup + Globals._totalTreeFilesIsBackup;
                             if (Globals._totalFilesIsDeletedAfterUnZipped != totalFilesThereShouldBeDeleted)
                             {
                                 if (Globals._totalFilesIsDeletedAfterUnZipped != 0)
@@ -1514,14 +1505,14 @@ namespace AzureDevOpsBackup
                             var useSimpleMailReportLayout = Array.Exists(args, argument => argument == "--simpelreport");
 
                             // Send status email and parse data to function
-                            ReportSender.SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements,
-                                repoitemscountelements, repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup,
-                                totalTreeFilesIsBackup, outDirSaveToDisk, elapsedTime, Globals._errors, Globals._totalFilesIsDeletedAfterUnZipped,
-                                Globals._totalBackupsIsDeleted, daysToKeepBackups, Globals._repoCountStatusText, repoItemsCountStatusText,
+                            ReportSender.SendEmail(server, serverPort, emailFrom, emailTo, Globals._emailStatusMessage, repocountelements,
+                                repoitemscountelements, Globals._repoCount, Globals._repoItemsCount, Globals._totalFilesIsBackupUnZipped, Globals._totalBlobFilesIsBackup,
+                                Globals._totalTreeFilesIsBackup, outDirSaveToDisk, elapsedTime, Globals._errors, Globals._totalFilesIsDeletedAfterUnZipped,
+                                Globals._totalBackupsIsDeleted, daysToKeepBackups, Globals._repoCountStatusText, Globals._repoItemsCountStatusText,
                                 Globals._totalFilesIsBackupUnZippedStatusText, Globals._totalBlobFilesIsBackupStatusText, Globals._totalTreeFilesIsBackupStatusText,
                                 Globals._totalFilesIsDeletedAfterUnZippedStatusText, Globals._letOverZipFilesStatusText, Globals._letOverJsonFilesStatusText,
                                 Globals._totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, Globals._isOutputFolderContainFilesStatusText,
-                                isDaysToKeepNotDefaultStatusText, Globals._startTime, Globals._endTime,
+                                Globals._isDaysToKeepNotDefaultStatusText, Globals._startTime, Globals._endTime,
                                 Globals._deletedFilesAfterUnzip, Globals._checkForLeftoverFilesAfterCleanup);
                         }
 
