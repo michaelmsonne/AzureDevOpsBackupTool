@@ -760,7 +760,7 @@ namespace AzureDevOpsBackup
 
                                                     // Get files from .zip folder to unzip
                                                     //ZipArchive archive = ZipFile.OpenRead(outDir + project.Name + "_" + repo.Name + "_blob.zip");
-                                                    ZipArchive archive = ZipFile.OpenRead(outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip");
+                                                    var archive = ZipFile.OpenRead(outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip");
 
                                                     foreach (Item item in items.Value)
                                                     {
@@ -876,7 +876,7 @@ namespace AzureDevOpsBackup
                                                     archive.Dispose();
                                                 }
 
-                                                // Set backup status
+                                                // Set backup status - projects to backup
                                                 noProjectsToBackup = false;
                                             }
                                             else
@@ -887,7 +887,7 @@ namespace AzureDevOpsBackup
                                                 Console.WriteLine("Number of items in project '" + project.Name + "' repository: '" + repo.Name + "' is 0, nothing to backup\n");
                                                 Console.ResetColor();
 
-                                                // Set backup status
+                                                // Set backup status - no projects to backup
                                                 noProjectsToBackup = true;
                                             }
                                         }
@@ -895,20 +895,23 @@ namespace AzureDevOpsBackup
                                 }
 
                                 // When done backup
-                                Message("No more projets to work with for now...", EventType.Information, 1000);
+                                Message("No projects to work with for now...", EventType.Information, 1000);
                                 Message("Done with '" + repoCount + "' project(s) in Azure DevOps", EventType.Information, 1000);
                                 Message("Done with '" + repoItemsCount + "' repositories to backup in folder: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'", EventType.Information, 1000);
                                 Message("Processed files to backup from Git repos (total unzipped if specified): '" + totalFilesIsBackupUnZipped + "'", EventType.Information, 1000);
                                 Message("Processed files to backup from Git repos (blob files (.zip files)) (all branches): " + totalBlobFilesIsBackup + "'", EventType.Information, 1000);
                                 Message("Processed files to backup from Git repos (tree files (.json files)) (all branches): " + totalTreeFilesIsBackup + "'", EventType.Information, 1000);
 
+                                // Show in console
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine("== No more projects to work with for now ==\n");
+                                Console.WriteLine("== No projects to work with for now ==\n");
                                 Console.WriteLine("Done with '" + repoCount + "' project(s) in Azure DevOps");
                                 Console.WriteLine("Done with '" + repoItemsCount + "' repositories to backup in folder: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'");
                                 Console.WriteLine("Processed files to backup from Git repos (total unzipped if specified): '" + totalFilesIsBackupUnZipped + "'");
                                 Console.WriteLine("Processed files to backup from Git repos (blob files (.zip files)) (all branches): '" + totalBlobFilesIsBackup + "'");
                                 Console.WriteLine("Processed files to backup from Git repos (tree files (.json files)) (all branches): '" + totalTreeFilesIsBackup + "'");
+
+                                // Reset colors
                                 Console.ResetColor();
 
                                 // Stop timer
