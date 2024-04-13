@@ -6,8 +6,8 @@
 - Sanitize directory name(s) to avoid path error(s) in backups and cleanup
 - Some code cleanup and optimization
 - Upgraded Microsoft.Bcl.AsyncInterfaces.7.0.0 to Microsoft.Bcl.AsyncInterfaces.8.0.0
-- UpgradedSystem.Text.Encodings.Web.7.0.0 to System.Text.Encodings.Web.8.0.0
-- UpgradedSystem.Text.Json.7.0.3 to System.Text.Json.8.0.3
+- Upgraded System.Text.Encodings.Web.7.0.0 to System.Text.Encodings.Web.8.0.0
+- Upgraded System.Text.Json.7.0.3 to System.Text.Json.8.0.3
 - Upgraded RestSharp from 106.15.0.0 to 110.2.0
 
 ### Fixed
