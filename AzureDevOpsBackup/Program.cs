@@ -110,7 +110,7 @@ namespace AzureDevOpsBackup
             Requirements.SystemCheck();
 
             // Get key to use for encryption and decryption
-            var key = SecureArgumentHandlerToken.GetComputerId();
+            var tokenEncryptionKey = SecureArgumentHandlerToken.GetComputerId();
 
             // Load data from exe file to use in tool
             ApplicationInfo.GetExeInfo();
@@ -200,7 +200,7 @@ namespace AzureDevOpsBackup
                     string tokentoencrypt = args[Array.IndexOf(args, "--tokenfile") + 1];
                     
                     // Encrypt data
-                    SecureArgumentHandlerToken.EncryptAndSaveToFile(key, tokentoencrypt);
+                    SecureArgumentHandlerToken.EncryptAndSaveToFile(tokenEncryptionKey, tokentoencrypt);
 
                     // Log
                     Message($"Saved information about token to file - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
@@ -255,6 +255,7 @@ namespace AzureDevOpsBackup
                         //const string version = "api-version=7.0";
                         string baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
                         
+                        // Create a new instance of the SecureArgumentHandler class to handle the encryption and decryption of the token
                         SecureArgumentHandler handler = new SecureArgumentHandler();
 
                         // Get the values of the --token and --org arguments
@@ -264,7 +265,7 @@ namespace AzureDevOpsBackup
                         if (token == "token.bin")
                         {
                             // Read the token information from the -tokentofile
-                            token = SecureArgumentHandlerToken.DecryptFromFile(key);
+                            token = SecureArgumentHandlerToken.DecryptFromFile(tokenEncryptionKey);
 #if DEBUG
                             //Console.WriteLine($"Decrypted string for token = {token}");
                             //Console.ReadKey();
@@ -306,10 +307,11 @@ namespace AzureDevOpsBackup
                         Console.WriteLine("Base URL is for Organization is: '" + baseUrl + "'");
                         
                         // Get output folder to backup (not with date stamp for backup folder name)
-                        string outBackupDir = args[Array.IndexOf(args, "--backup") + 1] + "\\";
+                        Globals._backupFolder = args[Array.IndexOf(args, "--backup") + 1] + "\\";
+                        //string outBackupDir = args[Array.IndexOf(args, "--backup") + 1] + "\\";
 
                         // Sanitize the backup directory name to remove any potentially malicious characters
-                        string sanitizedBackupDir = LocalFolderTasks.SanitizeDirectoryName(outBackupDir);
+                        string sanitizedBackupDir = LocalFolderTasks.SanitizeDirectoryName(Globals._backupFolder);
 
                         // Set output folder name
                         string todaysdate = DateTime.Now.ToString("dd-MM-yyyy-(HH-mm)");
@@ -983,7 +985,7 @@ namespace AzureDevOpsBackup
                                         Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
 
                                         // Do work
-                                        LocalBackupsTasks.DaysToKeepBackupsDefault(outBackupDir);
+                                        LocalBackupsTasks.DaysToKeepBackupsDefault(Globals._backupFolder);
                                     }
 
                                     // If --daystokeepbackup is not set to default 30 - show it and do work
@@ -1002,13 +1004,13 @@ namespace AzureDevOpsBackup
                                         Message(isDaysToKeepNotDefaultStatusText, EventType.Information, 1000);
 
                                         // Do work
-                                        LocalBackupsTasks.DaysToKeepBackups(outBackupDir, daysToKeepBackups);
+                                        LocalBackupsTasks.DaysToKeepBackups(Globals._backupFolder, daysToKeepBackups);
                                     }
                                 }
                                 else
                                 {
                                     // Set default
-                                    LocalBackupsTasks.DaysToKeepBackupsDefault(outBackupDir);
+                                    LocalBackupsTasks.DaysToKeepBackupsDefault(Globals._backupFolder);
                                 }
                             }
                             else
@@ -1020,7 +1022,7 @@ namespace AzureDevOpsBackup
                                 Console.ResetColor();
 
                                 // Do work
-                                LocalBackupsTasks.DaysToKeepBackupsDefault(outBackupDir);
+                                LocalBackupsTasks.DaysToKeepBackupsDefault(Globals._backupFolder);
                             }
 
                             // Cleanup old log files
@@ -1506,7 +1508,7 @@ namespace AzureDevOpsBackup
                         Message(isOutputFolderContainFilesStatusText, EventType.Information, 1000);
                         
                         // Count backups in backup folder
-                        LocalBackupsTasks.CountCurrentNumersOfBackup(outBackupDir);
+                        LocalBackupsTasks.CountCurrentNumersOfBackup(Globals._backupFolder);
 
                         // Log
                         Message($"Getting status for tasks for email report is done", EventType.Information, 1000);
