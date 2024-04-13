@@ -28,5 +28,14 @@ namespace AzureDevOpsBackup.Class
         public static string _backupFolder;
         public static string _sanitizedbackupFolder;
         public static string _dateOfToday;
+        public static string _repoCountStatusText;
+        public static string _totalFilesIsBackupUnZippedStatusText;
+        public static string _totalBlobFilesIsBackupStatusText;
+        public static string _totalTreeFilesIsBackupStatusText;
+        public static string _totalFilesIsDeletedAfterUnZippedStatusText;
+        public static string _letOverZipFilesStatusText;
+        public static string _letOverJsonFilesStatusText;
+        public static string _totalBackupsIsDeletedStatusText;
+        public static string _isOutputFolderContainFilesStatusText;
     }
 }

@@ -88,16 +88,7 @@ namespace AzureDevOpsBackup
             string emailTo = null;
             string elapsedTime = null;
             string daysToKeepBackups = null;
-            string repoCountStatusText;
             string repoItemsCountStatusText = "";
-            string totalFilesIsBackupUnZippedStatusText;
-            string totalBlobFilesIsBackupStatusText;
-            string totalTreeFilesIsBackupStatusText;
-            string totalFilesIsDeletedAfterUnZippedStatusText;
-            string letOverZipFilesStatusText;
-            string letOverJsonFilesStatusText;
-            string totalBackupsIsDeletedStatusText;
-            string isOutputFolderContainFilesStatusText;
             string isDaysToKeepNotDefaultStatusText = null;
 
             // Set default status for backup job
@@ -1106,34 +1097,34 @@ namespace AzureDevOpsBackup
                             // Processed Git repos in Azure DevOps (total):
                             if (repoCount == 0)
                             {
-                                repoCountStatusText = "Warning - nothing to backup!";
+                                Globals._repoCountStatusText = "Warning - nothing to backup!";
 
                                 // Log
-                                Message($"Processed Git project(s) in Azure DevOps (total) status: " + repoCountStatusText, EventType.Warning, 1001);
+                                Message($"Processed Git project(s) in Azure DevOps (total) status: " + Globals._repoCountStatusText, EventType.Warning, 1001);
                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"Processed Git project(s) in Azure DevOps (total) status: " + repoCountStatusText);
+                                Console.WriteLine($"Processed Git project(s) in Azure DevOps (total) status: " + Globals._repoCountStatusText);
                                 Console.ResetColor();
                             }
                             else
                             {
                                 if (isBackupOk)
                                 {
-                                    repoCountStatusText = "Good";
+                                    Globals._repoCountStatusText = "Good";
 
                                     // Log
-                                    Message($"Processed Git project(s) in Azure DevOps (total) status: " + repoCountStatusText, EventType.Information, 1000);
+                                    Message($"Processed Git project(s) in Azure DevOps (total) status: " + Globals._repoCountStatusText, EventType.Information, 1000);
                                     Console.ForegroundColor = ConsoleColor.Green;
-                                    Console.WriteLine($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText);
+                                    Console.WriteLine($"Processed Git repos in Azure DevOps (total) status: " + Globals._repoCountStatusText);
                                     Console.ResetColor();
                                 }
                                 else
                                 {
-                                    repoCountStatusText = "Warning!";
+                                    Globals._repoCountStatusText = "Warning!";
 
                                     // Log
-                                    Message($"Processed Git project(s) in Azure DevOps (total) status: " + repoCountStatusText, EventType.Warning, 1001);
+                                    Message($"Processed Git project(s) in Azure DevOps (total) status: " + Globals._repoCountStatusText, EventType.Warning, 1001);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Processed Git repos in Azure DevOps (total) status: " + repoCountStatusText);
+                                    Console.WriteLine($"Processed Git repos in Azure DevOps (total) status: " + Globals._repoCountStatusText);
                                     Console.ResetColor();
                                 }
                             }
@@ -1176,34 +1167,34 @@ namespace AzureDevOpsBackup
                             // Processed files to backup from Git repos (total unzipped if specified):
                             if (totalFilesIsBackupUnZipped == 0)
                             {
-                                totalFilesIsBackupUnZippedStatusText = "Good - nothing to unzip!";
+                                Globals._totalFilesIsBackupUnZippedStatusText = "Good - nothing to unzip!";
 
                                 // Log
-                                Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Warning, 1001);
+                                Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + Globals._totalFilesIsBackupUnZippedStatusText, EventType.Warning, 1001);
                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText);
+                                Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + Globals._totalFilesIsBackupUnZippedStatusText);
                                 Console.ResetColor();
                             }
                             else
                             {
                                 if (isBackupOkAndUnZip)
                                 {
-                                    totalFilesIsBackupUnZippedStatusText = "Good (and unzip is OK)";
+                                    Globals._totalFilesIsBackupUnZippedStatusText = "Good (and unzip is OK)";
 
                                     // Log
-                                    Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Information, 1000);
+                                    Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + Globals._totalFilesIsBackupUnZippedStatusText, EventType.Information, 1000);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText);
+                                    Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + Globals._totalFilesIsBackupUnZippedStatusText);
                                     Console.ResetColor();
                                 }
                                 else
                                 {
-                                    totalFilesIsBackupUnZippedStatusText = "Warning on unzip!";
+                                    Globals._totalFilesIsBackupUnZippedStatusText = "Warning on unzip!";
 
                                     // Log
-                                    Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText, EventType.Warning, 1001);
+                                    Message($"Processed files to backup from Git repos (total unzipped if specified) status: " + Globals._totalFilesIsBackupUnZippedStatusText, EventType.Warning, 1001);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + totalFilesIsBackupUnZippedStatusText);
+                                    Console.WriteLine($"Processed files to backup from Git repos (total unzipped if specified) status: " + Globals._totalFilesIsBackupUnZippedStatusText);
                                     Console.ResetColor();
                                 }
                             }
@@ -1211,34 +1202,34 @@ namespace AzureDevOpsBackup
                             // Processed files to backup from Git repos (blob files (.zip files)):
                             if (totalBlobFilesIsBackup == 0)
                             {
-                                totalBlobFilesIsBackupStatusText = "Warning - nothing to backup!";
+                                Globals._totalBlobFilesIsBackupStatusText = "Warning - nothing to backup!";
 
                                 // Log
-                                Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText, EventType.Warning, 1001);
+                                Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + Globals._totalBlobFilesIsBackupStatusText, EventType.Warning, 1001);
                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText);
+                                Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + Globals._totalBlobFilesIsBackupStatusText);
                                 Console.ResetColor();
                             }
                             else
                             {
                                 if (isBackupOk)
                                 {
-                                    totalBlobFilesIsBackupStatusText = "Good";
+                                    Globals._totalBlobFilesIsBackupStatusText = "Good";
 
                                     // Log
-                                    Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText, EventType.Information, 1000);
+                                    Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + Globals._totalBlobFilesIsBackupStatusText, EventType.Information, 1000);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText);
+                                    Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + Globals._totalBlobFilesIsBackupStatusText);
                                     Console.ResetColor();
                                 }
                                 else
                                 {
-                                    totalBlobFilesIsBackupStatusText = "Warning!";
+                                    Globals._totalBlobFilesIsBackupStatusText = "Warning!";
 
                                     // Log
-                                    Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText, EventType.Warning, 1001);
+                                    Message($"Processed files to backup from Git repos (blob files (.zip files) status: " + Globals._totalBlobFilesIsBackupStatusText, EventType.Warning, 1001);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + totalBlobFilesIsBackupStatusText);
+                                    Console.WriteLine($"Processed files to backup from Git repos (blob files (.zip files) status: " + Globals._totalBlobFilesIsBackupStatusText);
                                     Console.ResetColor();
                                 }
                             }
@@ -1246,34 +1237,34 @@ namespace AzureDevOpsBackup
                             // Processed files to backup from Git repos (tree files (.json files)):
                             if (totalTreeFilesIsBackup == 0)
                             {
-                                totalTreeFilesIsBackupStatusText = "Warning - nothing to backup!";
+                                Globals._totalTreeFilesIsBackupStatusText = "Warning - nothing to backup!";
 
                                 // Log
-                                Message($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText, EventType.Warning, 1001);
+                                Message($"Processed files to backup from Git repos (tree files (.json files) status: " + Globals._totalTreeFilesIsBackupStatusText, EventType.Warning, 1001);
                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText);
+                                Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + Globals._totalTreeFilesIsBackupStatusText);
                                 Console.ResetColor();
                             }
                             else
                             {
                                 if (isBackupOk)
                                 {
-                                    totalTreeFilesIsBackupStatusText = "Good";
+                                    Globals._totalTreeFilesIsBackupStatusText = "Good";
 
                                     // Log
-                                    Message($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText, EventType.Information, 1000);
+                                    Message($"Processed files to backup from Git repos (tree files (.json files) status: " + Globals._totalTreeFilesIsBackupStatusText, EventType.Information, 1000);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText);
+                                    Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + Globals._totalTreeFilesIsBackupStatusText);
                                     Console.ResetColor();
                                 }
                                 else
                                 {
-                                    totalTreeFilesIsBackupStatusText = "Warning!";
+                                    Globals._totalTreeFilesIsBackupStatusText = "Warning!";
 
                                     // Log
-                                    Message($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText, EventType.Warning, 1001);
+                                    Message($"Processed files to backup from Git repos (tree files (.json files) status: " + Globals._totalTreeFilesIsBackupStatusText, EventType.Warning, 1001);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + totalTreeFilesIsBackupStatusText);
+                                    Console.WriteLine($"Processed files to backup from Git repos (tree files (.json files) status: " + Globals._totalTreeFilesIsBackupStatusText);
                                     Console.ResetColor();
                                 }
                             }
@@ -1284,23 +1275,23 @@ namespace AzureDevOpsBackup
                             {
                                 if (Globals._totalFilesIsDeletedAfterUnZipped != 0)
                                 {
-                                    totalFilesIsDeletedAfterUnZippedStatusText =
+                                    Globals._totalFilesIsDeletedAfterUnZippedStatusText =
                                         "Warning - not all files is deleted and backup is not OK!";
 
                                     // Log
-                                    Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
+                                    Message($"Deleted original downloaded .zip and .json files in backup folder status: " + Globals._totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
                                     Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
+                                    Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + Globals._totalFilesIsDeletedAfterUnZippedStatusText);
                                     Console.ResetColor();
                                 }
                                 else
                                 {
-                                    totalFilesIsDeletedAfterUnZippedStatusText = isBackupOk ? "Good - not set to cleanup!" : "Warning - nothing to backup!";
+                                    Globals._totalFilesIsDeletedAfterUnZippedStatusText = isBackupOk ? "Good - not set to cleanup!" : "Warning - nothing to backup!";
 
                                     // Log
-                                    Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
+                                    Message($"Deleted original downloaded .zip and .json files in backup folder status: " + Globals._totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
+                                    Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + Globals._totalFilesIsDeletedAfterUnZippedStatusText);
                                     Console.ResetColor();
                                 }
                             }
@@ -1308,22 +1299,22 @@ namespace AzureDevOpsBackup
                             {
                                 if (isBackupOkAndUnZip)
                                 {
-                                    totalFilesIsDeletedAfterUnZippedStatusText = "Good (set to cleanup, and matched the total files downloaded)";
+                                    Globals._totalFilesIsDeletedAfterUnZippedStatusText = "Good (set to cleanup, and matched the total files downloaded)";
 
                                     // Log
-                                    Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Information, 1000);
+                                    Message($"Deleted original downloaded .zip and .json files in backup folder status: " + Globals._totalFilesIsDeletedAfterUnZippedStatusText, EventType.Information, 1000);
                                     Console.ForegroundColor = ConsoleColor.Green;
-                                    Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
+                                    Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + Globals._totalFilesIsDeletedAfterUnZippedStatusText);
                                     Console.ResetColor();
                                 }
                                 else
                                 {
-                                    totalFilesIsDeletedAfterUnZippedStatusText = "Warning - not all files is deleted!";
+                                    Globals._totalFilesIsDeletedAfterUnZippedStatusText = "Warning - not all files is deleted!";
 
                                     // Log
-                                    Message($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
+                                    Message($"Deleted original downloaded .zip and .json files in backup folder status: " + Globals._totalFilesIsDeletedAfterUnZippedStatusText, EventType.Warning, 1001);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + totalFilesIsDeletedAfterUnZippedStatusText);
+                                    Console.WriteLine($"Deleted original downloaded .zip and .json files in backup folder status: " + Globals._totalFilesIsDeletedAfterUnZippedStatusText);
                                     Console.ResetColor();
                                 }
                             }
@@ -1331,34 +1322,34 @@ namespace AzureDevOpsBackup
                             // Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete):
                             if (Globals._numZip != 0)
                             {
-                                letOverZipFilesStatusText = "Warning - leftover .zip files!";
+                                Globals._letOverZipFilesStatusText = "Warning - leftover .zip files!";
 
                                 // Log
-                                Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText, EventType.Warning, 1001);
+                                Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + Globals._letOverZipFilesStatusText, EventType.Warning, 1001);
                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText);
+                                Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + Globals._letOverZipFilesStatusText);
                                 Console.ResetColor();
                             }
                             else
                             {
                                 if (isBackupOk)
                                 {
-                                    letOverZipFilesStatusText = "Good (no leftover .zip files)";
+                                    Globals._letOverZipFilesStatusText = "Good (no leftover .zip files)";
 
                                     // Log
-                                    Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText, EventType.Information, 1000);
+                                    Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + Globals._letOverZipFilesStatusText, EventType.Information, 1000);
                                     Console.ForegroundColor = ConsoleColor.Green;
-                                    Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText);
+                                    Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + Globals._letOverZipFilesStatusText);
                                     Console.ResetColor();
                                 }
                                 else
                                 {
-                                    letOverZipFilesStatusText = "Warning - backup not OK!";
+                                    Globals._letOverZipFilesStatusText = "Warning - backup not OK!";
 
                                     // Log
-                                    Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText, EventType.Warning, 1001);
+                                    Message($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + Globals._letOverZipFilesStatusText, EventType.Warning, 1001);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + letOverZipFilesStatusText);
+                                    Console.WriteLine($"Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete) status: " + Globals._letOverZipFilesStatusText);
                                     Console.ResetColor();
                                 }
                             }
@@ -1366,34 +1357,34 @@ namespace AzureDevOpsBackup
                             // Leftovers for original downloaded .json files in backup folder (error(s) when try to delete):
                             if (Globals._numJson != 0)
                             {
-                                letOverJsonFilesStatusText = "Warning - leftover .json files!";
+                                Globals._letOverJsonFilesStatusText = "Warning - leftover .json files!";
 
                                 // Log
-                                Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText, EventType.Warning, 1001);
+                                Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + Globals._letOverJsonFilesStatusText, EventType.Warning, 1001);
                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText);
+                                Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + Globals._letOverJsonFilesStatusText);
                                 Console.ResetColor();
                             }
                             else
                             {
                                 if (isBackupOk)
                                 {
-                                    letOverJsonFilesStatusText = "Good (no leftover .json files)";
+                                    Globals._letOverJsonFilesStatusText = "Good (no leftover .json files)";
 
                                     // Log
-                                    Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText, EventType.Information, 1000);
+                                    Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + Globals._letOverJsonFilesStatusText, EventType.Information, 1000);
                                     Console.ForegroundColor = ConsoleColor.Green;
-                                    Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText);
+                                    Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + Globals._letOverJsonFilesStatusText);
                                     Console.ResetColor();
                                 }
                                 else
                                 {
-                                    letOverJsonFilesStatusText = "Warning!";
+                                    Globals._letOverJsonFilesStatusText = "Warning!";
 
                                     // Log
-                                    Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText, EventType.Warning, 1001);
+                                    Message($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + Globals._letOverJsonFilesStatusText, EventType.Warning, 1001);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + letOverJsonFilesStatusText);
+                                    Console.WriteLine($"Leftovers for original downloaded .json files in backup folder (error(s) when try to delete) status: " + Globals._letOverJsonFilesStatusText);
                                     Console.ResetColor();
                                 }
                             }
@@ -1401,34 +1392,34 @@ namespace AzureDevOpsBackup
                             // Old backup(s) deleted in backup folder:
                             if (Globals._totalBackupsIsDeleted != 0)
                             {
-                                totalBackupsIsDeletedStatusText = "Good - deleted " + Globals._totalBackupsIsDeleted + " old backup(s) from backup folder";
+                                Globals._totalBackupsIsDeletedStatusText = "Good - deleted " + Globals._totalBackupsIsDeleted + " old backup(s) from backup folder";
 
                                 // Log
-                                Message($"Old backup(s) deleted in backup folder: status: " + totalBackupsIsDeletedStatusText, EventType.Information, 1000);
+                                Message($"Old backup(s) deleted in backup folder: status: " + Globals._totalBackupsIsDeletedStatusText, EventType.Information, 1000);
                                 Console.ForegroundColor = ConsoleColor.Green;
-                                Console.WriteLine($"Old backup(s) deleted in backup folder: status: " + totalBackupsIsDeletedStatusText);
+                                Console.WriteLine($"Old backup(s) deleted in backup folder: status: " + Globals._totalBackupsIsDeletedStatusText);
                                 Console.ResetColor();
                             }
                             else
                             {
                                 if (isBackupOk)
                                 {
-                                    totalBackupsIsDeletedStatusText = "Good - no old backup(s) to delete from backup folder";
+                                    Globals._totalBackupsIsDeletedStatusText = "Good - no old backup(s) to delete from backup folder";
 
                                     // Log
-                                    Message($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText, EventType.Information, 1000);
+                                    Message($"Old backup(s) deleted in backup folder status: " + Globals._totalBackupsIsDeletedStatusText, EventType.Information, 1000);
                                     Console.ForegroundColor = ConsoleColor.Green;
-                                    Console.WriteLine($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText);
+                                    Console.WriteLine($"Old backup(s) deleted in backup folder status: " + Globals._totalBackupsIsDeletedStatusText);
                                     Console.ResetColor();
                                 }
                                 else
                                 {
-                                    totalBackupsIsDeletedStatusText = "Warning!";
+                                    Globals._totalBackupsIsDeletedStatusText = "Warning!";
 
                                     // Log
-                                    Message($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText, EventType.Warning, 1001);
+                                    Message($"Old backup(s) deleted in backup folder status: " + Globals._totalBackupsIsDeletedStatusText, EventType.Warning, 1001);
                                     Console.ForegroundColor = ConsoleColor.Yellow;
-                                    Console.WriteLine($"Old backup(s) deleted in backup folder status: " + totalBackupsIsDeletedStatusText);
+                                    Console.WriteLine($"Old backup(s) deleted in backup folder status: " + Globals._totalBackupsIsDeletedStatusText);
                                     Console.ResetColor();
                                 }
                             }
@@ -1484,27 +1475,27 @@ namespace AzureDevOpsBackup
                             // Get status for output folder
                             if (isOutputFolderContainFiles)
                             {
-                                isOutputFolderContainFilesStatusText = "Checked - folder is containing original downloaded files";
+                                Globals._isOutputFolderContainFilesStatusText = "Checked - folder is containing original downloaded files";
 
                                 if (LocalFolderTasks.CheckIfHaveSubfolders(outDirSaveToDisk))
                                 {
-                                    isOutputFolderContainFilesStatusText += ", but has also subfolders with unzipped backup(s)";
+                                    Globals._isOutputFolderContainFilesStatusText += ", but has also subfolders with unzipped backup(s)";
                                 }
                             }
                             else
                             {
-                                isOutputFolderContainFilesStatusText = "Checked - folder is NOT containing original downloaded files";
+                                Globals._isOutputFolderContainFilesStatusText = "Checked - folder is NOT containing original downloaded files";
                                 if (LocalFolderTasks.CheckIfHaveSubfolders(outDirSaveToDisk))
                                 {
-                                    isOutputFolderContainFilesStatusText += ", but has subfolders with unzipped backup(s)";
+                                    Globals._isOutputFolderContainFilesStatusText += ", but has subfolders with unzipped backup(s)";
                                 }
                             }
 
                             // Log
                             Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine(isOutputFolderContainFilesStatusText);
+                            Console.WriteLine(Globals._isOutputFolderContainFilesStatusText);
                             Console.ResetColor();
-                            Message(isOutputFolderContainFilesStatusText, EventType.Information, 1000);
+                            Message(Globals._isOutputFolderContainFilesStatusText, EventType.Information, 1000);
                         
                             // Count backups in backup folder
                             LocalBackupsTasks.CountCurrentNumersOfBackup(Globals._backupFolder);
@@ -1526,10 +1517,10 @@ namespace AzureDevOpsBackup
                             ReportSender.SendEmail(server, serverPort, emailFrom, emailTo, emailStatusMessage, repocountelements,
                                 repoitemscountelements, repoCount, repoItemsCount, totalFilesIsBackupUnZipped, totalBlobFilesIsBackup,
                                 totalTreeFilesIsBackup, outDirSaveToDisk, elapsedTime, Globals._errors, Globals._totalFilesIsDeletedAfterUnZipped,
-                                Globals._totalBackupsIsDeleted, daysToKeepBackups, repoCountStatusText, repoItemsCountStatusText,
-                                totalFilesIsBackupUnZippedStatusText, totalBlobFilesIsBackupStatusText, totalTreeFilesIsBackupStatusText,
-                                totalFilesIsDeletedAfterUnZippedStatusText, letOverZipFilesStatusText, letOverJsonFilesStatusText,
-                                totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, isOutputFolderContainFilesStatusText,
+                                Globals._totalBackupsIsDeleted, daysToKeepBackups, Globals._repoCountStatusText, repoItemsCountStatusText,
+                                Globals._totalFilesIsBackupUnZippedStatusText, Globals._totalBlobFilesIsBackupStatusText, Globals._totalTreeFilesIsBackupStatusText,
+                                Globals._totalFilesIsDeletedAfterUnZippedStatusText, Globals._letOverZipFilesStatusText, Globals._letOverJsonFilesStatusText,
+                                Globals._totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, Globals._isOutputFolderContainFilesStatusText,
                                 isDaysToKeepNotDefaultStatusText, Globals._startTime, Globals._endTime,
                                 Globals._deletedFilesAfterUnzip, Globals._checkForLeftoverFilesAfterCleanup);
                         }
