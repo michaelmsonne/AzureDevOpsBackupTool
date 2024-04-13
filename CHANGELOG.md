@@ -1,8 +1,8 @@
 ## [1.0.5.8] - 13-04-2024
 
 ### Changed
-- Typos in logging
-- Typos in tool
+- Small typos in logging
+- Small typos in tool in general
 - Sanitize directory name(s) to avoid path error(s) in backups and cleanup
 - Some code cleanup and optimization
 - Upgraded Microsoft.Bcl.AsyncInterfaces.7.0.0 to Microsoft.Bcl.AsyncInterfaces.8.0.0
@@ -11,7 +11,7 @@
 - Upgraded RestSharp from 106.15.0.0 to 110.2.0
 
 ### Fixed
-- Fix special characters in branch name to avoid path error
+- Fix special characters in branch name to avoid path error when saving backups
 - The program now saves files using the DownloadStream method, allowing large files to download without crash and useing async.
 
 ## [1.0.5.7] - 11-03-2024
