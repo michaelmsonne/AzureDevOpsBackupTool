@@ -1,34 +1,11 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="20.2" version="21.9" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{9B0F5C3A-F049-4A7F-A776-DAA7871CB253}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="20.2" version="21.6" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{9B0F5C3A-F049-4A7F-A776-DAA7871CB253}">
+  <COMPONENT cid="caphyon.advinst.msicomp.ProjectOptionsComponent">
+    <ROW Name="HiddenItems" Value="AppXProductDetailsComponent;AppXDependenciesComponent;AppXAppDetailsComponent;AppXVisualAssetsComponent;AppXCapabilitiesComponent;AppXAppDeclarationsComponent;AppXUriRulesComponent;FixupComponent;MsiXDiffComponent;MsixManifestEditorComponent;ActSyncAppComponent;CPLAppletComponent;AutorunComponent;GameUxComponent;SilverlightSlnComponent;SharePointSlnComponent"/>
+  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_PREDEF_LCONDS_PROPS" Value="AI_DETECTED_DOTNET_VERSION"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackup.exe_1" Value="..\AzureDevOpsBackup\bin\Release"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_CommandLine.dll_1" Value="..\AzureDevOpsBackup\packages\CommandLineParser.2.9.1\lib\net461"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Value="..\AzureDevOpsBackup\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll_1" Value="..\AzureDevOpsBackup\packages\Newtonsoft.Json.13.0.3\lib\net45"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_RestSharp.dll_1" Value="..\AzureDevOpsBackup\packages\RestSharp.111.3.0\lib\net48"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Buffers.dll_1" Value="..\AzureDevOpsBackup\packages\System.Buffers.4.5.1\lib\net461"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Memory.dll_1" Value="..\AzureDevOpsBackup\packages\System.Memory.4.5.5\lib\net461"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Numerics.Vectors.dll_1" Value="..\AzureDevOpsBackup\packages\System.Numerics.Vectors.4.5.0\lib\net46"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Runtime.CompilerServices.Un_1_safe.dll" Value="..\AzureDevOpsBackup\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Encodings.Web.dll_1" Value="..\AzureDevOpsBackup\packages\System.Text.Encodings.Web.8.0.0\lib\net462"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Json.dll_1" Value="..\AzureDevOpsBackup\packages\System.Text.Json.8.0.4\lib\net462"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Threading.Tasks.Extensions.dll_1" Value="..\AzureDevOpsBackup\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.ValueTuple.dll_1" Value="..\AzureDevOpsBackup\packages\System.ValueTuple.4.5.0\lib\net47"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe_1" Value="AzureDevOpsBackup.exe"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_CommandLine.dll_1" Value="CommandLine.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Value="Microsoft.Bcl.AsyncInterfaces.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1" Value="Newtonsoft.Json.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll_1" Value="RestSharp.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Buffers.dll_1" Value="System.Buffers.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Memory.dll_1" Value="System.Memory.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Numerics.Vectors.dll_1" Value="System.Numerics.Vectors.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Runtime.CompilerServices.Un_1_safe.dll" Value="System.Runtime.CompilerServices.Unsafe.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Text.Encodings.Web.dll_1" Value="System.Text.Encodings.Web.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Text.Json.dll_1" Value="System.Text.Json.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Threading.Tasks.Extensions.dll_1" Value="System.Threading.Tasks.Extensions.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.ValueTuple.dll_1" Value="System.ValueTuple.dll"/>
     <ROW Property="AI_REQUIRED_DOTNET_DISPLAY" MultiBuildValue="DefaultBuild:4.8" ValueLocId="-"/>
     <ROW Property="AI_REQUIRED_DOTNET_VERSION" MultiBuildValue="DefaultBuild:4.8" ValueLocId="-"/>
     <ROW Property="AI_UPGRADE" Value="No"/>
@@ -39,7 +16,7 @@
     <ROW Property="ProductCode" Value="1033:{AC9929FD-4693-47B7-830B-AE484BD4C29B} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Azure DevOps Backup"/>
-    <ROW Property="ProductVersion" Value="1.0.5.9" Options="24"/>
+    <ROW Property="ProductVersion" Value="1.0.5.8" Options="24"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{B5566068-564D-4227-A015-483DA03A0F0E}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
@@ -55,50 +32,45 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
-    <ROW Directory="AzureDevOpsBackup_Dir" Directory_Parent="APPDIR" DefaultDir="AZURED~1|AzureDevOpsBackup"/>
-    <ROW Directory="SHORTCUTDIR" Directory_Parent="TARGETDIR" DefaultDir="SHORTC~1|SHORTCUTDIR" IsPseudoRoot="1"/>
     <ROW Directory="TARGETDIR" DefaultDir="SourceDir"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCompsComponent">
     <ROW Component="APPDIR" ComponentId="{77D06582-4D0E-4AA4-8DDF-6C6FD1D60BB4}" Directory_="APPDIR" Attributes="0"/>
-    <ROW Component="AzureDevOpsBackup_PrimaryOutput" ComponentId="{14881A1B-2BF5-46B2-8F03-0DECEDC8F932}" Directory_="AzureDevOpsBackup_Dir" Attributes="0" KeyPath="AzureDevOpsBackup.exe_1"/>
-    <ROW Component="AzureDevOpsBackup_References" ComponentId="{518FDBA5-5167-4993-A6CC-ECC319606C0F}" Directory_="AzureDevOpsBackup_Dir" Attributes="0" KeyPath="System.ValueTuple.dll_1"/>
+    <ROW Component="AzureDevOpsBackup.exe" ComponentId="{15C342A3-4241-473A-B756-EB9C7DB38A66}" Directory_="APPDIR" Attributes="0" KeyPath="AzureDevOpsBackup.exe"/>
+    <ROW Component="AzureDevOpsBackup.exe.config" ComponentId="{931D695C-28B3-487E-91F5-6FD2CC3C71E6}" Directory_="APPDIR" Attributes="0" KeyPath="AzureDevOpsBackup.exe.config" Type="0"/>
+    <ROW Component="CommandLine.dll" ComponentId="{CD5C724B-F1AA-463D-87F3-A9DE1B723257}" Directory_="APPDIR" Attributes="0" KeyPath="CommandLine.dll"/>
+    <ROW Component="Microsoft.Bcl.AsyncInterfaces.dll" ComponentId="{DFA0B008-D9A7-44F1-84A7-E3CB9A228C05}" Directory_="APPDIR" Attributes="0" KeyPath="Microsoft.Bcl.AsyncInterfaces.dll"/>
+    <ROW Component="Newtonsoft.Json.dll" ComponentId="{BC2CEB3A-FDC4-494A-A8F3-EDE12A079A71}" Directory_="APPDIR" Attributes="0" KeyPath="Newtonsoft.Json.dll"/>
     <ROW Component="ProductInformation" ComponentId="{8F9875F9-59F3-4ED2-A15D-BEB8B99B2B1B}" Directory_="APPDIR" Attributes="260" KeyPath="Version"/>
-    <ROW Component="SHORTCUTDIR" ComponentId="{203F3F45-1EEC-4A6C-BA7D-6E6C8F8BB5F4}" Directory_="SHORTCUTDIR" Attributes="0"/>
+    <ROW Component="RestSharp.dll" ComponentId="{2C759EC5-A392-47F2-AE2D-199BBBD21CFD}" Directory_="APPDIR" Attributes="0" KeyPath="RestSharp.dll"/>
+    <ROW Component="System.Buffers.dll" ComponentId="{BC7C924F-EE00-4F42-8C93-F476B6DEAF21}" Directory_="APPDIR" Attributes="0" KeyPath="System.Buffers.dll"/>
+    <ROW Component="System.Memory.dll" ComponentId="{97308B51-868A-49D4-8911-C1698CD7785E}" Directory_="APPDIR" Attributes="0" KeyPath="System.Memory.dll"/>
+    <ROW Component="System.Numerics.Vectors.dll" ComponentId="{81504BBA-B20C-44D6-8683-EA81C982176B}" Directory_="APPDIR" Attributes="0" KeyPath="System.Numerics.Vectors.dll"/>
+    <ROW Component="System.Runtime.CompilerServices.Unsafe.dll" ComponentId="{730602D4-3576-45C0-B5E5-8C53902EAF9B}" Directory_="APPDIR" Attributes="0" KeyPath="System.Runtime.CompilerServices.Unsafe.dll"/>
+    <ROW Component="System.Text.Encodings.Web.dll" ComponentId="{38EF39D1-2CCD-451A-93EE-5DBC38EB807E}" Directory_="APPDIR" Attributes="0" KeyPath="System.Text.Encodings.Web.dll"/>
+    <ROW Component="System.Text.Json.dll" ComponentId="{BBDA1232-00A5-4763-8DD7-3586B5DF21E0}" Directory_="APPDIR" Attributes="0" KeyPath="System.Text.Json.dll"/>
+    <ROW Component="System.Threading.Tasks.Extensions.dll" ComponentId="{E71CDBCF-0482-4CC1-BF54-2B00381C6619}" Directory_="APPDIR" Attributes="0" KeyPath="System.Threading.Tasks.Extensions.dll"/>
+    <ROW Component="System.ValueTuple.dll" ComponentId="{DF8B9F45-CC70-4C8A-9F1E-EA694007956A}" Directory_="APPDIR" Attributes="0" KeyPath="System.ValueTuple.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
     <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
-    <ROW File="AzureDevOpsBackup.exe_1" Component_="AzureDevOpsBackup_PrimaryOutput" FileName="AZURED~2.EXE|[|AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_AzureDevOpsBackup.exe_1&gt;" SelfReg="false"/>
-    <ROW File="CommandLine.dll_1" Component_="AzureDevOpsBackup_References" FileName="COMMAN~2.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_CommandLine.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_CommandLine.dll_1&gt;" SelfReg="false"/>
-    <ROW File="Microsoft.Bcl.AsyncInterfaces.dll_1" Component_="AzureDevOpsBackup_References" FileName="MICROS~2.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1&gt;" SelfReg="false"/>
-    <ROW File="Newtonsoft.Json.dll_1" Component_="AzureDevOpsBackup_References" FileName="NEWTON~2.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Newtonsoft.Json.dll_1&gt;" SelfReg="false"/>
-    <ROW File="RestSharp.dll_1" Component_="AzureDevOpsBackup_References" FileName="RESTSH~2.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_RestSharp.dll_1&gt;" SelfReg="false"/>
-    <ROW File="System.Buffers.dll_1" Component_="AzureDevOpsBackup_References" FileName="SYSTEM~2.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.Buffers.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.Buffers.dll_1&gt;" SelfReg="false"/>
-    <ROW File="System.Memory.dll_1" Component_="AzureDevOpsBackup_References" FileName="SYSTEM~3.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.Memory.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.Memory.dll_1&gt;" SelfReg="false"/>
-    <ROW File="System.Numerics.Vectors.dll_1" Component_="AzureDevOpsBackup_References" FileName="SYSTEM~4.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.Numerics.Vectors.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.Numerics.Vectors.dll_1&gt;" SelfReg="false"/>
-    <ROW File="System.Runtime.CompilerServices.Un_1_safe.dll" Component_="AzureDevOpsBackup_References" FileName="SYSTEM~5.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.Runtime.CompilerServices.Un_1_safe.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.Runtime.CompilerServices.Un_1_safe.dll&gt;" SelfReg="false"/>
-    <ROW File="System.Text.Encodings.Web.dll_1" Component_="AzureDevOpsBackup_References" FileName="SYSTEM~6.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.Text.Encodings.Web.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.Text.Encodings.Web.dll_1&gt;" SelfReg="false"/>
-    <ROW File="System.Text.Json.dll_1" Component_="AzureDevOpsBackup_References" FileName="SYSTEM~7.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.Text.Json.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.Text.Json.dll_1&gt;" SelfReg="false"/>
-    <ROW File="System.Threading.Tasks.Extensions.dll_1" Component_="AzureDevOpsBackup_References" FileName="SYSTEM~8.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.Threading.Tasks.Extensions.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.Threading.Tasks.Extensions.dll_1&gt;" SelfReg="false"/>
-    <ROW File="System.ValueTuple.dll_1" Component_="AzureDevOpsBackup_References" FileName="SYSTEM~9.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.ValueTuple.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.ValueTuple.dll_1&gt;" SelfReg="false"/>
-  </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.AppPathsComponent">
-    <ROW Name="AI_APPPATH_PERBUILD_AzureDevOpsBackup.exe_1" Path="[|AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackup.exe_1]\[|AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe_1]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_CommandLine.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_CommandLine.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_CommandLine.dll_1]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_Newtonsoft.Json.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_RestSharp.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_RestSharp.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll_1]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_System.Buffers.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Buffers.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Buffers.dll_1]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_System.Memory.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Memory.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Memory.dll_1]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_System.Numerics.Vectors.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Numerics.Vectors.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Numerics.Vectors.dll_1]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_System.Runtime.CompilerServices.Un_1_safe.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Runtime.CompilerServices.Un_1_safe.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Runtime.CompilerServices.Un_1_safe.dll]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_System.Text.Encodings.Web.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Text.Encodings.Web.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Text.Encodings.Web.dll_1]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_System.Text.Json.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Text.Json.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Text.Json.dll_1]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_System.Threading.Tasks.Extensions.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Threading.Tasks.Extensions.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Threading.Tasks.Extensions.dll_1]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_System.ValueTuple.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.ValueTuple.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.ValueTuple.dll_1]" Type="2" Content="0"/>
+    <ROW File="AzureDevOpsBackup.exe" Component_="AzureDevOpsBackup.exe" FileName="AZURED~1.EXE|AzureDevOpsBackup.exe" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\AzureDevOpsBackup.exe" SelfReg="false"/>
+    <ROW File="AzureDevOpsBackup.exe.config" Component_="AzureDevOpsBackup.exe.config" FileName="AZURED~1.CON|AzureDevOpsBackup.exe.config" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\AzureDevOpsBackup.exe.config" SelfReg="false"/>
+    <ROW File="CommandLine.dll" Component_="CommandLine.dll" FileName="COMMAN~1.DLL|CommandLine.dll" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\CommandLine.dll" SelfReg="false"/>
+    <ROW File="Microsoft.Bcl.AsyncInterfaces.dll" Component_="Microsoft.Bcl.AsyncInterfaces.dll" FileName="MICROS~1.DLL|Microsoft.Bcl.AsyncInterfaces.dll" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\Microsoft.Bcl.AsyncInterfaces.dll" SelfReg="false"/>
+    <ROW File="Newtonsoft.Json.dll" Component_="Newtonsoft.Json.dll" FileName="NEWTON~1.DLL|Newtonsoft.Json.dll" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\Newtonsoft.Json.dll" SelfReg="false"/>
+    <ROW File="RestSharp.dll" Component_="RestSharp.dll" FileName="RESTSH~1.DLL|RestSharp.dll" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\RestSharp.dll" SelfReg="false"/>
+    <ROW File="System.Buffers.dll" Component_="System.Buffers.dll" FileName="SYSTEM~1.DLL|System.Buffers.dll" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\System.Buffers.dll" SelfReg="false"/>
+    <ROW File="System.Memory.dll" Component_="System.Memory.dll" FileName="SYSTEM~2.DLL|System.Memory.dll" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\System.Memory.dll" SelfReg="false"/>
+    <ROW File="System.Numerics.Vectors.dll" Component_="System.Numerics.Vectors.dll" FileName="SYSTEM~3.DLL|System.Numerics.Vectors.dll" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\System.Numerics.Vectors.dll" SelfReg="false"/>
+    <ROW File="System.Runtime.CompilerServices.Unsafe.dll" Component_="System.Runtime.CompilerServices.Unsafe.dll" FileName="SYSTEM~4.DLL|System.Runtime.CompilerServices.Unsafe.dll" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\System.Runtime.CompilerServices.Unsafe.dll" SelfReg="false"/>
+    <ROW File="System.Text.Encodings.Web.dll" Component_="System.Text.Encodings.Web.dll" FileName="SYSTEM~5.DLL|System.Text.Encodings.Web.dll" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\System.Text.Encodings.Web.dll" SelfReg="false"/>
+    <ROW File="System.Text.Json.dll" Component_="System.Text.Json.dll" FileName="SYSTEM~6.DLL|System.Text.Json.dll" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\System.Text.Json.dll" SelfReg="false"/>
+    <ROW File="System.Threading.Tasks.Extensions.dll" Component_="System.Threading.Tasks.Extensions.dll" FileName="SYSTEM~7.DLL|System.Threading.Tasks.Extensions.dll" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\System.Threading.Tasks.Extensions.dll" SelfReg="false"/>
+    <ROW File="System.ValueTuple.dll" Component_="System.ValueTuple.dll" FileName="SYSTEM~8.DLL|System.ValueTuple.dll" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\System.ValueTuple.dll" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BootstrOptComponent">
     <ROW BootstrOptKey="GlobalOptions" DownloadFolder="[AppDataFolder][|Manufacturer]\[|ProductName]\prerequisites" Options="2"/>
@@ -189,7 +161,6 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCreateFolderComponent">
     <ROW Directory_="APPDIR" Component_="APPDIR" ManualDelete="true"/>
-    <ROW Directory_="SHORTCUTDIR" Component_="SHORTCUTDIR" ManualDelete="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiCustActComponent">
     <ROW Action="AI_BACKUP_AI_SETUPEXEPATH" Type="51" Source="AI_SETUPEXEPATH_ORIGINAL" Target="[AI_SETUPEXEPATH]"/>
@@ -247,9 +218,20 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatCompsComponent">
     <ROW Feature_="MainFeature" Component_="APPDIR"/>
     <ROW Feature_="MainFeature" Component_="ProductInformation"/>
-    <ROW Feature_="MainFeature" Component_="AzureDevOpsBackup_PrimaryOutput"/>
-    <ROW Feature_="MainFeature" Component_="SHORTCUTDIR"/>
-    <ROW Feature_="MainFeature" Component_="AzureDevOpsBackup_References"/>
+    <ROW Feature_="MainFeature" Component_="AzureDevOpsBackup.exe"/>
+    <ROW Feature_="MainFeature" Component_="AzureDevOpsBackup.exe.config"/>
+    <ROW Feature_="MainFeature" Component_="CommandLine.dll"/>
+    <ROW Feature_="MainFeature" Component_="Microsoft.Bcl.AsyncInterfaces.dll"/>
+    <ROW Feature_="MainFeature" Component_="Newtonsoft.Json.dll"/>
+    <ROW Feature_="MainFeature" Component_="RestSharp.dll"/>
+    <ROW Feature_="MainFeature" Component_="System.Buffers.dll"/>
+    <ROW Feature_="MainFeature" Component_="System.Memory.dll"/>
+    <ROW Feature_="MainFeature" Component_="System.Numerics.Vectors.dll"/>
+    <ROW Feature_="MainFeature" Component_="System.Runtime.CompilerServices.Unsafe.dll"/>
+    <ROW Feature_="MainFeature" Component_="System.Text.Encodings.Web.dll"/>
+    <ROW Feature_="MainFeature" Component_="System.Text.Json.dll"/>
+    <ROW Feature_="MainFeature" Component_="System.Threading.Tasks.Extensions.dll"/>
+    <ROW Feature_="MainFeature" Component_="System.ValueTuple.dll"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
     <ROW Action="AI_STORE_LOCATION" Condition="(Not Installed) OR REINSTALL" Sequence="1501"/>
@@ -291,28 +273,10 @@
     <ROW Registry="Software" Root="-1" Key="Software" Name="\"/>
     <ROW Registry="Version" Root="-1" Key="Software\[Manufacturer]\[ProductName]" Name="Version" Value="[ProductVersion]" Component_="ProductInformation"/>
   </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
-    <ROW Shortcut="AzureDevOpsBackup" Directory_="SHORTCUTDIR" Name="AZURED~1|AzureDevOpsBackup" Component_="AzureDevOpsBackup_PrimaryOutput" Target="[#AzureDevOpsBackup.exe_1]" Hotkey="0" IconIndex="0" ShowCmd="1"/>
-  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiThemeComponent">
     <ATTRIBUTE name="UsedTheme" value="classic"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiUpgradeComponent">
     <ROW UpgradeCode="[|UpgradeCode]" VersionMin="0.0.1" VersionMax="[|ProductVersion]" Attributes="257" ActionProperty="OLDPRODUCTS"/>
-  </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.VsProjectComponent">
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="PrimaryOutput" OutputFile="AzureDevOpsBackup.exe_1" OutputFileShortcut="AzureDevOpsBackup"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="CommandLine.dll_1"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="Microsoft.Bcl.AsyncInterfaces.dll_1"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="Newtonsoft.Json.dll_1"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="RestSharp.dll_1"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Buffers.dll_1"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Memory.dll_1"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Numerics.Vectors.dll_1"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Runtime.CompilerServices.Un_1_safe.dll"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Text.Encodings.Web.dll_1"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Text.Json.dll_1"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Threading.Tasks.Extensions.dll_1"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.ValueTuple.dll_1"/>
   </COMPONENT>
 </DOCUMENT>
