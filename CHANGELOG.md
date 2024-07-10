@@ -1,3 +1,9 @@
+## [1.0.5.9] - 10-07-2024
+
+### Changed
+- Upgraded System.Text.Json.8.0.3 to System.Text.Json.8.0.4 (fix CVE-2024-30105)
+- Upgraded RestSharp.110.2.0 to RestSharp.111.3.0
+
 ## [1.0.5.8] - 13-04-2024
 
 ### Changed
