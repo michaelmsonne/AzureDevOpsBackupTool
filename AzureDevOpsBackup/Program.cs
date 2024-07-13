@@ -1038,6 +1038,8 @@ namespace AzureDevOpsBackup
                                 //DateTime endTime = DateTime.Now; // get current time as end time
                             }
 
+                            #region Backup cleanup tasks
+
                             // If user set to delete downloaded files (.zip and .json) after unzipped
                             if (Array.Exists(args, argument => argument == "--cleanup"))
                             {
@@ -1076,7 +1078,12 @@ namespace AzureDevOpsBackup
                             {
                                 // Set state
                                 _cleanUpState = false;
+
+                                // Log
+                                Message("Parameter --cleanup and --unzip is set - will not delete downloaded .zip and .json files when unzipped...", EventType.Information, 1000);
                             }
+
+                            #endregion Backup cleanup tasks
 
                             // Get status email text for Status colums in email report
                             // Log

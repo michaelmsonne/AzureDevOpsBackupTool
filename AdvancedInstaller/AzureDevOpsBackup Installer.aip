@@ -3,7 +3,7 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_PREDEF_LCONDS_PROPS" Value="AI_DETECTED_DOTNET_VERSION"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackup.exe_1" Value="..\AzureDevOpsBackup\bin\Release"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackup.exe_1" Value="..\AzureDevOpsBackup\bin\Debug"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_CommandLine.dll_1" Value="..\AzureDevOpsBackup\packages\CommandLineParser.2.9.1\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Value="..\AzureDevOpsBackup\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll_1" Value="..\AzureDevOpsBackup\packages\Newtonsoft.Json.13.0.3\lib\net45"/>
