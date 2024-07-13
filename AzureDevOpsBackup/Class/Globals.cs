@@ -46,5 +46,6 @@ namespace AzureDevOpsBackup.Class
         public static int _repoItemsCount;
         public static int _repoCount;
         public static string _emailStatusMessage;
+        public static int _workItemsCount = 0;
     }
 }
