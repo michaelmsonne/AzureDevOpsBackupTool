@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Web.Util;
 using System.IO;
+using static AzureDevOpsBackup.Class.FileLogger;
 
 namespace AzureDevOpsBackup.Class
 {
@@ -17,11 +18,18 @@ namespace AzureDevOpsBackup.Class
         private readonly string _organization;
         private readonly string _project;
 
+        // How to get work items from Azure DevOps using REST API where input is: personalAccessToken, organization and the project
+
         public WorkItemsTasks(string personalAccessToken, string organization, string project)
         {
             _personalAccessToken = personalAccessToken;
             _organization = organization;
             _project = project;
+
+            if (string.IsNullOrEmpty(_personalAccessToken) || string.IsNullOrEmpty(_organization) || string.IsNullOrEmpty(_project))
+            {
+                throw new ArgumentException("Personal Access Token, Organization and Project are required.");
+            }
         }
 
         public async Task<WorkItemsDetailResult> GetWorkItemsDetail(string[] ids)
@@ -47,13 +55,13 @@ namespace AzureDevOpsBackup.Class
                 }
             }
         }
-
+        /*
         public async Task<WorkItem[]> GetCurrentIterationPBIs()
         {
             var query = "Select [System.Id], [System.Title], [System.State] From WorkItems Where [System.WorkItemType] = 'Product Backlog Item' AND [State] <> 'Closed' AND [State] <> 'Removed' AND [Iteration Path] = @CurrentIteration order by [Microsoft.VSTS.Common.Priority] asc, [System.CreatedDate] desc";
             var result = await MakeWITQuery<WITResult>(query);
             return result.workItems;
-        }
+        }*/
 
         public async Task<WorkItemRelation[]> GetChildWorkItemsFromParentWorkItemId(string Id)
         {
@@ -88,9 +96,70 @@ namespace AzureDevOpsBackup.Class
             }
         }
 
-        public static void SaveWorkItems(string baseUrl, string project, string auth, string outDirSaveToDisk)
+        public static async Task SaveWorkItems(string baseUrl, string projectName, string auth, string outDirSaveToDisk)
         {
-            var azureHelper = new WorkItemsTasks(auth, baseUrl, project);
+            // Construct the URL for the Azure DevOps REST API call
+            string url = $"{baseUrl}/{projectName}/_apis/wit/wiql?" + Globals.APIversion;
+            string query = "{\"query\":\"Select [System.Id], [System.Title], [System.State], [System.TeamProject],[System.Parent] From WorkItems order by [Microsoft.VSTS.Common.Priority] asc, [System.CreatedDate] desc\"}";
+
+            using (var client = new HttpClient())
+            {
+                // Set up HttpClient with authentication and headers
+                client.DefaultRequestHeaders.Accept.Clear();
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", Convert.ToBase64String(Encoding.ASCII.GetBytes($":{auth}")));
+
+                // Make the POST request
+                HttpResponseMessage response = await client.PostAsync(url, new StringContent(query, Encoding.UTF8, "application/json"));
+                if (response.IsSuccessStatusCode)
+                {
+                    // Output response data
+                    Console.WriteLine($"Response: {response}");
+                    // Parse the response and save or process the work items
+                    string responseContent = await response.Content.ReadAsStringAsync();
+                    // Assuming you have a class that matches the JSON structure of your response
+                    var workItems = JsonConvert.DeserializeObject<WorkItemsResponse>(responseContent);
+                    try
+                    {
+                        
+
+                        // Save or process the work items
+                        // For example, save to disk
+                        string filePath = Path.Combine(outDirSaveToDisk, "workitems.json");
+                        // Replace the direct call to WriteAllTextAsync with Task.Run wrapping WriteAllText
+                        await Task.Run(() => File.WriteAllText(filePath, responseContent));
+                        Message("Saved: " + filePath, EventType.Information, 1000);
+                    }
+                    catch (JsonReaderException ex)
+                    {
+                        Console.WriteLine("Failed to parse JSON response.");
+                        Console.WriteLine($"Response Content: {responseContent}");
+                    }                    
+                }
+                else
+                {
+                    Console.WriteLine($"Error: {response.StatusCode}");
+                    string errorContent = await response.Content.ReadAsStringAsync();
+                    Console.WriteLine($"Response Content: {errorContent}");
+                    return;
+                }
+            }
+        }
+
+        public class WorkItemsResponse
+        {
+            public List<WorkItem> WorkItems { get; set; }
+        }
+
+        public class WorkItem
+        {
+            public int Id { get; set; }
+            public string Title { get; set; }
+            // Add other properties as needed
+        }
+        /*public static void SaveWorkItems(string baseUrl, string project, string auth, string outDirSaveToDisk)
+        {
+            /*var azureHelper = new WorkItemsTasks(auth, baseUrl, project);
 
             var workItems = azureHelper.GetCurrentIterationPBIs().Result;
 
@@ -114,8 +183,7 @@ namespace AzureDevOpsBackup.Class
 
             var filePath = Path.Combine(outDirSaveToDisk, "workitems.csv");
             File.WriteAllText(filePath, csv.ToString());
-            Console.WriteLine($"Work items saved to {filePath}");
-        }
+            Console.WriteLine($"Work items saved to {filePath}");}*/
     }
     public class WorkItemsDetailResult
     {
@@ -127,6 +195,10 @@ namespace AzureDevOpsBackup.Class
         public int id { get; set; }
         public Fields fields { get; set; }
     }
+
+
+
+
 
     public class Fields
     {
@@ -157,6 +229,4 @@ namespace AzureDevOpsBackup.Class
     {
         public WorkItemRelation[] workItemRelations { get; set; }
     }
-
-
 }
