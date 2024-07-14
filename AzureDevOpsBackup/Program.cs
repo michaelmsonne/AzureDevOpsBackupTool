@@ -1059,9 +1059,33 @@ namespace AzureDevOpsBackup
                                     // For each project, get Work Items and it´s details and save to disk as .csv file
                                     if (Array.Exists(args, argument => argument == "--workitems"))
                                     {
+                                        Console.ForegroundColor = ConsoleColor.Yellow;
                                         //await FetchAndSaveWorkItems(baseUrl, project.ToString(), auth, outDirSaveToDisk);
+                                        Console.WriteLine("Calling code to workitem save for " + project.Name);
+                                        Message("Calling code to workitem save for " + project.Name, EventType.Information, 1000);
+                                        //await WorkItemsTasks.SaveWorkItems(baseUrl, project.Name, auth, outDirSaveToDisk);
+                                        Console.ResetColor();
+                                        string pat = auth;
 
-                                        WorkItemsTasks.SaveWorkItems(baseUrl, project.Name, auth, outDirSaveToDisk);
+                                        //take base url from the user and take the last part of the url
+                                        string[] url = baseUrl.Split('/');
+                                        string orgName = url[url.Length - 2];
+
+
+                                        string devOpsOrgName = orgName;
+                                        string outputFileName = "output.csv";
+
+                                        try
+                                        {
+                                            await ExportWorkItems.ExportWorkItemsToCsv(pat, devOpsOrgName, outputFileName);
+                                            Console.WriteLine("Export completed successfully.");
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Console.ForegroundColor = ConsoleColor.Red;
+                                            Console.WriteLine($"An error occurred: {ex.Message}");
+                                            Console.ResetColor();
+                                        }
 
                                     }
                                 }

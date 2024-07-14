@@ -117,6 +117,11 @@
   <ItemGroup>
     <Compile Include="Class\ApplicationStatus.cs" />
     <Compile Include="Class\ApplicationInfo.cs" />
+    <Compile Include="Class\DevOpsProjects.cs" />
+    <Compile Include="Class\DevOpsProjectTeams.cs" />
+    <Compile Include="Class\DevOpsProjectTeamTasks.cs" />
+    <Compile Include="Class\DevOpsTask.cs" />
+    <Compile Include="Class\ExportWorkItems.cs" />
     <Compile Include="Class\LocalBackupsTasks.cs" />
     <Compile Include="Class\LocalLogCleanup.cs" />
     <Compile Include="Class\CommandLineParser.cs" />
