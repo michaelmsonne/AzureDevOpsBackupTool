@@ -1060,6 +1060,9 @@ namespace AzureDevOpsBackup
                                     if (Array.Exists(args, argument => argument == "--workitems"))
                                     {
                                         //await FetchAndSaveWorkItems(baseUrl, project.ToString(), auth, outDirSaveToDisk);
+
+                                        WorkItemsTasks.SaveWorkItems(baseUrl, project.Name, auth, outDirSaveToDisk);
+
                                     }
                                 }
 

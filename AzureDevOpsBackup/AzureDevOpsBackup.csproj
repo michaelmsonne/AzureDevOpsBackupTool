@@ -131,6 +131,7 @@
     <Compile Include="Class\Requirements.cs" />
     <Compile Include="Class\SecureArgumentHandler.cs" />
     <Compile Include="Class\SecureArgumentHandlerToken.cs" />
+    <Compile Include="Class\WorkItemsTasks.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
