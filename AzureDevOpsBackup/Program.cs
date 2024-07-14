@@ -426,8 +426,10 @@ namespace AzureDevOpsBackup
                                     Globals._projectCount++;
 
                                     // Log
-                                    Message("Getting information about Git project: '" + project.Name + "'...", EventType.Information, 1000);
-                                    Console.WriteLine("Getting information about Git project: '" + project.Name + "'...");
+                                    Message("Getting information about Git project: '" + project.Name + "'...",
+                                        EventType.Information, 1000);
+                                    Console.WriteLine(
+                                        "Getting information about Git project: '" + project.Name + "'...");
 
                                     // Get repos in projects
                                     var clientRepos = new RestClient(baseUrl + project.Name + "/_apis/git/repositories?" + Globals.APIversion);
@@ -443,8 +445,11 @@ namespace AzureDevOpsBackup
                                         Globals._repoCount++;
 
                                         // Log
-                                        Message("Getting information about Git repository is project: '" + repo.Name + "'...", EventType.Information, 1000);
-                                        Console.WriteLine("Getting information about Git repository in project: '" + repo.Name + "'...");
+                                        Message(
+                                            "Getting information about Git repository is project: '" + repo.Name +
+                                            "'...", EventType.Information, 1000);
+                                        Console.WriteLine("Getting information about Git repository in project: '" +
+                                                          repo.Name + "'...");
                                     
                                         // Branches
                                         var branches = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/refs?" + Globals.APIversion);
@@ -474,9 +479,14 @@ namespace AzureDevOpsBackup
                                             Items items = JsonConvert.DeserializeObject<Items>(responseItems.Content);
 
                                             // Get info about repos in projects, files
-                                            Message("Getting information about Git repository: '" + repo.Name + "' is done, items count in here is: '" + items.Count + "'", EventType.Information, 1000);
+                                            Message(
+                                                "Getting information about Git repository: '" + repo.Name +
+                                                "' is done, items count in here is: '" + items.Count + "'",
+                                                EventType.Information, 1000);
                                             Console.ForegroundColor = ConsoleColor.Yellow;
-                                            Console.WriteLine("Getting information about Git repository: '" + repo.Name + "' is done, items count in here is: '" + items.Count + "'");
+                                            Console.WriteLine("Getting information about Git repository: '" +
+                                                              repo.Name + "' is done, items count in here is: '" +
+                                                              items.Count + "'");
                                             Console.ResetColor();
 
                                             // If more then 0 is returned
@@ -494,8 +504,11 @@ namespace AzureDevOpsBackup
                                                 repoitemscountelements.Add(repo.Name + $" ('{branchName}' branch)");
 
                                                 // Log
-                                                Message("Getting client blob for Git repository: '" + repo.Name + "' from API...", EventType.Information, 1000);
-                                                Console.WriteLine("Getting client blob for Git repository: '" + repo.Name + "' from API...");
+                                                Message(
+                                                    "Getting client blob for Git repository: '" + repo.Name +
+                                                    "' from API...", EventType.Information, 1000);
+                                                Console.WriteLine("Getting client blob for Git repository: '" +
+                                                                  repo.Name + "' from API...");
 
                                                 // Get the files from repo to storage
                                                 requestBlob.AddJsonBody(items.Value.Where(itm => itm.GitObjectType == "blob").Select(itm => itm.ObjectId).ToList());
@@ -519,9 +532,14 @@ namespace AzureDevOpsBackup
                                                     }
 
                                                     // Log
-                                                    Message("Saved file to disk: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip'", EventType.Information, 1000);
+                                                    Message(
+                                                        "Saved file to disk: '" + outDirSaveToDisk + project.Name +
+                                                        "_" + repo.Name + $"_{branchNameFormatted}_blob.zip'",
+                                                        EventType.Information, 1000);
                                                     Console.ForegroundColor = ConsoleColor.Green;
-                                                    Console.WriteLine("Saved file to disk: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip'");
+                                                    Console.WriteLine("Saved file to disk: '" + outDirSaveToDisk +
+                                                                      project.Name + "_" + repo.Name +
+                                                                      $"_{branchNameFormatted}_blob.zip'");
                                                     Console.ResetColor();
 
                                                     // Count files there is downloaded
@@ -533,9 +551,17 @@ namespace AzureDevOpsBackup
                                                 }
                                                 catch (UnauthorizedAccessException)
                                                 {
-                                                    Message("! Unable to write the backup file to disk: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                    Message(
+                                                        "! Unable to write the backup file to disk: '" +
+                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                        $"_{branchNameFormatted}_blob.zip'. Make sure the account you use to run this tool has write rights to this location.",
+                                                        EventType.Error, 1001);
                                                     Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine("Unable to write the backup file to disk: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                    Console.WriteLine(
+                                                        "Unable to write the backup file to disk: '" +
+                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                        $"_{branchNameFormatted}_blob.zip'. Make sure the account you use to run this tool has write rights to this location.",
+                                                        EventType.Error, 1001);
                                                     Console.ResetColor();
 
                                                     // Count errors
@@ -544,9 +570,16 @@ namespace AzureDevOpsBackup
                                                 catch (Exception e)
                                                 {
                                                     // Error
-                                                    Message("Exception caught when trying to save file to disk: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip' - error: " + e, EventType.Error, 1001);
+                                                    Message(
+                                                        "Exception caught when trying to save file to disk: '" +
+                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                        $"_{branchNameFormatted}_blob.zip' - error: " + e,
+                                                        EventType.Error, 1001);
                                                     Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine("Exception caught when trying to save file to disk: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip' - error: " + e);
+                                                    Console.WriteLine(
+                                                        "Exception caught when trying to save file to disk: '" +
+                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                        $"_{branchNameFormatted}_blob.zip' - error: " + e);
                                                     Console.ResetColor();
 
                                                     // Set backup status
@@ -563,11 +596,16 @@ namespace AzureDevOpsBackup
                                                     // Save file to disk
                                                     //File.WriteAllText(outDir + project.Name + "_" + repo.Name + "_tree.json", responseItems.Content);
                                                     File.WriteAllText(outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json", responseItems.Content);
-                                                
+
                                                     // Log
-                                                    Message("Saved file to disk: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json'", EventType.Information, 1000);
+                                                    Message(
+                                                        "Saved file to disk: '" + outDirSaveToDisk + project.Name +
+                                                        "_" + repo.Name + $"_{branchNameFormatted}_tree.json'",
+                                                        EventType.Information, 1000);
                                                     Console.ForegroundColor = ConsoleColor.Green;
-                                                    Console.WriteLine("Saved file to disk: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json'");
+                                                    Console.WriteLine("Saved file to disk: '" + outDirSaveToDisk +
+                                                                      project.Name + "_" + repo.Name +
+                                                                      $"_{branchNameFormatted}_tree.json'");
                                                     Console.ResetColor();
 
                                                     // Count files there is downloaded
@@ -579,9 +617,17 @@ namespace AzureDevOpsBackup
                                                 }
                                                 catch (UnauthorizedAccessException)
                                                 {
-                                                    Message("! Unable to write the backup file to disk: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                    Message(
+                                                        "! Unable to write the backup file to disk: '" +
+                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                        $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location.",
+                                                        EventType.Error, 1001);
                                                     Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine("Unable to write the backup file to disk: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                    Console.WriteLine(
+                                                        "Unable to write the backup file to disk: '" +
+                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                        $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location.",
+                                                        EventType.Error, 1001);
                                                     Console.ResetColor();
 
                                                     // Count errors
@@ -590,9 +636,16 @@ namespace AzureDevOpsBackup
                                                 catch (Exception e)
                                                 {
                                                     // Error
-                                                    Message("Exception caught when trying to save file to disk: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json' - error: " + e, EventType.Error, 1001);
+                                                    Message(
+                                                        "Exception caught when trying to save file to disk: '" +
+                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                        $"_{branchNameFormatted}_tree.json' - error: " + e,
+                                                        EventType.Error, 1001);
                                                     Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine("Exception caught when trying to save file to disk: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json' - error: " + e);
+                                                    Console.WriteLine(
+                                                        "Exception caught when trying to save file to disk: '" +
+                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                        $"_{branchNameFormatted}_tree.json' - error: " + e);
                                                     Console.ResetColor();
 
                                                     // Set backup status
@@ -607,8 +660,13 @@ namespace AzureDevOpsBackup
                                                 if (Array.Exists(args, argument => argument == "--unzip"))
                                                 {
                                                     // If need to unzip data from .zip and .json (files details is in here)
-                                                    Message("Checking if folder exists before unzip: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + "'", EventType.Information, 1000);
-                                                    Console.WriteLine("Checking if folder exists before unzip: '" + outDirSaveToDisk + project.Name + "_" + repo.Name + "'");
+                                                    Message(
+                                                        "Checking if folder exists before unzip: '" + outDirSaveToDisk +
+                                                        project.Name + "_" + repo.Name + "'", EventType.Information,
+                                                        1000);
+                                                    Console.WriteLine("Checking if folder exists before unzip: '" +
+                                                                      outDirSaveToDisk + project.Name + "_" +
+                                                                      repo.Name + "'");
 
                                                     // Check if folder to unzip exists
 
@@ -624,9 +682,13 @@ namespace AzureDevOpsBackup
                                                             Directory.Delete(localRepoDirectory, true);
 
                                                             // Log
-                                                            Message("Folder exists before unzip: '" + localRepoDirectory + "', deleting folder...", EventType.Information, 1000);
+                                                            Message(
+                                                                "Folder exists before unzip: '" + localRepoDirectory +
+                                                                "', deleting folder...", EventType.Information, 1000);
                                                             Console.ForegroundColor = ConsoleColor.Yellow;
-                                                            Console.WriteLine("Folder exists before unzip: '" + localRepoDirectory + "', deleting folder...");
+                                                            Console.WriteLine("Folder exists before unzip: '" +
+                                                                              localRepoDirectory +
+                                                                              "', deleting folder...");
                                                             Console.ResetColor();
 
                                                             // Set backup status
@@ -634,9 +696,15 @@ namespace AzureDevOpsBackup
                                                         }
                                                         catch (UnauthorizedAccessException)
                                                         {
-                                                            Message("! Unable to delete folder under unzip: '" + localRepoDirectory + "'. Make sure the account you use to run this tool has delete rights to this location.", EventType.Error, 1001);
+                                                            Message(
+                                                                "! Unable to delete folder under unzip: '" +
+                                                                localRepoDirectory +
+                                                                "'. Make sure the account you use to run this tool has delete rights to this location.",
+                                                                EventType.Error, 1001);
                                                             Console.ForegroundColor = ConsoleColor.Red;
-                                                            Console.WriteLine("Unable to delete folder under unzip: '" + localRepoDirectory + "'. Make sure the account you use to run this tool has delete rights to this location.");
+                                                            Console.WriteLine("Unable to delete folder under unzip: '" +
+                                                                              localRepoDirectory +
+                                                                              "'. Make sure the account you use to run this tool has delete rights to this location.");
                                                             Console.ResetColor();
 
                                                             // Count errors
@@ -645,9 +713,14 @@ namespace AzureDevOpsBackup
                                                         catch (Exception e)
                                                         {
                                                             // Error
-                                                            Message("Exception caught when trying to delete folder when unzip: '" + localRepoDirectory + "' - error: " + e, EventType.Error, 1001);
+                                                            Message(
+                                                                "Exception caught when trying to delete folder when unzip: '" +
+                                                                localRepoDirectory + "' - error: " + e, EventType.Error,
+                                                                1001);
                                                             Console.ForegroundColor = ConsoleColor.Red;
-                                                            Console.WriteLine("Exception caught when trying to delete folder when unzip: '" + localRepoDirectory + "' - error: " + e);
+                                                            Console.WriteLine(
+                                                                "Exception caught when trying to delete folder when unzip: '" +
+                                                                localRepoDirectory + "' - error: " + e);
                                                             Console.ResetColor();
 
                                                             // Set backup status
@@ -662,9 +735,13 @@ namespace AzureDevOpsBackup
                                                         {
                                                             // Log
                                                             Console.ForegroundColor = ConsoleColor.Green;
-                                                            Console.WriteLine($"Directory '" + localRepoDirectory + "' is deleted successfully");
+                                                            Console.WriteLine($"Directory '" + localRepoDirectory +
+                                                                              "' is deleted successfully");
                                                             Console.ResetColor();
-                                                            Message("Directory '" + localRepoDirectory + "' is deleted successfully", EventType.Information, 1000);
+                                                            Message(
+                                                                "Directory '" + localRepoDirectory +
+                                                                "' is deleted successfully", EventType.Information,
+                                                                1000);
 
                                                             // Set backup status
                                                             isBackupOkAndUnZip = true;
@@ -673,9 +750,13 @@ namespace AzureDevOpsBackup
                                                         {
                                                             // Log
                                                             Console.ForegroundColor = ConsoleColor.Red;
-                                                            Console.WriteLine($"Directory '" + localRepoDirectory + "' is not deleted successfully - see logs for more information");
+                                                            Console.WriteLine($"Directory '" + localRepoDirectory +
+                                                                              "' is not deleted successfully - see logs for more information");
                                                             Console.ResetColor();
-                                                            Message("Directory '" + localRepoDirectory + "' is not deleted successfully - see logs for more information", EventType.Error, 1001);
+                                                            Message(
+                                                                "Directory '" + localRepoDirectory +
+                                                                "' is not deleted successfully - see logs for more information",
+                                                                EventType.Error, 1001);
 
                                                             // Set backup status
                                                             isBackupOkAndUnZip = false;
@@ -688,9 +769,13 @@ namespace AzureDevOpsBackup
                                                     {
                                                         // if not folder to unzip exists
                                                         Console.ForegroundColor = ConsoleColor.Yellow;
-                                                        Console.WriteLine($"Folder to unzip files from does not exists: '" + localRepoDirectory + "'...");
+                                                        Console.WriteLine(
+                                                            $"Folder to unzip files from does not exists: '" +
+                                                            localRepoDirectory + "'...");
                                                         Console.ResetColor();
-                                                        Message("Folder to unzip files from does not exists: '" + localRepoDirectory + "'...", EventType.Warning, 1001);
+                                                        Message(
+                                                            "Folder to unzip files from does not exists: '" +
+                                                            localRepoDirectory + "'...", EventType.Warning, 1001);
                                                     }
 
                                                     // Do work to start over - create folder to files
@@ -699,9 +784,15 @@ namespace AzureDevOpsBackup
                                                     {
                                                         // Log
                                                         Message(
-                                                            "Checking if folder exists before unzip: '" + localRepoDirectory + "' - The folder does not exist, creating folder: '" + localRepoDirectory + "'", EventType.Information, 1000);
+                                                            "Checking if folder exists before unzip: '" +
+                                                            localRepoDirectory +
+                                                            "' - The folder does not exist, creating folder: '" +
+                                                            localRepoDirectory + "'", EventType.Information, 1000);
                                                         Console.ForegroundColor = ConsoleColor.Yellow;
-                                                        Console.WriteLine("Checking if folder exists before unzip: '" + localRepoDirectory + "' - The folder does not exist, creating folder: '" + localRepoDirectory + "'");
+                                                        Console.WriteLine("Checking if folder exists before unzip: '" +
+                                                                          localRepoDirectory +
+                                                                          "' - The folder does not exist, creating folder: '" +
+                                                                          localRepoDirectory + "'");
                                                         Console.ResetColor();
 
                                                         // Do work
@@ -709,9 +800,15 @@ namespace AzureDevOpsBackup
 
                                                         // Log
                                                         Message(
-                                                            "Checked if folder exists before unzip: '" + localRepoDirectory + "' - The folder does not exist, created folder: '" + localRepoDirectory + "'", EventType.Information, 1000);
+                                                            "Checked if folder exists before unzip: '" +
+                                                            localRepoDirectory +
+                                                            "' - The folder does not exist, created folder: '" +
+                                                            localRepoDirectory + "'", EventType.Information, 1000);
                                                         Console.ForegroundColor = ConsoleColor.Yellow;
-                                                        Console.WriteLine("Checked if folder exists before unzip: '" + localRepoDirectory + "' - The folder does not exist, created folder: '" + localRepoDirectory + "'");
+                                                        Console.WriteLine("Checked if folder exists before unzip: '" +
+                                                                          localRepoDirectory +
+                                                                          "' - The folder does not exist, created folder: '" +
+                                                                          localRepoDirectory + "'");
                                                         Console.ResetColor();
 
                                                         // Set backup status
@@ -719,9 +816,15 @@ namespace AzureDevOpsBackup
                                                     }
                                                     catch (UnauthorizedAccessException)
                                                     {
-                                                        Message("Unable to create folder under unzipping: '" + localRepoDirectory + "'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                        Message(
+                                                            "Unable to create folder under unzipping: '" +
+                                                            localRepoDirectory +
+                                                            "'. Make sure the account you use to run this tool has write rights to this location.",
+                                                            EventType.Error, 1001);
                                                         Console.ForegroundColor = ConsoleColor.Red;
-                                                        Console.WriteLine("Unable to create folder under unzipping: '" + localRepoDirectory + "'. Make sure the account you use to run this tool has write rights to this location.");
+                                                        Console.WriteLine("Unable to create folder under unzipping: '" +
+                                                                          localRepoDirectory +
+                                                                          "'. Make sure the account you use to run this tool has write rights to this location.");
                                                         Console.ResetColor();
 
                                                         // Count errors
@@ -730,7 +833,10 @@ namespace AzureDevOpsBackup
                                                     catch (Exception e)
                                                     {
                                                         // Error
-                                                        Message("Exception caught when trying to creating folder: '" + localRepoDirectory + "' - error: " + e, EventType.Error, 1001);
+                                                        Message(
+                                                            "Exception caught when trying to creating folder: '" +
+                                                            localRepoDirectory + "' - error: " + e, EventType.Error,
+                                                            1001);
                                                         Console.ForegroundColor = ConsoleColor.Red;
                                                         Console.WriteLine("{0} Exception caught.", e);
                                                         Console.ResetColor();
@@ -750,9 +856,14 @@ namespace AzureDevOpsBackup
                                                         if (item.IsFolder)
                                                         {
                                                             // If folder data
-                                                            Message("Unzipping Git repository folder data: '" + localRepoDirectory + item.Path + "'...", EventType.Information, 1000);
+                                                            Message(
+                                                                "Unzipping Git repository folder data: '" +
+                                                                localRepoDirectory + item.Path + "'...",
+                                                                EventType.Information, 1000);
                                                             Console.ForegroundColor = ConsoleColor.Yellow;
-                                                            Console.WriteLine("Unzipping Git repository folder data: '" + localRepoDirectory + item.Path + "'...");
+                                                            Console.WriteLine(
+                                                                "Unzipping Git repository folder data: '" +
+                                                                localRepoDirectory + item.Path + "'...");
                                                             Console.ResetColor();
 
                                                             try
@@ -762,18 +873,28 @@ namespace AzureDevOpsBackup
 
                                                                 // Log
                                                                 Console.ForegroundColor = ConsoleColor.Green;
-                                                                Console.WriteLine($"> Created folder: '" + localRepoDirectory + item.Path + "'");
+                                                                Console.WriteLine($"> Created folder: '" +
+                                                                    localRepoDirectory + item.Path + "'");
                                                                 Console.ResetColor();
-                                                                Message("> Created folder: '" + localRepoDirectory + item.Path + "'", EventType.Information, 1000);
+                                                                Message(
+                                                                    "> Created folder: '" + localRepoDirectory +
+                                                                    item.Path + "'", EventType.Information, 1000);
 
                                                                 // Set backup status
                                                                 isBackupOkAndUnZip = true;
                                                             }
                                                             catch (UnauthorizedAccessException)
                                                             {
-                                                                Message("! Unable to create folder under unzipping: '" + localRepoDirectory + item.Path + "'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                                Message(
+                                                                    "! Unable to create folder under unzipping: '" +
+                                                                    localRepoDirectory + item.Path +
+                                                                    "'. Make sure the account you use to run this tool has write rights to this location.",
+                                                                    EventType.Error, 1001);
                                                                 Console.ForegroundColor = ConsoleColor.Red;
-                                                                Console.WriteLine("Unable to create folder under unzipping: '" + localRepoDirectory + item.Path + "'. Make sure the account you use to run this tool has write rights to this location.");
+                                                                Console.WriteLine(
+                                                                    "Unable to create folder under unzipping: '" +
+                                                                    localRepoDirectory + item.Path +
+                                                                    "'. Make sure the account you use to run this tool has write rights to this location.");
                                                                 Console.ResetColor();
 
                                                                 // Count errors
@@ -782,7 +903,10 @@ namespace AzureDevOpsBackup
                                                             catch (Exception e)
                                                             {
                                                                 // Log
-                                                                Message("Exception caught when trying to create folder: '" + localRepoDirectory + item.Path + "' - error: " + e, EventType.Error, 1001);
+                                                                Message(
+                                                                    "Exception caught when trying to create folder: '" +
+                                                                    localRepoDirectory + item.Path + "' - error: " + e,
+                                                                    EventType.Error, 1001);
                                                                 Console.ForegroundColor = ConsoleColor.Red;
                                                                 Console.WriteLine("{0} Exception caught.", e);
                                                                 Console.ResetColor();
@@ -801,18 +925,31 @@ namespace AzureDevOpsBackup
                                                             {
                                                                 // Log
                                                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                                                Console.WriteLine($"Unzipping Git repository file data on disk: '" + localRepoDirectory + item.Path + "'");
+                                                                Console.WriteLine(
+                                                                    $"Unzipping Git repository file data on disk: '" +
+                                                                    localRepoDirectory + item.Path + "'");
                                                                 Console.ResetColor();
-                                                                Message("Unzipping Git repository file data on disk: '" + localRepoDirectory + item.Path + "'", EventType.Information, 1000);
+                                                                Message(
+                                                                    "Unzipping Git repository file data on disk: '" +
+                                                                    localRepoDirectory + item.Path + "'",
+                                                                    EventType.Information, 1000);
 
                                                                 //Try to save data to disk
-                                                                archive.GetEntry(item.ObjectId).ExtractToFile(Path.GetFullPath(localRepoDirectory + item.Path), true);
+                                                                archive.GetEntry(item.ObjectId)
+                                                                    .ExtractToFile(
+                                                                        Path.GetFullPath(localRepoDirectory +
+                                                                            item.Path), true);
 
                                                                 // Log
                                                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                                                Console.WriteLine($"Unzipped Git repository file data on disk: '" + localRepoDirectory + item.Path + "'");
+                                                                Console.WriteLine(
+                                                                    $"Unzipped Git repository file data on disk: '" +
+                                                                    localRepoDirectory + item.Path + "'");
                                                                 Console.ResetColor();
-                                                                Message("Unzipped Git repository file data on disk: '" + localRepoDirectory + item.Path + "'", EventType.Information, 1000);
+                                                                Message(
+                                                                    "Unzipped Git repository file data on disk: '" +
+                                                                    localRepoDirectory + item.Path + "'",
+                                                                    EventType.Information, 1000);
 
                                                                 // Count
                                                                 Globals._totalFilesIsBackupUnZipped++;
@@ -822,9 +959,16 @@ namespace AzureDevOpsBackup
                                                             }
                                                             catch (UnauthorizedAccessException)
                                                             {
-                                                                Message("! Unable to create file under unzipping: '" + localRepoDirectory + item.Path + "'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
+                                                                Message(
+                                                                    "! Unable to create file under unzipping: '" +
+                                                                    localRepoDirectory + item.Path +
+                                                                    "'. Make sure the account you use to run this tool has write rights to this location.",
+                                                                    EventType.Error, 1001);
                                                                 Console.ForegroundColor = ConsoleColor.Red;
-                                                                Console.WriteLine("Unable to create file under unzipping: '" + localRepoDirectory + item.Path + "'. Make sure the account you use to run this tool has write rights to this location.");
+                                                                Console.WriteLine(
+                                                                    "Unable to create file under unzipping: '" +
+                                                                    localRepoDirectory + item.Path +
+                                                                    "'. Make sure the account you use to run this tool has write rights to this location.");
                                                                 Console.ResetColor();
 
                                                                 // Count errors
@@ -833,9 +977,14 @@ namespace AzureDevOpsBackup
                                                             catch (Exception e)
                                                             {
                                                                 // Error
-                                                                Message("Exception caught when trying to create data on disk: '" + localRepoDirectory + item.Path + "' - error: " + e, EventType.Error, 1001);
+                                                                Message(
+                                                                    "Exception caught when trying to create data on disk: '" +
+                                                                    localRepoDirectory + item.Path + "' - error: " + e,
+                                                                    EventType.Error, 1001);
                                                                 Console.ForegroundColor = ConsoleColor.Red;
-                                                                Console.WriteLine("Exception caught when trying to create data on disk: '" + localRepoDirectory + item.Path + "' - error: " + e);
+                                                                Console.WriteLine(
+                                                                    "Exception caught when trying to create data on disk: '" +
+                                                                    localRepoDirectory + item.Path + "' - error: " + e);
 
                                                                 Console.ResetColor();
 
@@ -849,9 +998,12 @@ namespace AzureDevOpsBackup
                                                     }
 
                                                     // When done unzip
-                                                    Message("Unzipping Git repository: '" + localRepoDirectory + "' is now done", EventType.Information, 1000);
+                                                    Message(
+                                                        "Unzipping Git repository: '" + localRepoDirectory +
+                                                        "' is now done", EventType.Information, 1000);
                                                     Console.ForegroundColor = ConsoleColor.Green;
-                                                    Console.WriteLine("Unzipping Git repository: '" + localRepoDirectory + "' is now done\n");
+                                                    Console.WriteLine("Unzipping Git repository: '" +
+                                                                      localRepoDirectory + "' is now done\n");
                                                     Console.ResetColor();
 
                                                     // When done release zip files from function
@@ -864,9 +1016,14 @@ namespace AzureDevOpsBackup
                                             else
                                             {
                                                 // If there is nothing in the Git repo/project to backup
-                                                Message("Number of items in project '" + project.Name + "' repository: '" + repo.Name + "' is 0, nothing to backup", EventType.Information, 1000);
+                                                Message(
+                                                    "Number of items in project '" + project.Name + "' repository: '" +
+                                                    repo.Name + "' is 0, nothing to backup", EventType.Information,
+                                                    1000);
                                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                                Console.WriteLine("Number of items in project '" + project.Name + "' repository: '" + repo.Name + "' is 0, nothing to backup\n");
+                                                Console.WriteLine("Number of items in project '" + project.Name +
+                                                                  "' repository: '" + repo.Name +
+                                                                  "' is 0, nothing to backup\n");
                                                 Console.ResetColor();
 
                                                 // Set backup status - no projects to backup
@@ -879,7 +1036,7 @@ namespace AzureDevOpsBackup
                                 // When done backup
                                 Message("No projects to work with for now...", EventType.Information, 1000);
                                 Message("Done with '" + Globals._repoCount + "' project(s) in Azure DevOps", EventType.Information, 1000);
-                                Message("Done with '" + Globals._repoItemsCount + "' repositories to backup in folder: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'", EventType.Information, 1000);
+                                Message("Done with '" + Globals._repoItemsCount + "' repositories (and number of total branches) with backup in folder: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'", EventType.Information, 1000);
                                 Message("Processed files to backup from Git repos (total unzipped if specified): '" + Globals._totalFilesIsBackupUnZipped + "'", EventType.Information, 1000);
                                 Message("Processed files to backup from Git repos (blob files (.zip files)) (all branches): " + Globals._totalBlobFilesIsBackup + "'", EventType.Information, 1000);
                                 Message("Processed files to backup from Git repos (tree files (.json files)) (all branches): " + Globals._totalTreeFilesIsBackup + "'", EventType.Information, 1000);
@@ -888,7 +1045,7 @@ namespace AzureDevOpsBackup
                                 Console.ForegroundColor = ConsoleColor.Green;
                                 Console.WriteLine("== No projects to work with for now ==\n");
                                 Console.WriteLine("Done with '" + Globals._repoCount + "' project(s) in Azure DevOps");
-                                Console.WriteLine("Done with '" + Globals._repoItemsCount + "' repositories to backup in folder: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'");
+                                Console.WriteLine("Done with '" + Globals._repoItemsCount + "' repositories (and number of total branches) with backup: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'");
                                 Console.WriteLine("Processed files to backup from Git repos (total unzipped if specified): '" + Globals._totalFilesIsBackupUnZipped + "'");
                                 Console.WriteLine("Processed files to backup from Git repos (blob files (.zip files)) (all branches): '" + Globals._totalBlobFilesIsBackup + "'");
                                 Console.WriteLine("Processed files to backup from Git repos (tree files (.json files)) (all branches): '" + Globals._totalTreeFilesIsBackup + "'");
@@ -1038,6 +1195,8 @@ namespace AzureDevOpsBackup
                                 //DateTime endTime = DateTime.Now; // get current time as end time
                             }
 
+                            #region Backup cleanup tasks
+
                             // If user set to delete downloaded files (.zip and .json) after unzipped
                             if (Array.Exists(args, argument => argument == "--cleanup"))
                             {
@@ -1077,6 +1236,10 @@ namespace AzureDevOpsBackup
                                 // Set state
                                 _cleanUpState = false;
                             }
+
+                            #endregion Backup cleanup tasks
+
+                            #region Status mail data collecting
 
                             // Get status email text for Status colums in email report
                             // Log
@@ -1514,6 +1677,7 @@ namespace AzureDevOpsBackup
                                 Globals._totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, Globals._isOutputFolderContainFilesStatusText,
                                 Globals._isDaysToKeepNotDefaultStatusText, Globals._startTime, Globals._endTime,
                                 Globals._deletedFilesAfterUnzip, Globals._checkForLeftoverFilesAfterCleanup);
+                            #endregion Status mail data collecting
                         }
 
                         Console.ForegroundColor = ConsoleColor.Green;
