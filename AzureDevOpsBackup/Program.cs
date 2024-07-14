@@ -1100,7 +1100,7 @@ namespace AzureDevOpsBackup
                                 // When done backup
                                 Message("No projects to work with for now...", EventType.Information, 1000);
                                 Message("Done with '" + Globals._repoCount + "' project(s) in Azure DevOps", EventType.Information, 1000);
-                                Message("Done with '" + Globals._repoItemsCount + "' repositories to backup in folder: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'", EventType.Information, 1000);
+                                Message("Done with '" + Globals._repoItemsCount + "' repositories (and number of total branches) with backup in folder: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'", EventType.Information, 1000);
                                 Message("Processed files to backup from Git repos (total unzipped if specified): '" + Globals._totalFilesIsBackupUnZipped + "'", EventType.Information, 1000);
                                 Message("Processed files to backup from Git repos (blob files (.zip files)) (all branches): " + Globals._totalBlobFilesIsBackup + "'", EventType.Information, 1000);
                                 Message("Processed files to backup from Git repos (tree files (.json files)) (all branches): " + Globals._totalTreeFilesIsBackup + "'", EventType.Information, 1000);
@@ -1109,7 +1109,7 @@ namespace AzureDevOpsBackup
                                 Console.ForegroundColor = ConsoleColor.Green;
                                 Console.WriteLine("== No projects to work with for now ==\n");
                                 Console.WriteLine("Done with '" + Globals._repoCount + "' project(s) in Azure DevOps");
-                                Console.WriteLine("Done with '" + Globals._repoItemsCount + "' repositories to backup in folder: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'");
+                                Console.WriteLine("Done with '" + Globals._repoItemsCount + "' repositories (and number of total branches) with backup: '" + outDirSaveToDisk + "' on host: '" + Environment.MachineName + "'");
                                 Console.WriteLine("Processed files to backup from Git repos (total unzipped if specified): '" + Globals._totalFilesIsBackupUnZipped + "'");
                                 Console.WriteLine("Processed files to backup from Git repos (blob files (.zip files)) (all branches): '" + Globals._totalBlobFilesIsBackup + "'");
                                 Console.WriteLine("Processed files to backup from Git repos (tree files (.json files)) (all branches): '" + Globals._totalTreeFilesIsBackup + "'");
