@@ -46,7 +46,7 @@ namespace AzureDevOpsBackupUnzipTool
                     DisplayHelpToConsole.DisplayGuide();
 
                     // Log
-                    Message($"Showed help to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", FileLogger.EventType.Information, 1000);
+                    Message($"Showed help to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
                     Console.ForegroundColor = ConsoleColor.Yellow;
                     Console.WriteLine($"Showed help to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!\n");
                     Console.ResetColor();
@@ -62,7 +62,7 @@ namespace AzureDevOpsBackupUnzipTool
                     DisplayHelpToConsole.DisplayGuide();
 
                     // Log
-                    Message($"Showed help to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", FileLogger.EventType.Information, 1000);
+                    Message($"Showed help to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
 
                     // Reset color
                     Console.ResetColor();
@@ -78,7 +78,7 @@ namespace AzureDevOpsBackupUnzipTool
                     DisplayHelpToConsole.DisplayInfo();
 
                     // Log
-                    //Message($"Showed information about application to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
+                    Message($"Showed information about application to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
 
                     // Reset color
                     Console.ResetColor();
@@ -118,12 +118,16 @@ namespace AzureDevOpsBackupUnzipTool
             //Try to unzip the project form the zip file and metadata file
             try
             {
+                // Do
                 UnzipProject(zipFilePath, outputDirectory, jsonFilePath);
+
+                // Log
                 Message("Unzipping completed successfully!", EventType.Information, 1000);
                 Console.WriteLine("Unzipping completed successfully.");
             }
             catch (Exception ex)
             {
+                // Log
                 Message($"An error occurred: {ex.Message}", EventType.Error, 1001);
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
@@ -141,8 +145,10 @@ namespace AzureDevOpsBackupUnzipTool
             {
                 foreach (var item in items)
                 {
+                    // Get the destination path
                     string destinationPath = Path.GetFullPath(Path.Combine(outputDirectory, item.Path.TrimStart('/')));
 
+                    // Check if the item is a folder or a file
                     if (item.GitObjectType == "tree")
                     {
                         // If folder data
@@ -161,6 +167,7 @@ namespace AzureDevOpsBackupUnzipTool
                         }
                         catch (UnauthorizedAccessException)
                         {
+                            // Log
                             Message("! Unable to create folder to store the backups: '" + destinationPath + "'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
                             Console.ForegroundColor = ConsoleColor.Red;
                             Console.WriteLine("Unable to create folder to store the backups: '" + destinationPath + "'. Make sure the account you use to run this tool has write rights to this location.");
@@ -174,9 +181,6 @@ namespace AzureDevOpsBackupUnzipTool
                             Console.WriteLine("{0} Exception caught.", e);
                             Console.ResetColor();
                         }
-
-                        //Directory.CreateDirectory(destinationPath);
-                        //Console.WriteLine($"> Created folder: '{destinationPath}'");
                     }
                     else if (item.GitObjectType == "blob")
                     {
@@ -184,7 +188,10 @@ namespace AzureDevOpsBackupUnzipTool
                         Console.WriteLine($"Unzipping Git repository file data on disk: '{destinationPath}'");
                         Message($"Unzipping Git repository file data on disk: '{destinationPath}'", EventType.Information, 1000);
 
+                        // Extract the file
                         var entry = archive.GetEntry(item.ObjectId);
+
+                        // Check if the entry is not null
                         if (entry != null)
                         {
                             try
@@ -199,6 +206,7 @@ namespace AzureDevOpsBackupUnzipTool
                             }
                             catch (UnauthorizedAccessException)
                             {
+                                // Log
                                 Message("! Unable to create folder to store the backups: '" + destinationPath + "'. Make sure the account you use to run this tool has write rights to this location.", EventType.Error, 1001);
                                 Console.ForegroundColor = ConsoleColor.Red;
                                 Console.WriteLine("Unable to create folder to store the backups: '" + destinationPath + "'. Make sure the account you use to run this tool has write rights to this location.");
@@ -213,6 +221,7 @@ namespace AzureDevOpsBackupUnzipTool
                                 Console.ResetColor();
                             }
                         }
+                        // If the entry is null
                         else
                         {
                             Console.WriteLine($"Entry with ObjectId '{item.ObjectId}' not found in the zip archive.");
