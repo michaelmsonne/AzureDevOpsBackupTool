@@ -30,7 +30,7 @@
       <Name>AzureDevOpsBackup</Name>
       <Project>{4795920a-5c87-48a0-9fcf-4641d68e9cb6}</Project>
       <Private>True</Private>
-      <OutputsToImport>PrimaryOutput;References;LocalizedResourcesOutput</OutputsToImport>
+      <OutputsToImport>PrimaryOutput;References;ContentOutput</OutputsToImport>
     </ProjectReference>
   </ItemGroup>
   <Target Name="Build">
