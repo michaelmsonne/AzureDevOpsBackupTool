@@ -42,24 +42,28 @@ We can download a repository from Azure DevOps as a Zip file, but this may not b
 
 Outline the file contents of the repository. It helps users navigate the codebase, build configuration and any related assets.
 
-| File/folder        | Description                                 |
-|--------------------|---------------------------------------------|
-| `AzureDevOpsBackup`| Source code.                                |
-| `docs`             | Documents/pictures.                         |
-| `.gitignore`       | Define what to ignore at commit time.       |
-| `CHANGELOG.md`     | List of changes to the sample.              |
-| `CONTRIBUTING.md`  | Guidelines for contributing to the AzureDevOpsBackupTool.|
-| `README.md`        | This README file.                           |
-| `SECURITY.md`      | Security file.                              |
-| `LICENSE`          | The license for the AzureDevOpsBackupTool.  |
+| File/folder                  | Description                                 |
+|------------------------------|---------------------------------------------|
+| `AdvancedInstaller`          | Code for installer project                  |
+| `AzureDevOpsBackup`          | Source code for the main backup tool itself.|
+| `AzureDevOpsBackupUnzipTool` | Source code for the unzip tool itself.      |
+| `docs`                       | Documents/pictures.                         |
+| `.gitignore`                 | Define what to ignore at commit time.       |
+| `CHANGELOG.md`               | List of changes to the sample.              |
+| `CONTRIBUTING.md`            | Guidelines for contributing to the AzureDevOpsBackupTool.|
+| `README.md`                  | This README file.                           |
+| `SECURITY.md`                | Security file.                              |
+| `LICENSE`                    | The license for the AzureDevOpsBackupTool.  |
 
 ## Features
 
-### Overall:
+### AzureDevOpsBackup:
+
+#### Overall:
 - Asynchronous Resolution: Utilizes asynchronous processing for improved performance and responsiveness, allowing users to continue working while backups are being created.
 - Simplicity and Ease of Use: Provides a straightforward and user-friendly method for creating backups from Azure DevOps repositories.
 
-### List:
+#### List:
 - Backup Functionality:
   - Repository backup: Enables users to create local backups of Azure DevOps repositories.
   - Customizable backup Options: Offers various command-line options to tailor the backup process, including specifying backup directories, token authentication, cleanup, backup retention period, and more.
@@ -74,6 +78,12 @@ Outline the file contents of the repository. It helps users navigate the codebas
  
 - Logging:
   - Job logging: Stores logs for backup jobs in a designated folder (.\Log) for a defined period (default: 30 days) beside the **AzureDevOpsBackup.exe** executable.
+
+### AzureDevOpsBackup unzip tool:
+
+#### Overall:
+- Unzip Functionality: Allows users to extract ZIP files and JSON metadata into a directory structure, renaming GUIDs to file or folder names for a specific repository backup.
+- Simplicity and Ease of Use: Provides a straightforward and user-friendly method for unzipping repository backups from Azure DevOps .zip files.
 
 ## Download
 
@@ -116,7 +126,9 @@ Note we are also saving the original JSON item list we got from the repository c
 
 ## Usage
 
-Paramenters:
+### AzureDevOpsBackup:
+
+**Paramenters:**
 
 Backup:
 - --token
@@ -153,6 +165,19 @@ It looks at the backup folder, and see when last changed. If the days matches th
 
 If the **--simpelreportlayout** argument is present, the program will use the old email report layout, else it will use the new default.
 
+### AzureDevOpsBackup unzip tool:
+
+**Paramenters:**
+
+Unzip from metadata:
+- --zipFile: Name of the .zip folder to rename GUID´s to file or folders
+- --jsonFile: Name of the .json file with the metadata in to rename GUID´s to files and folders
+- --output: Folder to unzip data into
+
+General:
+- --help, /h or /?: Show the help menu
+- --info or /about: Show the about menu
+
 ## Logs
 
 Logs for backup jobs is keept in the **.\Log** folder for **30 days** beside **AzureDevOpsBackup.exe**.
@@ -167,9 +192,14 @@ There is send an email report to the specified email address when the backup is 
 
 Check out the examples here:
 
+### AzureDevOpsBackup
+
 `.\AzureDevOpsBackup.exe --token "xxxx..." --org "AzureDevOpsOrgName" --backup "D:\Backup data\Azure DevOps" --server "orgdomain-cloud.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@orgdomain.cloud" --to "AZ-DL-AzureDevOpsBackupReports@orgdomain.cloud" --unzip --cleanup --daystokeepbackup 50`
 
 `.\AzureDevOpsBackup.exe --token "token.bin" --org "AzureDevOpsOrgName" --backup "D:\Backup data\Azure DevOps" --server "orgdomain-cloud.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@orgdomain.cloud" --to "AZ-DL-AzureDevOpsBackupReports@orgdomain.cloud" --unzip --cleanup --daystokeepbackup 50 --simpelreportlayout --priority high`
+
+### AzureDevOpsBackup unzip tool
+`.\AzureDevOpsBackupUnzipTool.exe --zipFile "C:\Temp\Test\master_blob.zip" --output "C:\Temp\Test\Test" --jsonFile "C:\Temp\Test\tree.json"`
 
 # Console use:
 
