@@ -4,6 +4,7 @@
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_PREDEF_LCONDS_PROPS" Value="AI_DETECTED_DOTNET_VERSION"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackup.exe_1" Value="..\AzureDevOpsBackup\bin\Release"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1" Value="..\AzureDevOpsBackupUnzipTool\bin\Release"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_CommandLine.dll_1" Value="..\AzureDevOpsBackup\packages\CommandLineParser.2.9.1\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Value="..\AzureDevOpsBackup\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll_1" Value="..\AzureDevOpsBackup\packages\Newtonsoft.Json.13.0.3\lib\net45"/>
@@ -17,6 +18,7 @@
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Threading.Tasks.Extensions.dll_1" Value="..\AzureDevOpsBackup\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.ValueTuple.dll_1" Value="..\AzureDevOpsBackup\packages\System.ValueTuple.4.5.0\lib\net47"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe_1" Value="AzureDevOpsBackup.exe"/>
+    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1" Value="AzureDevOpsBackupUnzipTool.exe"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_CommandLine.dll_1" Value="CommandLine.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Value="Microsoft.Bcl.AsyncInterfaces.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1" Value="Newtonsoft.Json.dll"/>
@@ -39,7 +41,7 @@
     <ROW Property="ProductCode" Value="1033:{AC9929FD-4693-47B7-830B-AE484BD4C29B} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Azure DevOps Backup"/>
-    <ROW Property="ProductVersion" Value="1.0.6.0" Options="24"/>
+    <ROW Property="ProductVersion" Value="1.1.0.0" Options="24"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{B5566068-564D-4227-A015-483DA03A0F0E}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
@@ -63,7 +65,7 @@
     <ROW Component="APPDIR" ComponentId="{77D06582-4D0E-4AA4-8DDF-6C6FD1D60BB4}" Directory_="APPDIR" Attributes="0"/>
     <ROW Component="AzureDevOpsBackup.exe.config" ComponentId="{1D4C20E9-ACC1-471E-B0D2-87742CF9FC0C}" Directory_="AzureDevOpsBackup_Dir" Attributes="0" KeyPath="AzureDevOpsBackup.exe.config" Type="0"/>
     <ROW Component="AzureDevOpsBackup_PrimaryOutput" ComponentId="{14881A1B-2BF5-46B2-8F03-0DECEDC8F932}" Directory_="AzureDevOpsBackup_Dir" Attributes="0" KeyPath="AzureDevOpsBackup.exe_1"/>
-    <ROW Component="AzureDevOpsBackup_References" ComponentId="{518FDBA5-5167-4993-A6CC-ECC319606C0F}" Directory_="AzureDevOpsBackup_Dir" Attributes="0" KeyPath="System.Runtime.CompilerServices.Unsafe.dll"/>
+    <ROW Component="AzureDevOpsBackup_References" ComponentId="{518FDBA5-5167-4993-A6CC-ECC319606C0F}" Directory_="AzureDevOpsBackup_Dir" Attributes="0" KeyPath="AzureDevOpsBackupUnzipTool.exe_1"/>
     <ROW Component="ProductInformation" ComponentId="{8F9875F9-59F3-4ED2-A15D-BEB8B99B2B1B}" Directory_="APPDIR" Attributes="260" KeyPath="Version"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{203F3F45-1EEC-4A6C-BA7D-6E6C8F8BB5F4}" Directory_="SHORTCUTDIR" Attributes="0"/>
   </COMPONENT>
@@ -86,9 +88,11 @@
     <ROW File="System.ValueTuple.dll_1" Component_="AzureDevOpsBackup_References" FileName="SYSTEM~9.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.ValueTuple.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.ValueTuple.dll_1&gt;" SelfReg="false"/>
     <ROW File="System.Runtime.CompilerServices.Unsafe.dll" Component_="AzureDevOpsBackup_References" FileName="SYSTEM~5.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.Runtime.CompilerServices.Unsafe.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.Runtime.CompilerServices.Unsafe.dll&gt;" SelfReg="false"/>
     <ROW File="AzureDevOpsBackup.exe.config" Component_="AzureDevOpsBackup.exe.config" FileName="AZURED~1.CON|AzureDevOpsBackup.exe.config" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\AzureDevOpsBackup.exe.config" SelfReg="false"/>
+    <ROW File="AzureDevOpsBackupUnzipTool.exe_1" Component_="AzureDevOpsBackup_References" FileName="AZURED~3.EXE|[|AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1&gt;" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AppPathsComponent">
     <ROW Name="AI_APPPATH_PERBUILD_AzureDevOpsBackup.exe_1" Path="[|AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackup.exe_1]\[|AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe_1]" Type="2" Content="0"/>
+    <ROW Name="AI_APPPATH_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1" Path="[|AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1]\[|AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_CommandLine.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_CommandLine.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_CommandLine.dll_1]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_Newtonsoft.Json.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1]" Type="2" Content="0"/>
@@ -317,5 +321,6 @@
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Threading.Tasks.Extensions.dll_1"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.ValueTuple.dll_1"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Runtime.CompilerServices.Unsafe.dll"/>
+    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="AzureDevOpsBackupUnzipTool.exe_1"/>
   </COMPONENT>
 </DOCUMENT>
