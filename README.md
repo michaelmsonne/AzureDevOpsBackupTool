@@ -48,7 +48,7 @@ Outline the file contents of the repository. It helps users navigate the codebas
 | `docs`             | Documents/pictures.                         |
 | `.gitignore`       | Define what to ignore at commit time.       |
 | `CHANGELOG.md`     | List of changes to the sample.              |
-| `CONTRIBUTING.md`  | Guidelines for contributing to the TEMPLATE.|
+| `CONTRIBUTING.md`  | Guidelines for contributing to the AzureDevOpsBackupTool.|
 | `README.md`        | This README file.                           |
 | `SECURITY.md`      | Security file.                              |
 | `LICENSE`          | The license for the AzureDevOpsBackupTool.  |
@@ -61,19 +61,19 @@ Outline the file contents of the repository. It helps users navigate the codebas
 
 ### List:
 - Backup Functionality:
-  - Repository Backup: Enables users to create local backups of Azure DevOps repositories.
-  - Customizable Backup Options: Offers various command-line options to tailor the backup process, including specifying backup directories, token authentication, cleanup, backup retention period, and more.
-  - Zip File Handling: Ability to download repository items as ZIP files and organize them locally, optionally extracting them into a directory structure using the --unzip argument.
-  - Automated Cleanup: Supports cleanup functionality to manage the disk space occupied by the backup files.
+  - Repository backup: Enables users to create local backups of Azure DevOps repositories.
+  - Customizable backup Options: Offers various command-line options to tailor the backup process, including specifying backup directories, token authentication, cleanup, backup retention period, and more.
+  - Zip file handling: Ability to download repository items as ZIP files and organize them locally, optionally extracting them into a directory structure using the --unzip argument.
+  - Automated cleanup: Supports cleanup functionality to manage the disk space occupied by the backup files.
   - Backup Retention: Allows users to specify the number of days to retain backups, automatically removing older backups based on the set retention period using the --daystokeepbackup argument.
 
 - Email Reporting:
-  - Email Notifications: Sends detailed email reports upon backup completion, providing status updates, backup job information, and relevant details.
-  - Email Customization: Offers different email layouts (--simpelreportlayout) to cater to varying preferences or requirements.
-  - Priority Configuration: Provides the option to set email priority (--priority) for the backup completion notification.
+  - Email notifications: Sends detailed email reports upon backup completion, providing status updates, backup job information, and relevant details.
+  - Email customization: Offers different email layouts (--simpelreportlayout) to cater to varying preferences or requirements.
+  - Priority configuration: Provides the option to set email priority (--priority) for the backup completion notification.
  
 - Logging:
-  - Job Logging: Stores logs for backup jobs in a designated folder (.\Log) for a defined period (default: 30 days) beside the **AzureDevOpsBackup.exe** executable.
+  - Job logging: Stores logs for backup jobs in a designated folder (.\Log) for a defined period (default: 30 days) beside the **AzureDevOpsBackup.exe** executable.
 
 ## Download
 
@@ -118,6 +118,7 @@ Note we are also saving the original JSON item list we got from the repository c
 
 Paramenters:
 
+Backup:
 - --token
     - token.bin: Use an encrypted .bin file (based on hardware ID´s) with your personal access token in. 
     (Remember to run --tokenfile <token.data> to create the file first beside the application .exe!)
@@ -133,6 +134,8 @@ Paramenters:
 - --daystokeepbackup: Set the number of days to retain backup files before automatic removal (default is 30 days if not specified).
 - --simpelreportlayout: Use this option to use the old email report layout.
 - --priority <priority> <high/low>: Specify the email priority for notifications (e.g., high, normal, low). Default (normal) if not set.
+
+General:
 - --help, /h or /?: Show the help menu
 - --info or /about: Show the about menu
 
@@ -164,15 +167,9 @@ There is send an email report to the specified email address when the backup is 
 
 Check out the examples here:
 
-# Email report sample:
+`.\AzureDevOpsBackup.exe --token "xxxx..." --org "AzureDevOpsOrgName" --backup "D:\Backup data\Azure DevOps" --server "orgdomain-cloud.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@orgdomain.cloud" --to "AZ-DL-AzureDevOpsBackupReports@orgdomain.cloud" --unzip --cleanup --daystokeepbackup 50`
 
-**Full layout:**
-
-![Screenshot](docs/email-report-full.png)
-
-**Simpel layout:**
-
-![Screenshot](docs/email-report-simpel.png)
+`.\AzureDevOpsBackup.exe --token "token.bin" --org "AzureDevOpsOrgName" --backup "D:\Backup data\Azure DevOps" --server "orgdomain-cloud.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@orgdomain.cloud" --to "AZ-DL-AzureDevOpsBackupReports@orgdomain.cloud" --unzip --cleanup --daystokeepbackup 50 --simpelreportlayout --priority high`
 
 # Console use:
 
@@ -183,6 +180,16 @@ Check out the examples here:
 **About menu:**
 
 ![Screenshot](docs/help-about.png)
+
+# Email report sample:
+
+**Full layout:**
+
+![Screenshot](docs/email-report-full.png)
+
+**Simpel layout:**
+
+![Screenshot](docs/email-report-simpel.png)
 
 ---
 
@@ -221,7 +228,7 @@ Thanks.
 
 Reach out to the maintainer at one of the following places:
 
-- [GitHub discussions](https://github.com/michaelmsonne/TEMPLATE/discussions)
+- [GitHub discussions](https://github.com/michaelmsonne/AzureDevOpsBackupTool/discussions)
 - The email which is located [in GitHub profile](https://github.com/michaelmsonne)
 
 # License
