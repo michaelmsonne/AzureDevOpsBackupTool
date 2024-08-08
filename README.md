@@ -48,7 +48,7 @@ Outline the file contents of the repository. It helps users navigate the codebas
 | `docs`             | Documents/pictures.                         |
 | `.gitignore`       | Define what to ignore at commit time.       |
 | `CHANGELOG.md`     | List of changes to the sample.              |
-| `CONTRIBUTING.md`  | Guidelines for contributing to the TEMPLATE.|
+| `CONTRIBUTING.md`  | Guidelines for contributing to the AzureDevOpsBackupTool.|
 | `README.md`        | This README file.                           |
 | `SECURITY.md`      | Security file.                              |
 | `LICENSE`          | The license for the AzureDevOpsBackupTool.  |
@@ -171,16 +171,6 @@ Check out the examples here:
 
 `.\AzureDevOpsBackup.exe --token "token.bin" --org "AzureDevOpsOrgName" --backup "D:\Backup data\Azure DevOps" --server "orgdomain-cloud.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@orgdomain.cloud" --to "AZ-DL-AzureDevOpsBackupReports@orgdomain.cloud" --unzip --cleanup --daystokeepbackup 50 --simpelreportlayout --priority high`
 
-# Email report sample:
-
-**Full layout:**
-
-![Screenshot](docs/email-report-full.png)
-
-**Simpel layout:**
-
-![Screenshot](docs/email-report-simpel.png)
-
 # Console use:
 
 **Help menu:**
@@ -190,6 +180,16 @@ Check out the examples here:
 **About menu:**
 
 ![Screenshot](docs/help-about.png)
+
+# Email report sample:
+
+**Full layout:**
+
+![Screenshot](docs/email-report-full.png)
+
+**Simpel layout:**
+
+![Screenshot](docs/email-report-simpel.png)
 
 ---
 
@@ -228,7 +228,7 @@ Thanks.
 
 Reach out to the maintainer at one of the following places:
 
-- [GitHub discussions](https://github.com/michaelmsonne/TEMPLATE/discussions)
+- [GitHub discussions](https://github.com/michaelmsonne/AzureDevOpsBackupTool/discussions)
 - The email which is located [in GitHub profile](https://github.com/michaelmsonne)
 
 # License
