@@ -2,9 +2,6 @@
 ## [1.0.6.0] - 08-08-2024
 
 ### Changed
-- Small typos in logging
-- Small typos in tool in general
-- Some code cleanup and optimization
 - Upgraded RestSharp.111.3.0 to RestSharp.111.4.1
 
 ### Fixed
