@@ -178,6 +178,29 @@ General:
 - --help, /h or /?: Show the help menu
 - --info or /about: Show the about menu
 
+## Task scheduler (Windows)
+
+The AzureDevOpsBackup.exe tool can be run via Task Scheduler in Windows. This way, you can schedule the backup to run at specific intervals, ensuring that your Azure DevOps repositories are backed up regularly.
+
+The setup for that to work (via my testing and useing over long time) is to create a new task in Task Scheduler with the following settings:
+
+- **General:**
+  - **Name**: Azure DevOps Backup or similar
+  - **Description**: Backup of Azure DevOps repositories or similar
+  - **User account**: Select a user account with the necessary permissions to run the backup job and to wite to the application path (for logs)
+  - **Security options**: Run whether user is logged on or not
+  - **Security options**: Run with highest privileges
+  - **Trigger**: Set the desired schedule for the backup job (e.g., daily, weekly, etc.)
+  - **Action**: Start a program
+	- **Program/script**: Path to the AzureDevOpsBackup.exe executable
+	- **Add arguments**: Add the necessary command-line arguments for the backup job
+	- **Start in**: Path to the folder containing the AzureDevOpsBackup.exe executable
+
+	**Sample**:
+	- **Program/script**: `D:\AzureDevOpsBackup\AzureDevOpsBackup.exe`
+	- **Add arguments**: `--token "xxxxxx" --org "YourOrg" --backup "D:\Backup\Azure DevOps" --server "domain-com.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@domain.com" --to "AZ-DL-AzureDevOpsBackupReports@domain.com" --unzip --cleanup --daystokeepbackup 180`
+	- **Start in**: `D:\AzureDevOpsBackup`
+
 ## Logs
 
 Logs for backup jobs is keept in the **.\Log** folder for **30 days** beside **AzureDevOpsBackup.exe**.
