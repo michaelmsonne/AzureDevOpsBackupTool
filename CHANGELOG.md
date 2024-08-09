@@ -4,10 +4,12 @@
 Major update with new features and bug fixes
 
 ### Added
-- Added new tool (**AzureDevOpsBackupUnzipTool**) to unzip backups from .zip files based on the backup folder with the metadata files so the backups can be restored for a single project to save disk space if you only need to restore a single project and not want to unzip the whole backup.
+- Added a hole new tool (**AzureDevOpsBackupUnzipTool**) to unzip backups from .zip files based on the backup folder with the metadata files so the backups can be restored for a single project to save disk space if you only need to restore a single project and not want to unzip the whole backup.
+- 
 
 ### Changed
 - Changed default install folder name (reflects only the installer)
+- Changed logfile location in the **.\Log folder** - now in a subfolder the the 2 tools
 
 ### Fixed
 - 
