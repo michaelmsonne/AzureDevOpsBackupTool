@@ -146,6 +146,7 @@ Backup:
 - --daystokeepbackup: Set the number of days to retain backup files before automatic removal (default is 30 days if not specified).
 - --simpelreportlayout: Use this option to use the old email report layout.
 - --priority <priority> <high/low>: Specify the email priority for notifications (e.g., high, normal, low). Default (normal) if not set.
+- --noattatchlog: Use this option to not attatch the log file to the email report.
 
 General:
 - --help, /h or /?: Show the help menu
