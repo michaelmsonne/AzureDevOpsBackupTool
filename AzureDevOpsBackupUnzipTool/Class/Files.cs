@@ -1,7 +1,4 @@
-﻿using System;
-using System.IO;
-using System.Linq;
-using System.Threading;
+﻿using System.IO;
 
 namespace AzureDevOpsBackupUnzipTool.Class
 {
@@ -12,7 +9,7 @@ namespace AzureDevOpsBackupUnzipTool.Class
             get
             {
                 // Root folder for log files
-                var logfilePathvar = ProgramDataFilePath + @"\Log";
+                var logfilePathvar = ProgramDataFilePath + @"\Log\Unzip tool";
                 return logfilePathvar;
             }
         }
