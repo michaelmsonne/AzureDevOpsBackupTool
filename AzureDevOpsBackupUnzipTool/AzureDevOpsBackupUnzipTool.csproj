@@ -61,6 +61,8 @@
     <Compile Include="Class\FileLogger.cs" />
     <Compile Include="Class\Files.cs" />
     <Compile Include="Class\Globals.cs" />
+    <Compile Include="Class\LocalFolderTasks.cs" />
+    <Compile Include="Class\LocalLogCleanup.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>

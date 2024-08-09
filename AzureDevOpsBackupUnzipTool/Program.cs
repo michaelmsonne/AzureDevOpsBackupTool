@@ -28,8 +28,15 @@ namespace AzureDevOpsBackupUnzipTool
     {
         static void Main(string[] args)
         {
+            // Get application information
             ApplicationInfo.GetExeInfo();
 
+            // Create log folder if not exist
+            LocalFolderTasks.CreateLogFolder();
+
+            // Cleanup old log files
+            LocalLogCleanup.CleanupLogs();
+            
             // Check if parameters have been provided and contains one of
             if (args.Length == 0 || args.Contains("--help") || args.Contains("/h") || args.Contains("/?") || args.Contains("/info") || args.Contains("/about"))
             {
@@ -123,7 +130,9 @@ namespace AzureDevOpsBackupUnzipTool
 
                 // Log
                 Message("Unzipping completed successfully!", EventType.Information, 1000);
-                Console.WriteLine("Unzipping completed successfully.");
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine("\n> Unzipping completed successfully!\n");
+                Console.ResetColor();
             }
             catch (Exception ex)
             {
@@ -185,8 +194,8 @@ namespace AzureDevOpsBackupUnzipTool
                     else if (item.GitObjectType == "blob")
                     {
                         // If file data
-                        Console.WriteLine($"Unzipping Git repository file data on disk: '{destinationPath}'");
-                        Message($"Unzipping Git repository file data on disk: '{destinationPath}'", EventType.Information, 1000);
+                        Console.WriteLine($"Unzipping Git repository file data on disk: '{destinationPath}'...");
+                        Message($"Unzipping Git repository file data on disk: '{destinationPath}'...", EventType.Information, 1000);
 
                         // Extract the file
                         var entry = archive.GetEntry(item.ObjectId);
