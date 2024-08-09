@@ -130,7 +130,7 @@ Note we are also saving the original JSON item list we got from the repository c
 
 **Paramenters:**
 
-Backup:
+**Backup**:
 - --token
     - token.bin: Use an encrypted .bin file (based on hardware ID´s) with your personal access token in. 
     (Remember to run --tokenfile <token.data> to create the file first beside the application .exe!)
@@ -148,13 +148,14 @@ Backup:
 - --priority <priority> <high/low>: Specify the email priority for notifications (e.g., high, normal, low). Default (normal) if not set.
 - --noattatchlog: Use this option to not attatch the log file to the email report.
 
-General:
+**General**:
 - --help, /h or /?: Show the help menu
 - --info or /about: Show the about menu
 
+#### Mandatory arguments:
 Mandatory arguments is: **`--token, --org, --outdir, --server, --port, --from and --to`**
 
-**A bit more information about some arguments:**
+#### **A bit more information about some arguments:**
 
 If the **--unzip** argument is present, the program will create a directory for each repository based on the information provided by each Zip/JSON file pair. In this directory, we will get the original file and folder structure with real file names and extensions. Looping through all the items on the JSON list file, we consider a simple condition: if the item is a folder we create the directory according to the item.path property. Otherwise, we assume it’s a blob and we extract it from the Zip archive into the corresponding directory assigning the original file name and extension.
 
