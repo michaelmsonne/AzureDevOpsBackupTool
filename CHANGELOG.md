@@ -14,7 +14,7 @@ Major update with new features and bug fixes
     - **AzureDevOpsBackupUnzipTool.exe**: **'.\Logs\Unzip tool'**
     
 ### Fixed
-- 
+- A lot documentation and help text overall
 
 ## [1.0.6.0] - 08-08-2024
 
