@@ -7,5 +7,7 @@
         public static string _copyrightData;
         public static string _vData;
         public static string AppName;
+        public static bool _oldLogfilesToDelete;
+        public static int _oldLogFilesToDeleteCount;
     }
 }
