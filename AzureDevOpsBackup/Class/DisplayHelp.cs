@@ -26,7 +26,7 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\t--server:            IP address or DNS name of the SMTP server");
             Console.WriteLine("\t--port:              The port for the SMTP server");
             Console.WriteLine("\t--from:              The email address the report is send from");
-            Console.WriteLine("\t--toemail:           The email address the report is send to\n");
+            Console.WriteLine("\t--to:                The email address the report is send to\n");
             Console.WriteLine("  Optional:");
             Console.WriteLine("\t--tokenfile <token>: Save a token to access the API in Azure DevOps to an encrypted token.bin file");
             Console.WriteLine("\t\t\t     (use this before using the '--token token.bin' argument!)");
