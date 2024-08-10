@@ -1667,6 +1667,8 @@ namespace AzureDevOpsBackup
                             // If args is set to old mail report layout
                             var useSimpleMailReportLayout = Array.Exists(args, argument => argument == "--simpelreport");
 
+                            var noAttatchLog = Array.Exists(args, argument => argument == "--noattatchlog");
+
                             // Send status email and parse data to function
                             ReportSender.SendEmail(server, serverPort, emailFrom, emailTo, Globals._emailStatusMessage, repocountelements,
                                 repoitemscountelements, Globals._repoCount, Globals._repoItemsCount, Globals._totalFilesIsBackupUnZipped, Globals._totalBlobFilesIsBackup,
@@ -1674,7 +1676,7 @@ namespace AzureDevOpsBackup
                                 Globals._totalBackupsIsDeleted, daysToKeepBackups, Globals._repoCountStatusText, Globals._repoItemsCountStatusText,
                                 Globals._totalFilesIsBackupUnZippedStatusText, Globals._totalBlobFilesIsBackupStatusText, Globals._totalTreeFilesIsBackupStatusText,
                                 Globals._totalFilesIsDeletedAfterUnZippedStatusText, Globals._letOverZipFilesStatusText, Globals._letOverJsonFilesStatusText,
-                                Globals._totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, Globals._isOutputFolderContainFilesStatusText,
+                                Globals._totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, noAttatchLog, Globals._isOutputFolderContainFilesStatusText,
                                 Globals._isDaysToKeepNotDefaultStatusText, Globals._startTime, Globals._endTime,
                                 Globals._deletedFilesAfterUnzip, Globals._checkForLeftoverFilesAfterCleanup);
                             #endregion Status mail data collecting
