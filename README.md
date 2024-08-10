@@ -3,7 +3,8 @@
 <p align="center">
   <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/languages/top/michaelmsonne/AzureDevOpsBackupTool.svg"></a>
   <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/languages/code-size/michaelmsonne/AzureDevOpsBackupTool.svg"></a>
-  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/downloads/michaelmsonne/AzureDevOpsBackupTool/total.svg"></a>
+  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/downloads/michaelmsonne/AzureDevOpsBackupTool/total.svg"></a><br>
+  <a href="https://www.buymeacoffee.com/sonnes" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;"></a>
 </p>
 
 <div align="center">
