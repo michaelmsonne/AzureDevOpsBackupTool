@@ -4,7 +4,8 @@
 Major update with new features and bug fixes
 
 ### Added
-- Added a hole new tool (**AzureDevOpsBackupUnzipTool**) to unzip backups from .zip files based on the backup folder with the metadata files so the backups can be restored for a single project to save disk space if you only need to restore a single project and not want to unzip the whole backup.
+- Added a new tool (**AzureDevOpsBackupUnzipTool**) to the application, there let you unzip backups from .zip files based on the backup folder with the metadata files (.json), so the backups can be restored for a single project to save disk space vs unzipping all based on how many projects you have to backup, if you only need to restore a single project and not want to unzip the whole backup for all projects:
+    - Sample command: `.\AzureDevOpsBackupUnzipTool.exe --zipFile "C:\Temp\Test\master_blob.zip" --output "C:\Temp\Test\Test" --jsonFile "C:\Temp\Test\tree.json"`
 - An option to not attach the logfile to the email report with argument: '**--noattatchlog**'
 - Added support to send email report to multiple recipients with argument: '**--to**' - separated by comma
 
