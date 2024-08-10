@@ -224,7 +224,7 @@ Check out the examples here:
 
 `.\AzureDevOpsBackup.exe --token "token.bin" --org "AzureDevOpsOrgName" --backup "D:\Backup data\Azure DevOps" --server "orgdomain-cloud.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@orgdomain.cloud" --to "AZ-DL-AzureDevOpsBackupReports@orgdomain.cloud" --unzip --cleanup --daystokeepbackup 50 --simpelreportlayout --priority high`
 
-`.\AzureDevOpsBackup.exe --token "token.bin" --org "AzureDevOpsOrgName" --backup "D:\Backup data\Azure DevOps" --server "orgdomain-cloud.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@orgdomain.cloud" --to "AZ-DL-AzureDevOpsBackupReports@orgdomain.cloud" --unzip --cleanup --daystokeepbackup 120 --noattatchlog`
+`.\AzureDevOpsBackup.exe --token "token.bin" --org "AzureDevOpsOrgName" --backup "D:\Backup data\Azure DevOps" --server "orgdomain-cloud.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@orgdomain.cloud" --to "admin@orgdomain.cloud,support@orgdomain.cloud" --unzip --cleanup --daystokeepbackup 120 --noattatchlog`
 
 
 ### AzureDevOpsBackup unzip tool
