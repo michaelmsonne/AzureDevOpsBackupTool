@@ -26,7 +26,8 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\t--server:            IP address or DNS name of the SMTP server");
             Console.WriteLine("\t--port:              The port for the SMTP server");
             Console.WriteLine("\t--from:              The email address the report is send from");
-            Console.WriteLine("\t--to:                The email address the report is send to\n");
+            Console.WriteLine("\t--to:                The email address the report is send to - support multiple recipients with");
+            Console.WriteLine("\t\t\t     argument separated by comma");
             Console.WriteLine("  Optional:");
             Console.WriteLine("\t--tokenfile <token>: Save a token to access the API in Azure DevOps to an encrypted token.bin file");
             Console.WriteLine("\t\t\t     (use this before using the '--token token.bin' argument!)");
@@ -36,8 +37,8 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\t\t\t     be deleted (default is 30 dayes) (optional)");
             Console.WriteLine("\t--simpelreport:      If set the email report layout there is send is simple, if not set it use the default");
             Console.WriteLine("\t\t\t     report layout");
+            Console.WriteLine("\t--noattatchlog:      Set the email report to not attach the logfile in the mail report sent");
             Console.WriteLine("\t--priority:          Set the email report priority to other then default (normal)");
-            Console.WriteLine("\t--noattatchlog:      Set the email report to not attach the logfile in the mail report send");
             Console.WriteLine("\t  high:              Set the email report priority to 'high'");
             Console.WriteLine("\t  low:               Set the email report priority to 'low'");
             Console.WriteLine();
@@ -58,7 +59,9 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine($"\t{Globals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
             Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --simpelreport --priority high\n");
             Console.WriteLine($"\t{Globals._currentExeFileName} --token token.bin --org OrgName --backup C:\\Backup --server smtp.domain.local");
-            Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --simpelreport --priority low");
+            Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --simpelreport --priority low\n");
+            Console.WriteLine($"\t{Globals._currentExeFileName} --token token.bin --org OrgName --backup C:\\Backup --server smtp.domain.local");
+            Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local,admin@domain.local --unzip --noattatchlog");
             Console.WriteLine();
             Console.WriteLine("Output:");
             Console.WriteLine("\tA timestamped folder containing the backup will be created within this directory unless --backup");
