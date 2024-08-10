@@ -140,10 +140,25 @@ namespace AzureDevOpsBackup.Class
             }
 
             // Create mail
-            var message = new MailMessage(emailFrom, emailTo);
+            //var message = new MailMessage(emailFrom, emailTo);
+
+            // Create mail
+            var message = new MailMessage();
+            message.From = new MailAddress(emailFrom);
+
+            // Split the emailTo string by commas and add each address to the To collection
+            var emailAddresses = emailTo.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var address in emailAddresses)
+            {
+                message.To.Add(address.Trim());
+            }
+
+            // Set email subject
             message.Subject = "[" + emailStatusMessage + $"] - {Globals.AppName} status - (" + totalBlobFilesIsBackup +
                               " Git projects backed up), " + errors + " issues(s) - (backups to keep (days): " + daysToKeep +
                               ", backup(s) deleted: " + totalBackupsIsDeleted + ")";
+            
+            // Set email body
             message.Body = mailBody;
             message.BodyEncoding = Encoding.UTF8;
             message.IsBodyHtml = true;
