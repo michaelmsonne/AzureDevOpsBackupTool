@@ -1,14 +1,15 @@
 ﻿using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 // General Information about an assembly is controlled through the following
 // set of attributes. Change these attribute values to modify the information
 // associated with an assembly.
-[assembly: AssemblyTitle("Azure DevOps Backup")]
-[assembly: AssemblyDescription("Azure DevOps Backup - For Git Projects and is using the API for Azure DevOps")]
+[assembly: AssemblyTitle("AzureDevOpsBackupUnzipTool")]
+[assembly: AssemblyDescription("Azure DevOps Backup unzip tool - Extract downloaded .zip Git projects from API for Azure DevOps for a single repo")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Michael Morten Sonne")]
-[assembly: AssemblyProduct("AzureDevOpsBackup")]
+[assembly: AssemblyProduct("AzureDevOpsBackupUnzipTool")]
 [assembly: AssemblyCopyright("Copyright © Michael Morten Sonne")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
@@ -19,7 +20,7 @@ using System.Runtime.InteropServices;
 [assembly: ComVisible(false)]
 
 // The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("4795920a-5c87-48a0-9fcf-4641d68e9cb6")]
+[assembly: Guid("050b25b3-9a27-44c2-a793-59357cfbcdc3")]
 
 // Version information for an assembly consists of the following four values:
 //
@@ -31,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.1.0.0")]
-[assembly: AssemblyFileVersion("1.1.0.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.0.0")]

@@ -3,7 +3,8 @@
 <p align="center">
   <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/languages/top/michaelmsonne/AzureDevOpsBackupTool.svg"></a>
   <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/languages/code-size/michaelmsonne/AzureDevOpsBackupTool.svg"></a>
-  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/downloads/michaelmsonne/AzureDevOpsBackupTool/total.svg"></a>
+  <a href="https://github.com/michaelmsonne/AzureDevOpsBackupTool"><img src="https://img.shields.io/github/downloads/michaelmsonne/AzureDevOpsBackupTool/total.svg"></a><br>
+  <a href="https://www.buymeacoffee.com/sonnes" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;"></a>
 </p>
 
 <div align="center">
@@ -42,24 +43,28 @@ We can download a repository from Azure DevOps as a Zip file, but this may not b
 
 Outline the file contents of the repository. It helps users navigate the codebase, build configuration and any related assets.
 
-| File/folder        | Description                                 |
-|--------------------|---------------------------------------------|
-| `AzureDevOpsBackup`| Source code.                                |
-| `docs`             | Documents/pictures.                         |
-| `.gitignore`       | Define what to ignore at commit time.       |
-| `CHANGELOG.md`     | List of changes to the sample.              |
-| `CONTRIBUTING.md`  | Guidelines for contributing to the AzureDevOpsBackupTool.|
-| `README.md`        | This README file.                           |
-| `SECURITY.md`      | Security file.                              |
-| `LICENSE`          | The license for the AzureDevOpsBackupTool.  |
+| File/folder                  | Description                                 |
+|------------------------------|---------------------------------------------|
+| `AdvancedInstaller`          | Code for installer project                  |
+| `AzureDevOpsBackup`          | Source code for the main backup tool itself.|
+| `AzureDevOpsBackupUnzipTool` | Source code for the unzip tool itself.      |
+| `docs`                       | Documents/pictures.                         |
+| `.gitignore`                 | Define what to ignore at commit time.       |
+| `CHANGELOG.md`               | List of changes to the sample.              |
+| `CONTRIBUTING.md`            | Guidelines for contributing to the AzureDevOpsBackupTool.|
+| `README.md`                  | This README file.                           |
+| `SECURITY.md`                | Security file.                              |
+| `LICENSE`                    | The license for the AzureDevOpsBackupTool.  |
 
 ## Features
 
-### Overall:
+### AzureDevOpsBackup:
+
+#### Overall:
 - Asynchronous Resolution: Utilizes asynchronous processing for improved performance and responsiveness, allowing users to continue working while backups are being created.
 - Simplicity and Ease of Use: Provides a straightforward and user-friendly method for creating backups from Azure DevOps repositories.
 
-### List:
+#### List:
 - Backup Functionality:
   - Repository backup: Enables users to create local backups of Azure DevOps repositories.
   - Customizable backup Options: Offers various command-line options to tailor the backup process, including specifying backup directories, token authentication, cleanup, backup retention period, and more.
@@ -74,6 +79,12 @@ Outline the file contents of the repository. It helps users navigate the codebas
  
 - Logging:
   - Job logging: Stores logs for backup jobs in a designated folder (.\Log) for a defined period (default: 30 days) beside the **AzureDevOpsBackup.exe** executable.
+
+### AzureDevOpsBackup unzip tool:
+
+#### Overall:
+- Unzip functionality: allows users to extract ZIP files and JSON metadata into a directory structure, renaming GUIDs to file or folder names for a specific repository backup.
+- Simplicity and ease of use: Provides a straightforward and user-friendly method for unzipping repository backups from Azure DevOps .zip files.
 
 ## Download
 
@@ -116,9 +127,11 @@ Note we are also saving the original JSON item list we got from the repository c
 
 ## Usage
 
-Paramenters:
+### AzureDevOpsBackup:
 
-Backup:
+**Paramenters:**
+
+**Backup**:
 - --token
     - token.bin: Use an encrypted .bin file (based on hardware ID´s) with your personal access token in. 
     (Remember to run --tokenfile <token.data> to create the file first beside the application .exe!)
@@ -134,14 +147,16 @@ Backup:
 - --daystokeepbackup: Set the number of days to retain backup files before automatic removal (default is 30 days if not specified).
 - --simpelreportlayout: Use this option to use the old email report layout.
 - --priority <priority> <high/low>: Specify the email priority for notifications (e.g., high, normal, low). Default (normal) if not set.
+- --noattatchlog: Use this option to not attatch the log file to the email report.
 
-General:
+**General**:
 - --help, /h or /?: Show the help menu
 - --info or /about: Show the about menu
 
+#### Mandatory arguments:
 Mandatory arguments is: **`--token, --org, --outdir, --server, --port, --from and --to`**
 
-**A bit more information about some arguments:**
+#### **A bit more information about some arguments:**
 
 If the **--unzip** argument is present, the program will create a directory for each repository based on the information provided by each Zip/JSON file pair. In this directory, we will get the original file and folder structure with real file names and extensions. Looping through all the items on the JSON list file, we consider a simple condition: if the item is a folder we create the directory according to the item.path property. Otherwise, we assume it’s a blob and we extract it from the Zip archive into the corresponding directory assigning the original file name and extension.
 
@@ -152,6 +167,42 @@ If the **--daystokeepbackup** argument is present, the program will keep that nu
 It looks at the backup folder, and see when last changed. If the days matches the days you set, the program **will delete** the old backup in the backup folder you had set.
 
 If the **--simpelreportlayout** argument is present, the program will use the old email report layout, else it will use the new default.
+
+### AzureDevOpsBackup unzip tool:
+
+**Paramenters:**
+
+Unzip from metadata:
+- --zipFile: Name of the .zip folder to rename GUID´s to file or folders
+- --jsonFile: Name of the .json file with the metadata in to rename GUID´s to files and folders
+- --output: Folder to unzip data into
+
+General:
+- --help, /h or /?: Show the help menu
+- --info or /about: Show the about menu
+
+## Task scheduler (Windows)
+
+The AzureDevOpsBackup.exe tool can be run via Task Scheduler in Windows. This way, you can schedule the backup to run at specific intervals, ensuring that your Azure DevOps repositories are backed up regularly.
+
+The setup for that to work (via my testing and useing over long time) is to create a new task in Task Scheduler with the following settings:
+
+- **General:**
+  - **Name**: Azure DevOps Backup or similar
+  - **Description**: Backup of Azure DevOps repositories or similar
+  - **User account**: Select a user account with the necessary permissions to run the backup job and to wite to the application path (for logs)
+  - **Security options**: Run whether user is logged on or not
+  - **Security options**: Run with highest privileges
+  - **Trigger**: Set the desired schedule for the backup job (e.g., daily, weekly, etc.)
+  - **Action**: Start a program
+	- **Program/script**: Path to the AzureDevOpsBackup.exe executable
+	- **Add arguments**: Add the necessary command-line arguments for the backup job
+	- **Start in**: Path to the folder containing the AzureDevOpsBackup.exe executable
+
+	**Sample**:
+	- **Program/script**: `D:\AzureDevOpsBackup\AzureDevOpsBackup.exe`
+	- **Add arguments**: `--token "xxxxxx" --org "YourOrg" --backup "D:\Backup\Azure DevOps" --server "domain-com.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@domain.com" --to "AZ-DL-AzureDevOpsBackupReports@domain.com" --unzip --cleanup --daystokeepbackup 180`
+	- **Start in**: `D:\AzureDevOpsBackup`
 
 ## Logs
 
@@ -167,9 +218,17 @@ There is send an email report to the specified email address when the backup is 
 
 Check out the examples here:
 
+### AzureDevOpsBackup
+
 `.\AzureDevOpsBackup.exe --token "xxxx..." --org "AzureDevOpsOrgName" --backup "D:\Backup data\Azure DevOps" --server "orgdomain-cloud.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@orgdomain.cloud" --to "AZ-DL-AzureDevOpsBackupReports@orgdomain.cloud" --unzip --cleanup --daystokeepbackup 50`
 
 `.\AzureDevOpsBackup.exe --token "token.bin" --org "AzureDevOpsOrgName" --backup "D:\Backup data\Azure DevOps" --server "orgdomain-cloud.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@orgdomain.cloud" --to "AZ-DL-AzureDevOpsBackupReports@orgdomain.cloud" --unzip --cleanup --daystokeepbackup 50 --simpelreportlayout --priority high`
+
+`.\AzureDevOpsBackup.exe --token "token.bin" --org "AzureDevOpsOrgName" --backup "D:\Backup data\Azure DevOps" --server "orgdomain-cloud.mail.protection.outlook.com" --port "25" --from "azure-devops-backup@orgdomain.cloud" --to "admin@orgdomain.cloud,support@orgdomain.cloud" --unzip --cleanup --daystokeepbackup 120 --noattatchlog`
+
+
+### AzureDevOpsBackup unzip tool
+`.\AzureDevOpsBackupUnzipTool.exe --zipFile "C:\Temp\Test\master_blob.zip" --output "C:\Temp\Test\Test" --jsonFile "C:\Temp\Test\tree.json"`
 
 # Console use:
 
@@ -223,6 +282,8 @@ Please try to create bug reports that are:
 Commercial support
 
 This project is open-source and I invite everybody who can and will to contribute, but I cannot provide any support because I only created this as a "hobby project" ofc. with tbe best in mind. For commercial support, please contact me on LinkedIn so we can discuss the possibilities. It’s my choice to work on this project in my spare time, so if you have commercial gain from this project you should considering sponsoring me.
+
+<a href="https://www.buymeacoffee.com/sonnes" target="_blank"><img src="https://cdn.buymeacoffee.com/buttons/v2/default-yellow.png" alt="Buy Me A Coffee" style="height: 30px !important;width: 117px !important;"></a>
 
 Thanks.
 

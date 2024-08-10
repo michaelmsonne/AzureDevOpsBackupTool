@@ -13,7 +13,7 @@ namespace AzureDevOpsBackup.Class
             get
             {
                 // Root folder for log files
-                var logfilePathvar = ProgramDataFilePath + @"\Log";
+                var logfilePathvar = ProgramDataFilePath + @"\Log\Backups";
                 return logfilePathvar;
             }
         }

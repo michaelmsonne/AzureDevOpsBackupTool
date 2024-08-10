@@ -156,6 +156,12 @@
     <None Include="app.manifest" />
     <None Include="packages.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\AzureDevOpsBackupUnzipTool\AzureDevOpsBackupUnzipTool.csproj">
+      <Project>{050b25b3-9a27-44c2-a793-59357cfbcdc3}</Project>
+      <Name>AzureDevOpsBackupUnzipTool</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>if $(ConfigurationName) == Release (

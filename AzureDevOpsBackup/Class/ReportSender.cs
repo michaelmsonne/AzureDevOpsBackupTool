@@ -17,7 +17,7 @@ namespace AzureDevOpsBackup.Class
             int totalFilesIsDeletedAfterUnZipped, int totalBackupsIsDeleted, string daysToKeep, string repoCountStatusText, string repoItemsCountStatusText,
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
             string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText,
-            bool useSimpleMailReportLayout, string isOutputFolderContainFilesStatusText, string isDaysToKeepNotDefaultStatusText, string startTime, string endTime, bool deletedFilesAfterUnzip,
+            bool useSimpleMailReportLayout, bool noAttatchLog, string isOutputFolderContainFilesStatusText, string isDaysToKeepNotDefaultStatusText, string startTime, string endTime, bool deletedFilesAfterUnzip,
             bool checkForLeftoverFilesAfterCleanup)
         {
             var serverPortStr = serverPort;
@@ -140,10 +140,22 @@ namespace AzureDevOpsBackup.Class
             }
 
             // Create mail
-            var message = new MailMessage(emailFrom, emailTo);
+            var message = new MailMessage();
+            message.From = new MailAddress(emailFrom);
+
+            // Split the emailTo string by commas and add each address to the To collection
+            var emailAddresses = emailTo.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries);
+            foreach (var address in emailAddresses)
+            {
+                message.To.Add(address.Trim());
+            }
+
+            // Set email subject
             message.Subject = "[" + emailStatusMessage + $"] - {Globals.AppName} status - (" + totalBlobFilesIsBackup +
                               " Git projects backed up), " + errors + " issues(s) - (backups to keep (days): " + daysToKeep +
                               ", backup(s) deleted: " + totalBackupsIsDeleted + ")";
+            
+            // Set email body
             message.Body = mailBody;
             message.BodyEncoding = Encoding.UTF8;
             message.IsBodyHtml = true;
@@ -162,88 +174,108 @@ namespace AzureDevOpsBackup.Class
                 Console.WriteLine("Created email report and parsed data");
                 Console.ResetColor();
 
-                // Get all the files in the log dir for today
-
-                // Log
-                Message("Finding logfile for today to attach in email report...", EventType.Information, 1000);
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine("Finding logfile for today to attach in email report...");
-                Console.ResetColor();
-
-                // Get filename to find
-                var filePaths = Directory.GetFiles(Files.LogFilePath, $"{Globals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + "*.*");
-
-                // Get the files that their extension are .log or .txt
-                var files = filePaths.Where(filePath => Path.GetExtension(filePath).Contains(".log") || Path.GetExtension(filePath).Contains(".txt"));
-
-                // Loop through the files enumeration and attach each file in the mail.
-                foreach (var file in files)
+                // Check if we should attach the logfile to the email report or not
+                if (noAttatchLog)
                 {
-                    Globals._fileAttachedIneMailReport = file;
+                    // Log
+                    Message("No logfile attached to email report!", EventType.Information, 1000);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("No logfile attached to email report!");
+                    Console.ResetColor();
+                }
+                else
+                {
+                    // Get all the files in the log dir for today
 
                     // Log
-                    Message("Found logfile for today:", EventType.Information, 1000);
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Found logfile for today:");
+                    Message("Finding logfile for today to attach in email report...", EventType.Information, 1000);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Finding logfile for today to attach in email report...");
                     Console.ResetColor();
 
-                    // Full file name
-                    var fileName = Globals._fileAttachedIneMailReport;
-                    var fi = new FileInfo(fileName);
+                    // Get filename to find
+                    var filePaths = Directory.GetFiles(Files.LogFilePath,
+                        $"{Globals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + "*.*");
 
-                    // Get File Name
-                    var justFileName = fi.Name;
-                    Console.WriteLine("File name: " + justFileName);
-                    Message("File name: " + justFileName, EventType.Information, 1000);
+                    // Get the files that their extension are .log or .txt
+                    var files = filePaths.Where(filePath =>
+                        Path.GetExtension(filePath).Contains(".log") || Path.GetExtension(filePath).Contains(".txt"));
 
-                    // Get file name with full path
-                    var fullFileName = fi.FullName;
-                    Console.WriteLine("Full file name: " + fullFileName);
-                    Message("Full file name: " + fullFileName, EventType.Information, 1000);
-
-                    // Get file extension
-                    var extn = fi.Extension;
-                    Console.WriteLine("File Extension: " + extn);
-                    Message("File Extension: " + extn, EventType.Information, 1000);
-
-                    // Get directory name
-                    var directoryName = fi.DirectoryName;
-                    Console.WriteLine("Directory name: " + directoryName);
-                    Message("Directory name: " + directoryName, EventType.Information, 1000);
-
-                    // File Exists ?
-                    var exists = fi.Exists;
-                    Console.WriteLine("File exists: " + exists);
-                    Message("File exists: " + exists, EventType.Information, 1000);
-                    if (fi.Exists)
+                    // Loop through the files enumeration and attach each file in the mail.
+                    foreach (var file in files)
                     {
-                        // Get file size
-                        var size = fi.Length;
-                        Console.WriteLine("File Size in Bytes: " + size);
-                        Message("File Size in Bytes: " + size, EventType.Information, 1000);
+                        Globals._fileAttachedIneMailReport = file;
 
-                        // File ReadOnly ?
-                        var isReadOnly = fi.IsReadOnly;
-                        Console.WriteLine("Is ReadOnly: " + isReadOnly);
-                        Message("Is ReadOnly: " + isReadOnly, EventType.Information, 1000);
+                        // Log
+                        Message("Found logfile for today:", EventType.Information, 1000);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("Found logfile for today:");
+                        Console.ResetColor();
 
-                        // Creation, last access, and last write time
-                        var creationTime = fi.CreationTime;
-                        Console.WriteLine("Creation time: " + creationTime);
-                        Message("Creation time: " + creationTime, EventType.Information, 1000);
-                        var accessTime = fi.LastAccessTime;
-                        Console.WriteLine("Last access time: " + accessTime);
-                        Message("Last access time: " + accessTime, EventType.Information, 1000);
-                        var updatedTime = fi.LastWriteTime;
-                        Console.WriteLine("Last write time: " + updatedTime + "\n");
-                        Message("Last write time: " + updatedTime, EventType.Information, 1000);
+                        // Full file name
+                        var fileName = Globals._fileAttachedIneMailReport;
+                        var fi = new FileInfo(fileName);
+
+                        // Get File Name
+                        var justFileName = fi.Name;
+                        Console.WriteLine("File name: " + justFileName);
+                        Message("File name: " + justFileName, EventType.Information, 1000);
+
+                        // Get file name with full path
+                        var fullFileName = fi.FullName;
+                        Console.WriteLine("Full file name: " + fullFileName);
+                        Message("Full file name: " + fullFileName, EventType.Information, 1000);
+
+                        // Get file extension
+                        var extn = fi.Extension;
+                        Console.WriteLine("File Extension: " + extn);
+                        Message("File Extension: " + extn, EventType.Information, 1000);
+
+                        // Get directory name
+                        var directoryName = fi.DirectoryName;
+                        Console.WriteLine("Directory name: " + directoryName);
+                        Message("Directory name: " + directoryName, EventType.Information, 1000);
+
+                        // File Exists ?
+                        var exists = fi.Exists;
+                        Console.WriteLine("File exists: " + exists);
+                        Message("File exists: " + exists, EventType.Information, 1000);
+                        if (fi.Exists)
+                        {
+                            // Get file size
+                            var size = fi.Length;
+                            Console.WriteLine("File Size in Bytes: " + size);
+                            Message("File Size in Bytes: " + size, EventType.Information, 1000);
+
+                            // File ReadOnly ?
+                            var isReadOnly = fi.IsReadOnly;
+                            Console.WriteLine("Is ReadOnly: " + isReadOnly);
+                            Message("Is ReadOnly: " + isReadOnly, EventType.Information, 1000);
+
+                            // Creation, last access, and last write time
+                            var creationTime = fi.CreationTime;
+                            Console.WriteLine("Creation time: " + creationTime);
+                            Message("Creation time: " + creationTime, EventType.Information, 1000);
+                            var accessTime = fi.LastAccessTime;
+                            Console.WriteLine("Last access time: " + accessTime);
+                            Message("Last access time: " + accessTime, EventType.Information, 1000);
+                            var updatedTime = fi.LastWriteTime;
+                            Console.WriteLine("Last write time: " + updatedTime + "\n");
+                            Message("Last write time: " + updatedTime, EventType.Information, 1000);
+                        }
+
+                        // TODO Do not add more to logfile here - file is locked!
+                        var attachment = new Attachment(file);
+
+                        // Attach file to email
+                        message.Attachments.Add(attachment);
                     }
 
-                    // TODO Do not add more to logfile here - file is locked!
-                    var attachment = new Attachment(file);
-
-                    // Attach file to email
-                    message.Attachments.Add(attachment);
+                    // Log
+                    Message("Logfile attached to email report!", EventType.Information, 1000);
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine("Logfile attached to email report!");
+                    Console.ResetColor();
                 }
 
                 //Try to send email status email
