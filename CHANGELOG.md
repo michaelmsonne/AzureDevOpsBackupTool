@@ -11,7 +11,7 @@ Major update with new features and bug fixes
 
 ### Changed
 - Changed default install folder name (reflects only the installer)
-- Changed logfile location in the **'.\Log'** folder - now in a subfolder the the 2 tools:
+- Changed logfile location in the **'.\Log'** folder - now in a subfolder the the 2 tools to it not being mixed and supports for cleanup:
     - **AzureDevOpsBackupTool.exe**: **'.\Logs\Backup'**
     - **AzureDevOpsBackupUnzipTool.exe**: **'.\Logs\Unzip tool'**
     
