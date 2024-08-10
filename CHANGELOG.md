@@ -1,4 +1,4 @@
-## [1.1.0.0] - xx-xx-2024
+## [1.1.0.0] - 10-08-2024
 
 Major update with new features and bug fixes
 
