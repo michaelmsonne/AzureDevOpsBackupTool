@@ -82,8 +82,8 @@ Outline the file contents of the repository. It helps users navigate the codebas
 ### AzureDevOpsBackup unzip tool:
 
 #### Overall:
-- Unzip Functionality: Allows users to extract ZIP files and JSON metadata into a directory structure, renaming GUIDs to file or folder names for a specific repository backup.
-- Simplicity and Ease of Use: Provides a straightforward and user-friendly method for unzipping repository backups from Azure DevOps .zip files.
+- Unzip functionality: allows users to extract ZIP files and JSON metadata into a directory structure, renaming GUIDs to file or folder names for a specific repository backup.
+- Simplicity and ease of use: Provides a straightforward and user-friendly method for unzipping repository backups from Azure DevOps .zip files.
 
 ## Download
 
