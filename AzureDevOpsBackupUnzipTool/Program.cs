@@ -33,9 +33,6 @@ namespace AzureDevOpsBackupUnzipTool
 
             // Create log folder if not exist
             LocalFolderTasks.CreateLogFolder();
-
-            // Cleanup old log files
-            LocalLogCleanup.CleanupLogs();
             
             // Check if parameters have been provided and contains one of
             if (args.Length == 0 || args.Contains("--help") || args.Contains("/h") || args.Contains("/?") || args.Contains("/info") || args.Contains("/about"))
@@ -94,6 +91,9 @@ namespace AzureDevOpsBackupUnzipTool
                     Environment.Exit(1);
                 }
             }
+
+            // Cleanup old log files
+            LocalLogCleanup.CleanupLogs();
 
             // Check for required Args for application will work
             string[] requiredArgs = { "--zipFile", "--jsonFile", "--output" };
