@@ -37,6 +37,7 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\t--simpelreport:      If set the email report layout there is send is simple, if not set it use the default");
             Console.WriteLine("\t\t\t     report layout");
             Console.WriteLine("\t--priority:          Set the email report priority to other then default (normal)");
+            Console.WriteLine("\t--noattatchlog:      Set the email report to not attach the logfile in the mail report send");
             Console.WriteLine("\t  high:              Set the email report priority to 'high'");
             Console.WriteLine("\t  low:               Set the email report priority to 'low'");
             Console.WriteLine();
