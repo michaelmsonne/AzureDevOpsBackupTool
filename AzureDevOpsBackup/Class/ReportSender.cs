@@ -140,9 +140,6 @@ namespace AzureDevOpsBackup.Class
             }
 
             // Create mail
-            //var message = new MailMessage(emailFrom, emailTo);
-
-            // Create mail
             var message = new MailMessage();
             message.From = new MailAddress(emailFrom);
 
