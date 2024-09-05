@@ -113,7 +113,7 @@ To get the sample code, we can clone this GitHub repository or another and open 
 
 Here’s how the argument list will look like:
 
-`.\AzureDevOpsBackup.exe --token "our-auth-token" --org "our-org" --outdir "C:\backup\out-directory" --server "smtp.server.com" --port "25" --from "azure-devops-backup@domain.com" --to "backupmail@domain.com" --unzip --cleanup --daystokeepbackup 50 --priority high`
+`.\AzureDevOpsBackup.exe --token "our-auth-token" --org "our-org" --backup "C:\backup\out-directory" --server "smtp.server.com" --port "25" --from "azure-devops-backup@domain.com" --to "backupmail@domain.com" --unzip --cleanup --daystokeepbackup 50 --priority high`
 
 This solution uses two external libraries we need to reference: RestSharp to facilitate the API calls and Newtonsoft JSON to deserialize the API responses into objects.
 
@@ -154,7 +154,7 @@ Note we are also saving the original JSON item list we got from the repository c
 - --info or /about: Show the about menu
 
 #### Mandatory arguments:
-Mandatory arguments is: **`--token, --org, --outdir, --server, --port, --from and --to`**
+Mandatory arguments is: **`--token, --org, --backup, --server, --port, --from and --to`**
 
 #### **A bit more information about some arguments:**
 
