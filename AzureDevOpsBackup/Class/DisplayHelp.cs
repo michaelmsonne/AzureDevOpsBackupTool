@@ -22,6 +22,10 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\t--token <token>:     Token to access the API in Azure DevOps (raw token data)");
             Console.WriteLine("\t     or token.bin:   Will use data to access the API in Azure DevOps from encrypted token.bin file");
             Console.WriteLine("\t--org:               Name of the organization in Azure DevOps");
+            Console.WriteLine("\t     --oldurl:       Specify this option if you are using the old organization URL format");
+            Console.WriteLine(
+                "\t\t\t     (https://organization.visualstudio.com) if you have not updated your organization URL");
+            Console.WriteLine("\t\t\t     to the new format (https://dev.azure.com/{organization})");
             Console.WriteLine("\t--backup:            Folder where to store the backup(s) - folder with timestamp will be created");
             Console.WriteLine("\t--server:            IP address or DNS name of the SMTP server");
             Console.WriteLine("\t--port:              The port for the SMTP server");
