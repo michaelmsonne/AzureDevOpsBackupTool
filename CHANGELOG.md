@@ -1,3 +1,17 @@
+## [1.1.1.0] - 22-09-2024
+
+AzureDevOpsBackup:
+### Added
+- Added support for the old organization URL format (https://organization.visualstudio.com) in the backup tool, so the tool now supports both the new and old URL format if you have not updated your organization URL to the new format (https://dev.azure.com/{organization}).
+
+### Fixed
+- Fixed a bug in the backup tool, where the tool would crach if it not could create the log file in the log folder.
+- Fixed a bug where the log files folder was not created if it not exists.
+
+AzureDevOpsBackupUnzipTool:
+### Added
+- Added a bit more logging to the unzip tool to show the progress of the unzip process.
+
 ## [1.1.0.0] - 10-08-2024
 
 Major update with new features and bug fixes

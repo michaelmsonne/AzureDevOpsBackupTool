@@ -235,7 +235,22 @@ namespace AzureDevOpsBackup
 
                         // Base GET API
                         //const string version = "api-version=7.0";
-                        string baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
+                        string baseUrl;
+                        if (args.Contains("--oldurl"))
+                        {
+                            baseUrl = "https://" + args[Array.IndexOf(args, "--org") + 1] + ".visualstudio.com/";
+
+                            // Show warning to user about old URL format
+                            Message("Starting connection to Azure DevOps API via the old url format - recommended to update this. Read more here: https://learn.microsoft.com/en-us/azure/devops/release-notes/2018/sep-10-azure-devops-launch#administration", EventType.Information, 1000);
+                            Console.WriteLine("Starting connection to Azure DevOps API via the old url format - recommended to update this.");
+                        }
+                        else
+                        {
+                            // Show warning to user about old URL format
+                            Message("Starting connection to Azure DevOps API via the new url format - all is good!", EventType.Information, 1000);
+                            Console.WriteLine("Starting connection to Azure DevOps API via the new url format - all is good!");
+                            baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
+                        }
                         
                         // Create a new instance of the SecureArgumentHandler class to handle the encryption and decryption of the token
                         SecureArgumentHandler handler = new SecureArgumentHandler();
