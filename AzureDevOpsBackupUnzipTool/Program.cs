@@ -31,6 +31,9 @@ namespace AzureDevOpsBackupUnzipTool
             // Get application information
             ApplicationInfo.GetExeInfo();
 
+            // Log start of program to log
+            ApplicationStatus.ApplicationStartMessage();
+
             // Create log folder if not exist
             LocalFolderTasks.CreateLogFolder();
             
@@ -140,6 +143,9 @@ namespace AzureDevOpsBackupUnzipTool
                 Message($"An error occurred: {ex.Message}", EventType.Error, 1001);
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
+
+            // Log end of program to console
+            ApplicationStatus.ApplicationEndMessage();
         }
 
         private static void UnzipProject(string zipFilePath, string outputDirectory, string jsonFilePath)
