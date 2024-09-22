@@ -31,6 +31,16 @@ namespace AzureDevOpsBackupUnzipTool
             // Get application information
             ApplicationInfo.GetExeInfo();
 
+            // Log start of program to log
+            ApplicationStatus.ApplicationStartMessage();
+
+            // Set Global Logfile properties for log
+            DateFormat = "dd-MM-yyyy";
+            DateTimeFormat = "dd-MM-yyyy HH:mm:ss";
+            WriteOnlyErrorsToEventLog = false;
+            WriteToEventLog = false;
+            WriteToFile = true;
+
             // Create log folder if not exist
             LocalFolderTasks.CreateLogFolder();
             
@@ -127,12 +137,6 @@ namespace AzureDevOpsBackupUnzipTool
             {
                 // Do
                 UnzipProject(zipFilePath, outputDirectory, jsonFilePath);
-
-                // Log
-                Message("Unzipping completed successfully!", EventType.Information, 1000);
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine("\n> Unzipping completed successfully!\n");
-                Console.ResetColor();
             }
             catch (Exception ex)
             {
@@ -140,29 +144,51 @@ namespace AzureDevOpsBackupUnzipTool
                 Message($"An error occurred: {ex.Message}", EventType.Error, 1001);
                 Console.WriteLine($"An error occurred: {ex.Message}");
             }
+
+            // Log end of program to console
+            ApplicationStatus.ApplicationEndMessage();
         }
 
         private static void UnzipProject(string zipFilePath, string outputDirectory, string jsonFilePath)
         {
+            // Log start of the unzipping process
+            Message("Starting the unzipping process...", EventType.Information, 1000);
+            Console.WriteLine("Starting the unzipping process...");
+
             // Read JSON data
             string jsonData = File.ReadAllText(jsonFilePath);
             var rootObject = JsonConvert.DeserializeObject<RootObject>(jsonData);
             var items = rootObject.Value;
+
+            // Log the number of items to be processed
+            Message($"Number of items to process: {items.Count}", EventType.Information, 1000);
+            Console.WriteLine($"Number of items to process: {items.Count}");
+
+            // Initialize a counter for processed items
+            int processedItemCount = 0;
 
             // Open the zip archive
             using (var archive = ZipFile.OpenRead(zipFilePath))
             {
                 foreach (var item in items)
                 {
+                    // Increment the counter
+                    processedItemCount++;
+
                     // Get the destination path
                     string destinationPath = Path.GetFullPath(Path.Combine(outputDirectory, item.Path.TrimStart('/')));
+
+                    // Log the item being processed with the counter
+                    Message($"Processing item {processedItemCount}/{items.Count}: {item.Path} (Type: {item.GitObjectType})", EventType.Information, 1000);
+                    Console.WriteLine($"Processing item {processedItemCount}/{items.Count}: {item.Path} (Type: {item.GitObjectType})");
 
                     // Check if the item is a folder or a file
                     if (item.GitObjectType == "tree")
                     {
                         // If folder data
                         Console.WriteLine($"Unzipping Git repository folder data: '{destinationPath}'...");
-                        
+                        Message($"Unzipping Git repository folder data: '{destinationPath}'...", EventType.Information, 1000);
+
                         try
                         {
                             // Create backup folder if not exist
@@ -233,11 +259,17 @@ namespace AzureDevOpsBackupUnzipTool
                         // If the entry is null
                         else
                         {
+                            // Log
+                            Message($"Entry with ObjectId '{item.ObjectId}' not found in the zip archive.", EventType.Error, 1001);
                             Console.WriteLine($"Entry with ObjectId '{item.ObjectId}' not found in the zip archive.");
                         }
                     }
                 }
             }
+
+            // Log end of the unzipping process
+            Message("Unzipping process completed.", EventType.Information, 1000);
+            Console.WriteLine("Unzipping process completed.");
         }
     }
 }
