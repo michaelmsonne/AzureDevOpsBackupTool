@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Diagnostics;
+using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Security;
 
@@ -15,8 +16,8 @@ namespace AzureDevOpsBackup.Class
 
         public static bool WriteOnlyErrorsToEventLog { get; set; } = true;
 
-        // Sets the App name for the log function
-        //public static string AppName { get; set; } = Globals.AppName; // "Unknown",;
+        // Flag to prevent recursive logging
+        private static bool isLogging = false;
 
         // Set date format short
         public static string DateFormat { get; set; } = "dd-MM-yyyy";
@@ -69,24 +70,58 @@ namespace AzureDevOpsBackup.Class
         // Save message to logfile
         private static void AppendMessageToFile(string mess, EventType type, string dtf, string path, int id)
         {
+            if (isLogging) return; // Prevent recursive logging
+            isLogging = true;
+
             try
             {
                 // Check if file exists else create it
-                if (!Directory.Exists(Files.LogFilePath))
-                    Directory.CreateDirectory(Files.LogFilePath);
+                try
+                {
+                    if (!Directory.Exists(Files.LogFilePath))
+                    {
+                        Directory.CreateDirectory(Files.LogFilePath);
+                        //Console.WriteLine("Directory to log files created: " + Files.LogFilePath);
+                    }
+                }
+                catch (Exception ex)
+                {
+                    if (WriteToEventLog)
+                    {
+                        AddMessageToEventLog($"Error creating log directory, {ex.Message}", EventType.Error, dtf, path, id);
+                        AddMessageToEventLog("Writing log file has been disabled.", EventType.Information, dtf, path, id);
 
+                        Console.WriteLine("No write access to log directory. Writing log file has been disabled.");
+                    }
+                    WriteToFile = false;
+                    return;
+                }
+
+                // Check if we have write access to the directory
+                if (!HasWriteAccessToDirectory(Files.LogFilePath))
+                {
+                    if (WriteToEventLog)
+                    {
+                        AddMessageToEventLog("No write access to log directory.", EventType.Error, dtf, path, id);
+                        AddMessageToEventLog("Writing log file has been disabled.", EventType.Information, dtf, path, id);
+
+                        Console.WriteLine("No write access to log directory. Writing log file has been disabled.");
+                    }
+                    WriteToFile = false;
+                    return;
+                }
                 var str = type.ToString().Length > 7 ? "\t" : "\t\t";
                 if (!File.Exists(path))
                 {
                     using (var text = File.CreateText(path))
                         text.WriteLine(
-                            $"{(object)dtf} - [EventID {(object)id.ToString()}] {(object)type.ToString()}{(object)str}{(object)mess}");
+                            $"{dtf} - [EventID {id}] {type}{str}{mess}");
                 }
                 else
                 {
                     using (var streamWriter = File.AppendText(path))
                         streamWriter.WriteLine(
-                            $"{(object)dtf} - [EventID {(object)id.ToString()}] {(object)type.ToString()}{(object)str}{(object)mess}");
+                            $"{dtf} - [EventID {id}] {type}{str}{mess}");
                 }
             }
             catch (Exception ex)
@@ -94,14 +129,40 @@ namespace AzureDevOpsBackup.Class
                 if (!WriteToEventLog)
                     return;
                 AddMessageToEventLog($"Error writing to log file, {ex.Message}", EventType.Error, dtf, path, 0);
-                AddMessageToEventLog("Writing log file have been disabled.", EventType.Information, dtf, path, 0);
+                AddMessageToEventLog("Writing log file has been disabled.", EventType.Information, dtf, path, 0);
                 WriteToFile = false;
+            }
+            finally
+            {
+                isLogging = false;
+            }
+        }
+
+        private static bool HasWriteAccessToDirectory(string path)
+        {
+            try
+            {
+                // Attempt to get a list of security permissions from the directory.
+                // This will raise an exception if the path is read-only or do not have access.
+                Directory.GetAccessControl(path);
+                return true;
+            }
+            catch (UnauthorizedAccessException)
+            {
+                return false;
+            }
+            catch (Exception)
+            {
+                return false;
             }
         }
 
         // Save message to Windows event log
         private static void AddMessageToEventLog(string mess, EventType type, string dtf, string path, int id)
         {
+            if (isLogging) return; // Prevent recursive logging
+            isLogging = true;
+
             try
             {
                 if (type != EventType.Error && WriteOnlyErrorsToEventLog)
@@ -144,6 +205,10 @@ namespace AzureDevOpsBackup.Class
                     AppendMessageToFile("Event log entries have been disabled.", EventType.Information, dtf, path, id);
                     WriteToEventLog = false;
                 }
+            }
+            finally
+            {
+                isLogging = false;
             }
         }
     }
