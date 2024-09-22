@@ -10,7 +10,7 @@ AzureDevOpsBackup:
 
 AzureDevOpsBackupUnzipTool:
 ### Added
-- Added a bit more logging
+- Added a bit more logging to the unzip tool to show the progress of the unzip process.
 
 ## [1.1.0.0] - 10-08-2024
 
