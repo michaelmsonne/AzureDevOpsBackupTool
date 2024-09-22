@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Diagnostics.Eventing.Reader;
 using System.IO;
 using System.Security;
 
@@ -17,7 +16,7 @@ namespace AzureDevOpsBackup.Class
         public static bool WriteOnlyErrorsToEventLog { get; set; } = true;
 
         // Flag to prevent recursive logging
-        private static bool isLogging = false;
+        private static bool _isLogging;
 
         // Set date format short
         public static string DateFormat { get; set; } = "dd-MM-yyyy";
@@ -70,8 +69,8 @@ namespace AzureDevOpsBackup.Class
         // Save message to logfile
         private static void AppendMessageToFile(string mess, EventType type, string dtf, string path, int id)
         {
-            if (isLogging) return; // Prevent recursive logging
-            isLogging = true;
+            if (_isLogging) return; // Prevent recursive logging
+            _isLogging = true;
 
             try
             {
@@ -134,7 +133,7 @@ namespace AzureDevOpsBackup.Class
             }
             finally
             {
-                isLogging = false;
+                _isLogging = false;
             }
         }
 
@@ -160,8 +159,8 @@ namespace AzureDevOpsBackup.Class
         // Save message to Windows event log
         private static void AddMessageToEventLog(string mess, EventType type, string dtf, string path, int id)
         {
-            if (isLogging) return; // Prevent recursive logging
-            isLogging = true;
+            if (_isLogging) return; // Prevent recursive logging
+            _isLogging = true;
 
             try
             {
@@ -208,7 +207,7 @@ namespace AzureDevOpsBackup.Class
             }
             finally
             {
-                isLogging = false;
+                _isLogging = false;
             }
         }
     }
