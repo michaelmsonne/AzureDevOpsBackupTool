@@ -1,3 +1,11 @@
+## [1.1.1.0] - 22-09-2024
+
+### Changed
+
+### Fixed
+- Fixed a bug in the backup tool, where the tool would crach if it not could create the log file in the log folder.
+- Fixed a bug where the log files folder was not created if it not exists.
+
 ## [1.1.0.0] - 10-08-2024
 
 Major update with new features and bug fixes
