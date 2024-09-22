@@ -137,6 +137,9 @@ Note we are also saving the original JSON item list we got from the repository c
     (Remember to run --tokenfile <token.data> to create the file first beside the application .exe!)
     - <token.data>: Replace this with your Azure DevOps personal access token.
 - --org: Replace this with your Azure DevOps organization name.
+    - --oldurl: Specifu this option if you are using the old organization URL format (https://organization.visualstudio.com) if you have not updated your organization URL to the new format (https://dev.azure.com/{organization}).
+	
+    	Read more here: https://learn.microsoft.com/en-us/azure/devops/release-notes/2018/sep-10-azure-devops-launch#administration
 - --backup: Specify the local directory where you want to store the Azure DevOps repository backups.
 - --server: IP address or domain name of the SMTP server for sending email notifications.
 - --port: The SMTP server port
