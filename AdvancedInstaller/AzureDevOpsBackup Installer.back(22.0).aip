@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="20.2" version="22.1" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{9B0F5C3A-F049-4A7F-A776-DAA7871CB253}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="20.2" version="22.0" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{9B0F5C3A-F049-4A7F-A776-DAA7871CB253}">
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_PREDEF_LCONDS_PROPS" Value="AI_DETECTED_DOTNET_VERSION"/>
@@ -8,13 +8,13 @@
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_CommandLine.dll_1" Value="..\AzureDevOpsBackup\packages\CommandLineParser.2.9.1\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Value="..\AzureDevOpsBackup\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll_1" Value="..\AzureDevOpsBackup\packages\Newtonsoft.Json.13.0.3\lib\net45"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_RestSharp.dll_1" Value="..\AzureDevOpsBackup\packages\RestSharp.112.1.0\lib\net48"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_RestSharp.dll_1" Value="..\AzureDevOpsBackup\packages\RestSharp.111.4.1\lib\net48"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Buffers.dll_1" Value="..\AzureDevOpsBackup\packages\System.Buffers.4.5.1\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Memory.dll_1" Value="..\AzureDevOpsBackup\packages\System.Memory.4.5.5\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Numerics.Vectors.dll_1" Value="..\AzureDevOpsBackup\packages\System.Numerics.Vectors.4.5.0\lib\net46"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Runtime.CompilerServices.Unsafe.dll" Value="..\AzureDevOpsBackup\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Encodings.Web.dll_1" Value="..\AzureDevOpsBackup\packages\System.Text.Encodings.Web.8.0.0\lib\net462"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Json.dll_1" Value="..\AzureDevOpsBackup\packages\System.Text.Json.8.0.5\lib\net462"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Json.dll_1" Value="..\AzureDevOpsBackup\packages\System.Text.Json.8.0.4\lib\net462"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Threading.Tasks.Extensions.dll_1" Value="..\AzureDevOpsBackup\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.ValueTuple.dll_1" Value="..\AzureDevOpsBackup\packages\System.ValueTuple.4.5.0\lib\net47"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe_1" Value="AzureDevOpsBackup.exe"/>

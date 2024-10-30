@@ -4,6 +4,7 @@ AzureDevOpsBackup:
 
 ### Fixed
 - Microsoft Security Advisory CVE-2024-43485 | .NET Denial of Service Vulnerability (System.Text.Json 8.0.4 > 8.0.5)
+- CRLF Injection CVE-2024-45302 | RestSharp's `RestRequest.AddHeader` method (RestSharp 111.4.1 > 112.1.0)
 
 ## [1.1.1.0] - 22-09-2024
 
