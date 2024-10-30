@@ -1,3 +1,10 @@
+## [1.1.2.0] - 30-10-2024
+
+AzureDevOpsBackup:
+
+### Fixed
+- Microsoft Security Advisory CVE-2024-43485 | .NET Denial of Service Vulnerability (System.Text.Json 8.0.4 > 8.0.5)
+
 ## [1.1.1.0] - 22-09-2024
 
 AzureDevOpsBackup:
