@@ -8,7 +8,7 @@
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_CommandLine.dll_1" Value="..\AzureDevOpsBackup\packages\CommandLineParser.2.9.1\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Value="..\AzureDevOpsBackup\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll_1" Value="..\AzureDevOpsBackup\packages\Newtonsoft.Json.13.0.3\lib\net45"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_RestSharp.dll_1" Value="..\AzureDevOpsBackup\packages\RestSharp.112.1.0\lib\net48"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_RestSharp.dll" Value="..\AzureDevOpsBackup\packages\RestSharp.112.1.0\lib\net48"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Buffers.dll_1" Value="..\AzureDevOpsBackup\packages\System.Buffers.4.5.1\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Memory.dll_1" Value="..\AzureDevOpsBackup\packages\System.Memory.4.5.5\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Numerics.Vectors.dll_1" Value="..\AzureDevOpsBackup\packages\System.Numerics.Vectors.4.5.0\lib\net46"/>
@@ -22,7 +22,7 @@
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_CommandLine.dll_1" Value="CommandLine.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Value="Microsoft.Bcl.AsyncInterfaces.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1" Value="Newtonsoft.Json.dll"/>
-    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll_1" Value="RestSharp.dll"/>
+    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll" Value="RestSharp.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Buffers.dll_1" Value="System.Buffers.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Memory.dll_1" Value="System.Memory.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Numerics.Vectors.dll_1" Value="System.Numerics.Vectors.dll"/>
@@ -64,7 +64,6 @@
     <ROW Component="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1" ComponentId="{BDB90E29-E629-4578-8EA5-89CD2E0EFFC2}" Directory_="APPDIR" Attributes="0" KeyPath="AzureDevOpsBackupUnzipTool.exe_1"/>
     <ROW Component="AI_PROPPATH_FILENAME_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" ComponentId="{03B81FB9-EB94-4D90-A2B4-9704A13531BC}" Directory_="APPDIR" Attributes="0" KeyPath="Microsoft.Bcl.AsyncInterfaces.dll_1"/>
     <ROW Component="AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1" ComponentId="{A524CC02-829E-42A6-8EDA-66E7D329C691}" Directory_="APPDIR" Attributes="0" KeyPath="Newtonsoft.Json.dll_1"/>
-    <ROW Component="AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll_1" ComponentId="{F4704B49-22C9-4BAD-AFB3-6BEF15C980DE}" Directory_="APPDIR" Attributes="0" KeyPath="RestSharp.dll_1"/>
     <ROW Component="AI_PROPPATH_FILENAME_PERBUILD_Syst_1_em.Text.Json.dll_1" ComponentId="{16FDA6D0-819C-4AE8-B492-C01EAF283486}" Directory_="APPDIR" Attributes="0" KeyPath="System.Text.Json.dll_1"/>
     <ROW Component="AI_PROPPATH_FILENAME_PERBUILD_System.Buffers.dll_1" ComponentId="{21300A63-C639-4F47-BDE7-495F69DFDDBC}" Directory_="APPDIR" Attributes="0" KeyPath="System.Buffers.dll_1"/>
     <ROW Component="AI_PROPPATH_FILENAME_PERBUILD_System.Memory.dll_1" ComponentId="{EE6EA162-A2AC-4422-A985-93EE3E1A558D}" Directory_="APPDIR" Attributes="0" KeyPath="System.Memory.dll_1"/>
@@ -86,7 +85,6 @@
     <ROW File="CommandLine.dll_1" Component_="AzureDevOpsBackup.exe.config_1" FileName="COMMAN~1.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_CommandLine.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_CommandLine.dll_1&gt;" SelfReg="false"/>
     <ROW File="Microsoft.Bcl.AsyncInterfaces.dll_1" Component_="AI_PROPPATH_FILENAME_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" FileName="MICROS~1.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1&gt;" SelfReg="false"/>
     <ROW File="Newtonsoft.Json.dll_1" Component_="AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1" FileName="NEWTON~1.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_Newtonsoft.Json.dll_1&gt;" SelfReg="false"/>
-    <ROW File="RestSharp.dll_1" Component_="AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll_1" FileName="RESTSH~1.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_RestSharp.dll_1&gt;" SelfReg="false"/>
     <ROW File="System.Buffers.dll_1" Component_="AI_PROPPATH_FILENAME_PERBUILD_System.Buffers.dll_1" FileName="SYSTEM~1.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.Buffers.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.Buffers.dll_1&gt;" SelfReg="false"/>
     <ROW File="System.Memory.dll_1" Component_="AI_PROPPATH_FILENAME_PERBUILD_System.Memory.dll_1" FileName="SYSTEM~2.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.Memory.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.Memory.dll_1&gt;" SelfReg="false"/>
     <ROW File="System.Numerics.Vectors.dll_1" Component_="AI_PROPPATH_FILENAME_PERBUILD_System.Numerics.Vectors.dll_1" FileName="SYSTEM~3.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.Numerics.Vectors.dll_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.Numerics.Vectors.dll_1&gt;" SelfReg="false"/>
@@ -97,6 +95,7 @@
     <ROW File="System.Runtime.CompilerServices.Unsafe.dll" Component_="AzureDevOpsBackup.exe.config_1" FileName="SYSTEM~4.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.Runtime.CompilerServices.Unsafe.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.Runtime.CompilerServices.Unsafe.dll&gt;" SelfReg="false"/>
     <ROW File="AzureDevOpsBackup.exe.config" Component_="AzureDevOpsBackup.exe.config_1" FileName="AZURED~1.CON|AzureDevOpsBackup.exe.config" Attributes="0" SourcePath="..\AzureDevOpsBackup\bin\Release\AzureDevOpsBackup.exe.config" SelfReg="false"/>
     <ROW File="AzureDevOpsBackupUnzipTool.exe_1" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1" FileName="AZURED~2.EXE|[|AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1&gt;" SelfReg="false"/>
+    <ROW File="RestSharp.dll" Component_="AzureDevOpsBackup.exe.config_1" FileName="RESTSH~2.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_RestSharp.dll&gt;" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AppPathsComponent">
     <ROW Name="AI_APPPATH_PERBUILD_AzureDevOpsBackup.exe_1" Path="[|AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackup.exe_1]\[|AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe_1]" Type="2" Content="0"/>
@@ -104,7 +103,7 @@
     <ROW Name="AI_APPPATH_PERBUILD_CommandLine.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_CommandLine.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_CommandLine.dll_1]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_Newtonsoft.Json.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1]" Type="2" Content="0"/>
-    <ROW Name="AI_APPPATH_PERBUILD_RestSharp.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_RestSharp.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll_1]" Type="2" Content="0"/>
+    <ROW Name="AI_APPPATH_PERBUILD_RestSharp.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_RestSharp.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_System.Buffers.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Buffers.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Buffers.dll_1]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_System.Memory.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Memory.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Memory.dll_1]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_System.Numerics.Vectors.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Numerics.Vectors.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Numerics.Vectors.dll_1]" Type="2" Content="0"/>
@@ -267,7 +266,6 @@
     <ROW Feature_="MainFeature" Component_="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1"/>
     <ROW Feature_="MainFeature" Component_="AI_PROPPATH_FILENAME_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1"/>
     <ROW Feature_="MainFeature" Component_="AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1"/>
-    <ROW Feature_="MainFeature" Component_="AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll_1"/>
     <ROW Feature_="MainFeature" Component_="AI_PROPPATH_FILENAME_PERBUILD_System.Buffers.dll_1"/>
     <ROW Feature_="MainFeature" Component_="AI_PROPPATH_FILENAME_PERBUILD_System.Memory.dll_1"/>
     <ROW Feature_="MainFeature" Component_="AI_PROPPATH_FILENAME_PERBUILD_System.Numerics.Vectors.dll_1"/>
@@ -329,7 +327,6 @@
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="CommandLine.dll_1"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="Microsoft.Bcl.AsyncInterfaces.dll_1"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="Newtonsoft.Json.dll_1"/>
-    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="RestSharp.dll_1"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Buffers.dll_1"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Memory.dll_1"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Numerics.Vectors.dll_1"/>
@@ -339,5 +336,6 @@
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.ValueTuple.dll_1"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.Runtime.CompilerServices.Unsafe.dll"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="AzureDevOpsBackupUnzipTool.exe_1"/>
+    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="RestSharp.dll"/>
   </COMPONENT>
 </DOCUMENT>
