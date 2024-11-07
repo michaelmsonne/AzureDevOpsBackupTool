@@ -28,6 +28,7 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\t\t\t     to the new format (https://dev.azure.com/{organization})");
             Console.WriteLine("\t--backup:            Folder where to store the backup(s) - folder with timestamp will be created");
             Console.WriteLine("\t--server:            IP address or DNS name of the SMTP server");
+            Console.WriteLine("\t--nossl:             No SSL for the mail server");
             Console.WriteLine("\t--port:              The port for the SMTP server");
             Console.WriteLine("\t--from:              The email address the report is send from");
             Console.WriteLine("\t--to:                The email address the report is send to - support multiple recipients with");

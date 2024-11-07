@@ -1092,23 +1092,37 @@ namespace AzureDevOpsBackup
                                 Console.WriteLine("\nBackup start Time: " + Globals._startTime);
                                 Console.WriteLine("\nBackup end Time: " + Globals._endTime);
 
-                                // Parse data
+                                // Parse data to email
                                 server = args[Array.IndexOf(args, "--server") + 1];
                                 serverPort = args[Array.IndexOf(args, "--port") + 1];
                                 emailFrom = args[Array.IndexOf(args, "--from") + 1];
                                 emailTo = args[Array.IndexOf(args, "--to") + 1];
+
+                                // Check if --nossl is set
+                                if (args.Contains("--nossl"))
+                                {
+                                    // Set to true to not use SSL for email server
+                                    Globals._nossl = true;
+                                }
+                                else
+                                {
+                                    // Set to false to use SSL for email server
+                                    Globals._nossl = false;
+                                }
 
                                 // Log details regarding email send
                                 Console.WriteLine("Email details:");
                                 Console.WriteLine("--server: " + server);
                                 Console.WriteLine("--port: " + serverPort);
                                 Console.WriteLine("--from: " + emailFrom);
-                                Console.WriteLine("--to: " + emailTo + Environment.NewLine);
+                                Console.WriteLine("--to: " + emailTo);
+                                Console.WriteLine("--ssl: " + (!Globals._nossl ? "enabled" : "disabled") + Environment.NewLine);
                                 Message("Email details:", EventType.Information, 1000);
                                 Message("--server: " + server, EventType.Information, 1000);
                                 Message("--port: " + serverPort, EventType.Information, 1000);
                                 Message("--from: " + emailFrom, EventType.Information, 1000);
                                 Message("--to: " + emailTo, EventType.Information, 1000);
+                                Message("--ssl: " + (!Globals._nossl ? "enabled" : "disabled"), EventType.Information, 1000);
 
                                 // Cleanup old backups
                                 Message("Clean up old backups", EventType.Information, 1000);
@@ -1685,7 +1699,7 @@ namespace AzureDevOpsBackup
                             var noAttatchLog = Array.Exists(args, argument => argument == "--noattatchlog");
 
                             // Send status email and parse data to function
-                            ReportSender.SendEmail(server, serverPort, emailFrom, emailTo, Globals._emailStatusMessage, repocountelements,
+                            ReportSender.SendEmail(server, Globals._nossl, serverPort, emailFrom, emailTo, Globals._emailStatusMessage, repocountelements,
                                 repoitemscountelements, Globals._repoCount, Globals._repoItemsCount, Globals._totalFilesIsBackupUnZipped, Globals._totalBlobFilesIsBackup,
                                 Globals._totalTreeFilesIsBackup, outDirSaveToDisk, elapsedTime, Globals._errors, Globals._totalFilesIsDeletedAfterUnZipped,
                                 Globals._totalBackupsIsDeleted, daysToKeepBackups, Globals._repoCountStatusText, Globals._repoItemsCountStatusText,
