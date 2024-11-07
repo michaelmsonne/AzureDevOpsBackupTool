@@ -1,3 +1,10 @@
+## [1.1.2.1] - 30-10-2024
+
+AzureDevOpsBackup:
+
+### Added
+- Added an option to set mail server SSL (Secure Sockets Layer) to true or false in the email report with argument: '**--nossl**'
+
 ## [1.1.2.0] - 30-10-2024
 
 AzureDevOpsBackup:

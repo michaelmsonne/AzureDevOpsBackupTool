@@ -16,6 +16,7 @@ namespace AzureDevOpsBackup.Class
         public static int _numJson; // The number of json files
         public static bool _checkForLeftoverFilesAfterCleanup; // Check for leftover files after cleanup
         public static bool _deletedFilesAfterUnzip; // Delete files after unzipping
+        public static bool _nossl; // No SSL for the email server
         public static string AppName; // The name of the application
         public static string _copyrightData; // The copyright data of the application
         public static int _totalBackupsIsDeleted; // The total number of backups deleted
