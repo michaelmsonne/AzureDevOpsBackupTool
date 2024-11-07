@@ -142,6 +142,7 @@ Note we are also saving the original JSON item list we got from the repository c
     	Read more here: https://learn.microsoft.com/en-us/azure/devops/release-notes/2018/sep-10-azure-devops-launch#administration
 - --backup: Specify the local directory where you want to store the Azure DevOps repository backups.
 - --server: IP address or domain name of the SMTP server for sending email notifications.
+- --nossl: Use this option to disable SSL/TLS for the SMTP server.
 - --port: The SMTP server port
 - --from: The email address for the notification emails to send from.
 - --toemail: The email address to report is send to.
