@@ -3,11 +3,11 @@
 AzureDevOpsBackup:
 
 ### Added
-- Added graceful handling of API rate limits: The tool now gracefully handles API rate limits by implementing exponential backoff and retry logic. This ensures that the backup process continues smoothly even when the API rate limit is reached.
 - Added an option to test the connection to the Azure DevOps REST API and folder write access with argument: '**--healthcheck**' - this will test the connection to the Azure DevOps REST API and backup folder write test and show the result.
 
 ### Fixed
 - Fixed a bug in the backup tool, where the tool would crash if a repository was not found/disabled in the Azure DevOps organization. The tool now skips the repository and continues with the next one.
+- Added graceful handling of API rate limits: The tool now gracefully handles API rate limits by implementing exponential backoff and retry logic. This ensures that the backup process continues smoothly even when the API rate limit is reached.
 
 ## [1.1.2.1] - 07-11-2024
 
