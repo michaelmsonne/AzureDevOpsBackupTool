@@ -713,6 +713,10 @@ namespace AzureDevOpsBackup
                                         // Set if using REST API or GIT CLI
                                         if (doFullGitBackup)
                                         {
+                                            // Log set to use GIT CLI also
+                                            Message("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...", EventType.Information, 1000);
+                                            Console.WriteLine("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...");
+
                                             if (!Requirements.IsGitInstalled())
                                             {
                                                 Console.ForegroundColor = ConsoleColor.Red;
@@ -720,10 +724,6 @@ namespace AzureDevOpsBackup
                                                 Console.ResetColor();
                                                 Environment.Exit(1);
                                             }
-
-                                            // Log set to use GIT CLI also
-                                            Message("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...", EventType.Information, 1000);
-                                            Console.WriteLine("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...");
 
                                             // Log calling GIT CLI
                                             Message("Calling GIT CLI to backup repository: '" + repo.Name + "'...", EventType.Information, 1000);
