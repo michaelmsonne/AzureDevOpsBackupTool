@@ -721,6 +721,7 @@ namespace AzureDevOpsBackup
                                             {
                                                 Console.ForegroundColor = ConsoleColor.Red;
                                                 Console.WriteLine("ERROR: 'git' CLI is not installed or not found in PATH. Please install Git before running with --fullgitbackup.");
+                                                Message("'git' CLI is not installed or not found in PATH. Please install Git before running with --fullgitbackup.", EventType.Error, 1002);
                                                 Console.ResetColor();
                                                 Environment.Exit(1);
                                             }
