@@ -72,31 +72,6 @@ namespace AzureDevOpsBackup
     {
         private static bool _cleanUpState;
 
-        private static bool IsGitInstalled()
-        {
-            try
-            {
-                var psi = new ProcessStartInfo
-                {
-                    FileName = "git",
-                    Arguments = "--version",
-                    RedirectStandardOutput = true,
-                    RedirectStandardError = true,
-                    UseShellExecute = false,
-                    CreateNoWindow = true
-                };
-                using (var process = Process.Start(psi))
-                {
-                    process.WaitForExit(3000); // Wait up to 3 seconds
-                    return process.ExitCode == 0;
-                }
-            }
-            catch
-            {
-                return false;
-            }
-        }
-
         private static async Task<RestResponse> ExecuteWithRetryAsync(RestClient client, RestRequest request, int maxRetries = 5, int initialDelayMs = 1000)
         {
             int retries = 0;
@@ -738,7 +713,7 @@ namespace AzureDevOpsBackup
                                         // Set if using REST API or GIT CLI
                                         if (doFullGitBackup)
                                         {
-                                            if (!IsGitInstalled())
+                                            if (!Requirements.IsGitInstalled())
                                             {
                                                 Console.ForegroundColor = ConsoleColor.Red;
                                                 Console.WriteLine("ERROR: 'git' CLI is not installed or not found in PATH. Please install Git before running with --fullgitbackup.");
