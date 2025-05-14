@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<DOCUMENT Type="Advanced Installer" CreateVersion="20.2" version="22.6" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{9B0F5C3A-F049-4A7F-A776-DAA7871CB253}">
+<DOCUMENT Type="Advanced Installer" CreateVersion="20.2" version="22.2" PreviousModules="professional" Modules="enterprise" RootPath="." Language="en" Id="{9B0F5C3A-F049-4A7F-A776-DAA7871CB253}">
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_PREDEF_LCONDS_PROPS" Value="AI_DETECTED_DOTNET_VERSION"/>

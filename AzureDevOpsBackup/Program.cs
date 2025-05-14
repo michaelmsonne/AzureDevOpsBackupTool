@@ -471,6 +471,18 @@ namespace AzureDevOpsBackup
                                         var requestBranches = new RestRequest { Method = Method.Get };
                                         requestBranches.AddHeader("Authorization", auth);
                                         var responseBranches = await branches.GetAsync(requestBranches);
+
+                                        // Check for disabled or inaccessible repository
+                                        if (responseBranches.StatusCode != HttpStatusCode.OK)
+                                        {
+                                            Message($"Repository '{repo.Name}' is inaccessible or disabled (HTTP {responseBranches.StatusCode}). Skipping.", EventType.Warning, 1001);
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine($"Repository '{repo.Name}' is inaccessible or disabled (HTTP {responseBranches.StatusCode}). Skipping.");
+                                            Console.ResetColor();
+                                            continue;
+                                        }
+
+                                        // Get branches in repos
                                         var branchResponse = JsonConvert.DeserializeObject<Branches>(responseBranches.Content);
                                     
                                         foreach (var branch in branchResponse.Value)

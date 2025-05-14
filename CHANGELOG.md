@@ -1,3 +1,10 @@
+## [1.1.2.2] - 07-11-2024
+
+AzureDevOpsBackup:
+
+### Fixed
+- Fixed a bug in the backup tool, where the tool would crash if a repository was not found/disabled in the Azure DevOps organization. The tool now skips the repository and continues with the next one.
+
 ## [1.1.2.1] - 07-11-2024
 
 AzureDevOpsBackup:
