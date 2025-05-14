@@ -1054,11 +1054,11 @@ namespace AzureDevOpsBackup
                                                                     // Log
                                                                     Console.ForegroundColor = ConsoleColor.Green;
                                                                     Console.WriteLine($"> Created folder: '" +
-                                                                        localRepoDirectory + item.Path + "'");
+                                                                        localRepoDirectory + item.Path + "' with SUCCESS");
                                                                     Console.ResetColor();
                                                                     Message(
                                                                         "> Created folder: '" + localRepoDirectory +
-                                                                        item.Path + "'", EventType.Information, 1000);
+                                                                        item.Path + "' with SUCCESS", EventType.Information, 1000);
 
                                                                     // Set backup status
                                                                     isBackupOkAndUnZip = true;
@@ -1124,11 +1124,11 @@ namespace AzureDevOpsBackup
                                                                     Console.ForegroundColor = ConsoleColor.Yellow;
                                                                     Console.WriteLine(
                                                                         $"Unzipped Git repository file data on disk: '" +
-                                                                        localRepoDirectory + item.Path + "'");
+                                                                        localRepoDirectory + item.Path + "' with SUCCESS");
                                                                     Console.ResetColor();
                                                                     Message(
                                                                         "Unzipped Git repository file data on disk: '" +
-                                                                        localRepoDirectory + item.Path + "'",
+                                                                        localRepoDirectory + item.Path + "' with SUCCESS",
                                                                         EventType.Information, 1000);
 
                                                                     // Count
