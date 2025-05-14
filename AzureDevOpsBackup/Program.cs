@@ -110,6 +110,11 @@ namespace AzureDevOpsBackup
             string safePat = Uri.EscapeDataString(pat);
             string authenticatedUrl = repoUrl.Insert(8, $"pat:{safePat}@");
 
+            Console.ForegroundColor = ConsoleColor.Yellow;
+            Console.WriteLine($"[GIT] Starting git backup for repository: {repoUrl}");
+            Console.WriteLine($"[GIT] Target backup directory: {backupDir}\\");
+            Console.ResetColor();
+
             var psi = new ProcessStartInfo
             {
                 FileName = "git",
@@ -126,20 +131,66 @@ namespace AzureDevOpsBackup
                 string error = process.StandardError.ReadToEnd();
                 process.WaitForExit();
 
+                // Output git stdout and stderr to the console
+                if (!string.IsNullOrWhiteSpace(output))
+                {
+                    Console.ForegroundColor = ConsoleColor.Gray;
+                    Console.WriteLine("[GIT OUTPUT]");
+                    Console.WriteLine(output);
+                    Console.ResetColor();
+                }
+                if (!string.IsNullOrWhiteSpace(error))
+                {
+                    // Lines that are known to be informational, not errors
+                    string[] infoPatterns = {
+                        "Cloning into", // Add more patterns as needed
+                        "remote:",      // Git progress lines
+                        "Receiving objects:",
+                        "Resolving deltas:"
+                    };
+
+                    // Split error output into lines and process each
+                    var errorLines = error.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
+                    foreach (var line in errorLines)
+                    {
+                        bool isInfo = infoPatterns.Any(p => line.Trim().StartsWith(p, StringComparison.OrdinalIgnoreCase));
+                        if (isInfo)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Yellow;
+                            Console.WriteLine("[GIT INFO] " + line);
+                            //Console.WriteLine(line);
+                            Console.ResetColor();
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("[GIT ERROR] " + line);
+                            //Console.WriteLine(line);
+                            Console.ResetColor();
+                        }
+                    }
+                }
+
                 if (process.ExitCode != 0)
                 {
                     Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"[GIT] Failed to backup repository: {repoUrl}");
-                    Console.WriteLine(error);
+                    Console.WriteLine($"[GIT] Failed to backup repository: '{repoUrl}'");
                     Console.ResetColor();
-                    Message($"[GIT] Failed to backup repository: {repoUrl}\n{error}", EventType.Error, 1001);
+                    Message($"[GIT] Failed to backup repository: '{repoUrl}'\n{error}", EventType.Error, 1001);
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"[ACTION] Git backup failed for: '{repoUrl}'");
+                    Console.ResetColor();
                 }
                 else
                 {
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"[GIT] Successfully backed up repository: {repoUrl}");
+                    Console.WriteLine($"[GIT] Successfully backed up repository: '{repoUrl}'");
                     Console.ResetColor();
-                    Message($"[GIT] Successfully backed up repository: {repoUrl}", EventType.Information, 1000);
+                    Message($"[GIT] Successfully backed up repository: '{repoUrl}'", EventType.Information, 1000);
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"[GIT] Git backup completed for: '{repoUrl}'");
+                    Console.WriteLine($"[GIT] Backup stored at: '{backupDir}\\'");
+                    Console.ResetColor();
                 }
             }
         }
@@ -654,7 +705,7 @@ namespace AzureDevOpsBackup
 
                                         // Log
                                         Message(
-                                            "Getting information about Git repository is project: '" + repo.Name +
+                                            "Getting information about Git repository in project: '" + repo.Name +
                                             "'...", EventType.Information, 1000);
                                         Console.WriteLine("Getting information about Git repository in project: '" +
                                                           repo.Name + "'...");
@@ -662,6 +713,14 @@ namespace AzureDevOpsBackup
                                         // Set if using REST API or GIT CLI
                                         if (doFullGitBackup)
                                         {
+                                            // Log set to use GIT CLI also
+                                            Message("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...", EventType.Information, 1000);
+                                            Console.WriteLine("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...");
+
+                                            // Log calling GIT CLI
+                                            Message("Calling GIT CLI to backup repository: '" + repo.Name + "'...", EventType.Information, 1000);
+                                            Console.WriteLine("Calling GIT CLI to backup repository: '" + repo.Name + "'...");
+
                                             // Construct the HTTPS clone URL for Azure DevOps
                                             string encodedProject = Uri.EscapeDataString(project.Name);
                                             string encodedRepo = Uri.EscapeDataString(repo.Name);
@@ -715,11 +774,11 @@ namespace AzureDevOpsBackup
 
                                                 // Get info about repos in projects, files
                                                 Message(
-                                                    "Getting information about Git repository: '" + repo.Name +
+                                                    "Getting REST API information about Git repository: '" + repo.Name +
                                                     "' is done, items count in here is: '" + items.Count + "'",
                                                     EventType.Information, 1000);
                                                 Console.ForegroundColor = ConsoleColor.Yellow;
-                                                Console.WriteLine("Getting information about Git repository: '" +
+                                                Console.WriteLine("Getting REST API information about Git repository: '" +
                                                                   repo.Name + "' is done, items count in here is: '" +
                                                                   items.Count + "'");
                                                 Console.ResetColor();
