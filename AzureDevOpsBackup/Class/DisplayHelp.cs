@@ -48,6 +48,8 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\t  low:               Set the email report priority to 'low'");
             Console.WriteLine("\t--healthcheck:       Option to test connectivity to Azure DevOps REST API and backup folder write access");
             Console.WriteLine("\t\t\t     (optional)");
+            Console.WriteLine("\t--fullgitbackup:     Also perform a full git clone --mirror backup of each repository (with all history)");
+            Console.WriteLine("\t\t\t     in 'xx.git' folder (optional)");
             Console.WriteLine();
             Console.WriteLine("\t--help, /h or /?:    Showing this help text for the tool");
             Console.WriteLine("\t--info or /about:    Showing information about the tool");

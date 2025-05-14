@@ -103,6 +103,47 @@ namespace AzureDevOpsBackup
             }
         }
 
+        private static void BackupRepositoryWithGit(string repoUrl, string backupDir, string pat)
+        {
+            // Embed PAT in the URL for non-interactive authentication
+            // Example: https://pat:{PAT}@dev.azure.com/org/project/_git/repo
+            string safePat = Uri.EscapeDataString(pat);
+            string authenticatedUrl = repoUrl.Insert(8, $"pat:{safePat}@");
+
+            var psi = new ProcessStartInfo
+            {
+                FileName = "git",
+                Arguments = $"clone --mirror \"{authenticatedUrl}\" \"{backupDir}\"",
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false,
+                CreateNoWindow = true
+            };
+
+            using (var process = Process.Start(psi))
+            {
+                string output = process.StandardOutput.ReadToEnd();
+                string error = process.StandardError.ReadToEnd();
+                process.WaitForExit();
+
+                if (process.ExitCode != 0)
+                {
+                    Console.ForegroundColor = ConsoleColor.Red;
+                    Console.WriteLine($"[GIT] Failed to backup repository: {repoUrl}");
+                    Console.WriteLine(error);
+                    Console.ResetColor();
+                    Message($"[GIT] Failed to backup repository: {repoUrl}\n{error}", EventType.Error, 1001);
+                }
+                else
+                {
+                    Console.ForegroundColor = ConsoleColor.Green;
+                    Console.WriteLine($"[GIT] Successfully backed up repository: {repoUrl}");
+                    Console.ResetColor();
+                    Message($"[GIT] Successfully backed up repository: {repoUrl}", EventType.Information, 1000);
+                }
+            }
+        }
+
         private static async Task Main(string[] args)
         {
             // Set console encoding to UTF-8 to support special characters
@@ -384,7 +425,14 @@ namespace AzureDevOpsBackup
                             Console.WriteLine("Starting connection to Azure DevOps API via the new url format - all is good!");
                             baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
                         }
-                        
+
+
+
+                        bool doFullGitBackup = args.Contains("--fullgitbackup");
+
+
+
+
                         // Create a new instance of the SecureArgumentHandler class to handle the encryption and decryption of the token
                         SecureArgumentHandler handler = new SecureArgumentHandler();
 
@@ -610,6 +658,19 @@ namespace AzureDevOpsBackup
                                             "'...", EventType.Information, 1000);
                                         Console.WriteLine("Getting information about Git repository in project: '" +
                                                           repo.Name + "'...");
+
+                                        // Set if using REST API or GIT CLI
+                                        if (doFullGitBackup)
+                                        {
+                                            // Construct the HTTPS clone URL for Azure DevOps
+                                            string encodedProject = Uri.EscapeDataString(project.Name);
+                                            string encodedRepo = Uri.EscapeDataString(repo.Name);
+                                            string repoUrl = $"https://dev.azure.com/{Globals._orgName}/{encodedProject}/_git/{encodedRepo}";
+                                            string gitBackupPath = Path.Combine(outDirSaveToDisk, $"{project.Name}_{repo.Name}.git");
+                                            string pat = handler.Decrypt(Convert.FromBase64String(encryptedTokenString));
+                                            BackupRepositoryWithGit(repoUrl, gitBackupPath, pat);
+                                        }
+
 
                                         try
                                         {
