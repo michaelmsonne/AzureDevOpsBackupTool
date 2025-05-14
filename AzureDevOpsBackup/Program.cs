@@ -768,7 +768,6 @@ namespace AzureDevOpsBackup
                                                     try
                                                     {
                                                         // Save file to disk
-                                                        //File.WriteAllText(outDir + project.Name + "_" + repo.Name + "_tree.json", responseItems.Content);
                                                         File.WriteAllText(outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json", responseItems.Content);
 
                                                         // Log
@@ -789,7 +788,7 @@ namespace AzureDevOpsBackup
                                                         isBackupOk = true;
                                                         isBackupOkAndUnZip = false;
                                                     }
-                                                    catch (UnauthorizedAccessException)
+                                                    catch (UnauthorizedAccessException e)
                                                     {
                                                         Message(
                                                             "! Unable to write the backup file to disk: '" +
@@ -807,17 +806,24 @@ namespace AzureDevOpsBackup
                                                         // Count errors
                                                         Globals._errors++;
                                                     }
+                                                    catch (IOException ex)
+                                                    {
+                                                        Message($"I/O error writing file '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json': {ex.Message}", EventType.Error, 1001);
+                                                        Console.ForegroundColor = ConsoleColor.Red;
+                                                        Console.WriteLine($"I/O error writing file '" + outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json': {ex.Message}");
+                                                        Console.ResetColor();
+                                                    }
                                                     catch (Exception e)
                                                     {
                                                         // Error
                                                         Message(
-                                                            "Exception caught when trying to save file to disk: '" +
+                                                            "Unexpected error when trying to save file to disk: '" +
                                                             outDirSaveToDisk + project.Name + "_" + repo.Name +
-                                                            $"_{branchNameFormatted}_tree.json' - error: " + e,
+                                                            $"_{branchNameFormatted}_tree.json' - error: " + e.Message + e.StackTrace, 
                                                             EventType.Error, 1001);
                                                         Console.ForegroundColor = ConsoleColor.Red;
                                                         Console.WriteLine(
-                                                            "Exception caught when trying to save file to disk: '" +
+                                                            "Unexpected error when trying to save file to disk: '" +
                                                             outDirSaveToDisk + project.Name + "_" + repo.Name +
                                                             $"_{branchNameFormatted}_tree.json' - error: " + e);
                                                         Console.ResetColor();
