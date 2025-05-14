@@ -46,6 +46,8 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\t--priority:          Set the email report priority to other then default (normal)");
             Console.WriteLine("\t  high:              Set the email report priority to 'high'");
             Console.WriteLine("\t  low:               Set the email report priority to 'low'");
+            Console.WriteLine("\t--healthcheck:       Option to test connectivity to Azure DevOps REST API and backup folder write access");
+            Console.WriteLine("\t\t\t     (optional)");
             Console.WriteLine();
             Console.WriteLine("\t--help, /h or /?:    Showing this help text for the tool");
             Console.WriteLine("\t--info or /about:    Showing information about the tool");

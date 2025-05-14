@@ -152,6 +152,7 @@ Note we are also saving the original JSON item list we got from the repository c
 - --simpelreportlayout: Use this option to use the old email report layout.
 - --priority <priority> <high/low>: Specify the email priority for notifications (e.g., high, normal, low). Default (normal) if not set.
 - --noattatchlog: Use this option to not attatch the log file to the email report.
+- --healthcheck: Use this to check if the Azure DevOps API is reachable and the token is valid and the backup folder have write access.
 
 **General**:
 - --help, /h or /?: Show the help menu

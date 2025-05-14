@@ -72,8 +72,42 @@ namespace AzureDevOpsBackup
     {
         private static bool _cleanUpState;
 
+        private static async Task<RestResponse> ExecuteWithRetryAsync(RestClient client, RestRequest request, int maxRetries = 5, int initialDelayMs = 1000)
+        {
+            int retries = 0;
+            int delay = initialDelayMs;
+            while (true)
+            {
+                var response = await client.ExecuteAsync(request);
+                if (response.StatusCode != (HttpStatusCode)429) // 429 = Too Many Requests
+                    return response;
+
+                // Optionally, check for "Retry-After" header
+                if (response.Headers != null)
+                {
+                    var retryAfter = response.Headers.FirstOrDefault(h => h.Name.Equals("Retry-After", StringComparison.OrdinalIgnoreCase));
+                    if (retryAfter != null && int.TryParse(retryAfter.Value, out int retrySeconds))
+                    {
+                        delay = retrySeconds * 1000;
+                    }
+                }
+
+                if (++retries > maxRetries)
+                    return response;
+
+                Console.ForegroundColor = ConsoleColor.Yellow;
+                Console.WriteLine($"Rate limit hit (429). Retrying in {delay / 1000.0:F1} seconds... (Attempt {retries}/{maxRetries})");
+                Console.ResetColor();
+                await Task.Delay(delay);
+                delay *= 2; // Exponential backoff
+            }
+        }
+
         private static async Task Main(string[] args)
         {
+            // Set console encoding to UTF-8 to support special characters
+            Console.OutputEncoding = Encoding.UTF8;
+
             // Global variabels for tool
             string server = null;
             string serverPort = null;
@@ -119,7 +153,7 @@ namespace AzureDevOpsBackup
             string[] requiredArgs = { "--token", "--org", "--backup", "--server", "--port", "--from", "--to" };
             
             // Check if parameters have been provided and Contains one of
-            if (args.Length == 0 || args.Contains("--help") || args.Contains("/h") || args.Contains("/?") || args.Contains("/info") || args.Contains("/about") || args.Contains("--tokenfile"))
+            if (args.Length == 0 || args.Contains("--help") || args.Contains("/h") || args.Contains("/?") || args.Contains("/info") || args.Contains("/about") || args.Contains("--tokenfile") || args.Contains("--healthcheck"))
             {
                 // If none arguments
                 if (args.Length == 0)
@@ -192,6 +226,105 @@ namespace AzureDevOpsBackup
 
                     // End application
                     Environment.Exit(1);
+                }
+
+                if (args.Contains("--healthcheck"))
+                {
+                    Console.ForegroundColor = ConsoleColor.Cyan;
+                    Console.WriteLine("== Azure DevOps Backup Tool Health Check ==");
+                    Message("Azure DevOps Backup Tool Health Check", EventType.Information, 1000);
+
+                    bool allOk = true;
+
+                    // 1. Check Azure DevOps API connectivity
+                    try
+                    {
+                        // Check if --org and --token arguments are provided
+                        int orgIndex = Array.IndexOf(args, "--org");
+                        if (orgIndex == -1 || args.Length <= orgIndex + 1 || string.IsNullOrWhiteSpace(args[orgIndex + 1]))
+                            throw new Exception("Missing or empty --org argument.");
+
+                        string org = args[orgIndex + 1];
+                        int tokenIndex = Array.IndexOf(args, "--token");
+                        if (tokenIndex == -1 || args.Length <= tokenIndex + 1 || string.IsNullOrWhiteSpace(args[tokenIndex + 1]))
+                            throw new Exception("Missing or empty --token argument.");
+
+                        // Construct the URL and authentication header
+                        string token = args[tokenIndex + 1];
+                        string baseUrl = "https://dev.azure.com/" + org + "/";
+                        if (token == "token.bin")
+                        {
+                            token = SecureArgumentHandlerToken.DecryptFromFile(tokenEncryptionKey);
+                        }
+                        // Encrypt the value
+                        string auth = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes($":{token}"));
+                        var client = new RestClient(baseUrl + $"_apis/projects?{Globals.APIversion}");
+                        var request = new RestRequest { Method = Method.Get };
+                        request.AddHeader("Authorization", auth);
+
+                        // Execute the request
+                        var response = client.Execute(request);
+
+                        // Check the response status code
+                        if (response.StatusCode == HttpStatusCode.OK)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Green;
+                            Console.WriteLine("✔ Azure DevOps API connectivity: OK");
+                            Message("Azure DevOps API connectivity: OK", EventType.Information, 1000);
+                        }
+                        else
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine($"✖ Azure DevOps API connectivity: FAILED ({response.StatusCode})");
+                            Message($"Azure DevOps API connectivity: FAILED ({response.StatusCode})", EventType.Error, 1001);
+                            if (!string.IsNullOrWhiteSpace(response.Content))
+                            {
+                                Console.WriteLine("  Details: " + response.Content);
+                                Message($"Details: " + response.Content, EventType.Error, 1001);
+                            }
+                                
+                            allOk = false;
+                        }
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("✖ Azure DevOps API connectivity: ERROR - " + ex.Message);
+                        Message($"Azure DevOps API connectivity: ERROR - " + ex.Message, EventType.Error, 1001);
+                        allOk = false;
+                    }
+
+                    // 2. Check backup folder write access
+                    try
+                    {
+                        int backupIndex = Array.IndexOf(args, "--backup");
+                        if (backupIndex == -1 || args.Length <= backupIndex + 1 || string.IsNullOrWhiteSpace(args[backupIndex + 1]))
+                            throw new Exception("Missing or empty --backup argument.");
+
+                        string backupFolder = args[backupIndex + 1];
+                        if (!Directory.Exists(backupFolder))
+                            Directory.CreateDirectory(backupFolder);
+
+                        string testFile = Path.Combine(backupFolder, "healthcheck_test.txt");
+                        File.WriteAllText(testFile, "test");
+                        File.Delete(testFile);
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("✔ Backup folder write access: OK");
+                        Message("Backup folder write access: OK", EventType.Information, 1000);
+                    }
+                    catch (Exception ex)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("✖ Backup folder write access: FAILED - " + ex.Message);
+                        Message($"Backup folder write access: FAILED - " + ex.Message, EventType.Error, 1001);
+                        allOk = false;
+                    }
+
+                    Console.ResetColor();
+                    Console.WriteLine("\nHealth check " + (allOk ? "PASSED" : "FAILED") + "\n");
+                    Message("Health check " + (allOk ? "PASSED" : "FAILED"), EventType.Information, 1000);
+
+                    Environment.Exit(allOk ? 0 : 1);
                 }
             }
 
@@ -420,9 +553,12 @@ namespace AzureDevOpsBackup
                         var clientProjects = new RestClient(baseUrl + "_apis/projects?" + Globals.APIversion);
                         var requestProjects = new RestRequest { Method = Method.Get };
 
+                        // Add authorization header to request
                         requestProjects.AddHeader("Authorization", auth);
 
-                        var responseProjects = await clientProjects.GetAsync(requestProjects);
+                        //var responseProjects = await clientProjects.GetAsync(requestProjects);
+                        var responseProjects = await ExecuteWithRetryAsync(clientProjects, requestProjects);
+
                         if (responseProjects.Content != null)
                         {
                             var projects = JsonConvert.DeserializeObject<Projects>(responseProjects.Content);
