@@ -521,6 +521,15 @@ namespace AzureDevOpsBackup
                             Message("Connected successfully to Azure DevOps organization '" + Globals._orgName + "'...", EventType.Information, 1000);
                             Console.WriteLine("Connected successfully to Azure DevOps organization '" + Globals._orgName + "'...");
                         }
+                        else if (responseCheckConnectionToAzureDevOpsGet.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine("ERROR: The provided Azure DevOps PAT is expired or invalid.");
+                            Message("ERROR: The provided Azure DevOps PAT is expired or invalid.", EventType.Error, 1001);
+                            Console.ResetColor();
+
+                            Environment.Exit(1);
+                        }
                         else
                         {
                             // Log - connection is not okay
