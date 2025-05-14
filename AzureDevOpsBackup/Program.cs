@@ -465,393 +465,132 @@ namespace AzureDevOpsBackup
                                             "'...", EventType.Information, 1000);
                                         Console.WriteLine("Getting information about Git repository in project: '" +
                                                           repo.Name + "'...");
-                                    
-                                        // Branches
-                                        var branches = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/refs?" + Globals.APIversion);
-                                        var requestBranches = new RestRequest { Method = Method.Get };
-                                        requestBranches.AddHeader("Authorization", auth);
-                                        var responseBranches = await branches.GetAsync(requestBranches);
 
-                                        // Check for disabled or inaccessible repository
-                                        if (responseBranches.StatusCode != HttpStatusCode.OK)
+                                        try
                                         {
-                                            Message($"Repository '{repo.Name}' is inaccessible or disabled (HTTP {responseBranches.StatusCode}). Skipping.", EventType.Warning, 1001);
-                                            Console.ForegroundColor = ConsoleColor.Yellow;
-                                            Console.WriteLine($"Repository '{repo.Name}' is inaccessible or disabled (HTTP {responseBranches.StatusCode}). Skipping.");
-                                            Console.ResetColor();
-                                            continue;
-                                        }
+                                            // Branches
+                                            var branches = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/refs?" + Globals.APIversion);
+                                            var requestBranches = new RestRequest { Method = Method.Get };
+                                            requestBranches.AddHeader("Authorization", auth);
+                                            var responseBranches = await branches.GetAsync(requestBranches);
 
-                                        // Get branches in repos
-                                        var branchResponse = JsonConvert.DeserializeObject<Branches>(responseBranches.Content);
-                                    
-                                        foreach (var branch in branchResponse.Value)
-                                        {
-                                            // Get branch name
-                                            var branchName = branch.Name.Replace("refs/heads/", "");
-
-                                            // Fix special characters to avoid path errors in Windows OS when saving files to disk - replace with "-"
-                                            var regex = new Regex(@"[<>|/]");
-                                            var branchNameFormatted = regex.Replace(branchName, "-");
-
-                                            // Get data to find in specific branch
-                                            var clientItems = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/items?recursionlevel=full&" + Globals.APIversion + "&versionDescriptor.versionType=Branch&versionDescriptor.version=" + branchName);
-                                            var requestItems = new RestRequest { Method = Method.Get };
-
-                                            // List name for projects to list for email report list
-                                            repocountelements.Add(repo.Name + $" ('{branchName}' branch)");
-
-                                            requestItems.AddHeader("Authorization", auth);
-                                            var responseItems = await clientItems.GetAsync(requestItems);
-                                            Items items = JsonConvert.DeserializeObject<Items>(responseItems.Content);
-
-                                            // Get info about repos in projects, files
-                                            Message(
-                                                "Getting information about Git repository: '" + repo.Name +
-                                                "' is done, items count in here is: '" + items.Count + "'",
-                                                EventType.Information, 1000);
-                                            Console.ForegroundColor = ConsoleColor.Yellow;
-                                            Console.WriteLine("Getting information about Git repository: '" +
-                                                              repo.Name + "' is done, items count in here is: '" +
-                                                              items.Count + "'");
-                                            Console.ResetColor();
-
-                                            // If more then 0 is returned
-                                            if (items.Count > 0)
+                                            // Check for disabled or inaccessible repository
+                                            if (responseBranches.StatusCode != HttpStatusCode.OK)
                                             {
-                                                // If repos have files, get it
+                                                Message($"Repository '{repo.Name}' is inaccessible or disabled (HTTP {responseBranches.StatusCode}). Skipping.", EventType.Warning, 1001);
+                                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                                Console.WriteLine($"Repository '{repo.Name}' is inaccessible or disabled (HTTP {responseBranches.StatusCode}). Skipping.");
+                                                Console.ResetColor();
+                                                continue;
+                                            }
 
-                                                // Count files
-                                                Globals._repoItemsCount++;
+                                            // Get branches in repos
+                                            var branchResponse = JsonConvert.DeserializeObject<Branches>(responseBranches.Content);
 
-                                                var clientBlob = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/blobs?" + Globals.APIversion);
-                                                var requestBlob = new RestRequest { Method = Method.Post };
+                                            foreach (var branch in branchResponse.Value)
+                                            {
+                                                // Get branch name
+                                                var branchName = branch.Name.Replace("refs/heads/", "");
 
-                                                // List data about repos in projects
-                                                repoitemscountelements.Add(repo.Name + $" ('{branchName}' branch)");
+                                                // Fix special characters to avoid path errors in Windows OS when saving files to disk - replace with "-"
+                                                var regex = new Regex(@"[<>|/]");
+                                                var branchNameFormatted = regex.Replace(branchName, "-");
 
-                                                // Log
+                                                // Get data to find in specific branch
+                                                var clientItems = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/items?recursionlevel=full&" + Globals.APIversion + "&versionDescriptor.versionType=Branch&versionDescriptor.version=" + branchName);
+                                                var requestItems = new RestRequest { Method = Method.Get };
+
+                                                // List name for projects to list for email report list
+                                                repocountelements.Add(repo.Name + $" ('{branchName}' branch)");
+
+                                                requestItems.AddHeader("Authorization", auth);
+                                                var responseItems = await clientItems.GetAsync(requestItems);
+                                                Items items = JsonConvert.DeserializeObject<Items>(responseItems.Content);
+
+                                                // Get info about repos in projects, files
                                                 Message(
-                                                    "Getting client blob for Git repository: '" + repo.Name +
-                                                    "' from API...", EventType.Information, 1000);
-                                                Console.WriteLine("Getting client blob for Git repository: '" +
-                                                                  repo.Name + "' from API...");
+                                                    "Getting information about Git repository: '" + repo.Name +
+                                                    "' is done, items count in here is: '" + items.Count + "'",
+                                                    EventType.Information, 1000);
+                                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                                Console.WriteLine("Getting information about Git repository: '" +
+                                                                  repo.Name + "' is done, items count in here is: '" +
+                                                                  items.Count + "'");
+                                                Console.ResetColor();
 
-                                                // Get the files from repo to storage
-                                                requestBlob.AddJsonBody(items.Value.Where(itm => itm.GitObjectType == "blob").Select(itm => itm.ObjectId).ToList());
-                                                requestBlob.AddHeader("Authorization", auth);
-                                                requestBlob.AddHeader("Accept", "application/zip");
-
-                                                // Save to disk - _blob.zip
-                                                try
+                                                // If more then 0 is returned
+                                                if (items.Count > 0)
                                                 {
-                                                    // Save file to disk
-                                                    Stream inputStream = clientBlob.DownloadStream(requestBlob);
-                                                    using (FileStream fs = new FileStream(outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip", FileMode.Create))
-                                                    {
-                                                        int bufferSize = 4096;
-                                                        byte[] buffer = new byte[bufferSize];
-                                                        int bytesRead;
-                                                        while ((bytesRead = inputStream.Read(buffer, 0, bufferSize)) > 0)
-                                                        {
-                                                            fs.Write(buffer, 0, bytesRead);
-                                                        }
-                                                    }
+                                                    // If repos have files, get it
+
+                                                    // Count files
+                                                    Globals._repoItemsCount++;
+
+                                                    var clientBlob = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/blobs?" + Globals.APIversion);
+                                                    var requestBlob = new RestRequest { Method = Method.Post };
+
+                                                    // List data about repos in projects
+                                                    repoitemscountelements.Add(repo.Name + $" ('{branchName}' branch)");
 
                                                     // Log
                                                     Message(
-                                                        "Saved file to disk: '" + outDirSaveToDisk + project.Name +
-                                                        "_" + repo.Name + $"_{branchNameFormatted}_blob.zip'",
-                                                        EventType.Information, 1000);
-                                                    Console.ForegroundColor = ConsoleColor.Green;
-                                                    Console.WriteLine("Saved file to disk: '" + outDirSaveToDisk +
-                                                                      project.Name + "_" + repo.Name +
-                                                                      $"_{branchNameFormatted}_blob.zip'");
-                                                    Console.ResetColor();
+                                                        "Getting client blob for Git repository: '" + repo.Name +
+                                                        "' from API...", EventType.Information, 1000);
+                                                    Console.WriteLine("Getting client blob for Git repository: '" +
+                                                                      repo.Name + "' from API...");
 
-                                                    // Count files there is downloaded
-                                                    Globals._totalBlobFilesIsBackup++;
+                                                    // Get the files from repo to storage
+                                                    requestBlob.AddJsonBody(items.Value.Where(itm => itm.GitObjectType == "blob").Select(itm => itm.ObjectId).ToList());
+                                                    requestBlob.AddHeader("Authorization", auth);
+                                                    requestBlob.AddHeader("Accept", "application/zip");
 
-                                                    //Set backup status
-                                                    isBackupOk = true;
-                                                    isBackupOkAndUnZip = false;
-                                                }
-                                                catch (UnauthorizedAccessException)
-                                                {
-                                                    Message(
-                                                        "! Unable to write the backup file to disk: '" +
-                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
-                                                        $"_{branchNameFormatted}_blob.zip'. Make sure the account you use to run this tool has write rights to this location.",
-                                                        EventType.Error, 1001);
-                                                    Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine(
-                                                        "Unable to write the backup file to disk: '" +
-                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
-                                                        $"_{branchNameFormatted}_blob.zip'. Make sure the account you use to run this tool has write rights to this location.",
-                                                        EventType.Error, 1001);
-                                                    Console.ResetColor();
-
-                                                    // Count errors
-                                                    Globals._errors++;
-                                                }
-                                                catch (Exception e)
-                                                {
-                                                    // Error
-                                                    Message(
-                                                        "Exception caught when trying to save file to disk: '" +
-                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
-                                                        $"_{branchNameFormatted}_blob.zip' - error: " + e,
-                                                        EventType.Error, 1001);
-                                                    Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine(
-                                                        "Exception caught when trying to save file to disk: '" +
-                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
-                                                        $"_{branchNameFormatted}_blob.zip' - error: " + e);
-                                                    Console.ResetColor();
-
-                                                    // Set backup status
-                                                    isBackupOk = false;
-                                                    isBackupOkAndUnZip = false;
-
-                                                    // Count errors
-                                                    Globals._errors++;
-                                                }
-
-                                                //Save to disk - _tree.json
-                                                try
-                                                {
-                                                    // Save file to disk
-                                                    //File.WriteAllText(outDir + project.Name + "_" + repo.Name + "_tree.json", responseItems.Content);
-                                                    File.WriteAllText(outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json", responseItems.Content);
-
-                                                    // Log
-                                                    Message(
-                                                        "Saved file to disk: '" + outDirSaveToDisk + project.Name +
-                                                        "_" + repo.Name + $"_{branchNameFormatted}_tree.json'",
-                                                        EventType.Information, 1000);
-                                                    Console.ForegroundColor = ConsoleColor.Green;
-                                                    Console.WriteLine("Saved file to disk: '" + outDirSaveToDisk +
-                                                                      project.Name + "_" + repo.Name +
-                                                                      $"_{branchNameFormatted}_tree.json'");
-                                                    Console.ResetColor();
-
-                                                    // Count files there is downloaded
-                                                    Globals._totalTreeFilesIsBackup++;
-
-                                                    // Set backup status
-                                                    isBackupOk = true;
-                                                    isBackupOkAndUnZip = false;
-                                                }
-                                                catch (UnauthorizedAccessException)
-                                                {
-                                                    Message(
-                                                        "! Unable to write the backup file to disk: '" +
-                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
-                                                        $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location.",
-                                                        EventType.Error, 1001);
-                                                    Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine(
-                                                        "Unable to write the backup file to disk: '" +
-                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
-                                                        $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location.",
-                                                        EventType.Error, 1001);
-                                                    Console.ResetColor();
-
-                                                    // Count errors
-                                                    Globals._errors++;
-                                                }
-                                                catch (Exception e)
-                                                {
-                                                    // Error
-                                                    Message(
-                                                        "Exception caught when trying to save file to disk: '" +
-                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
-                                                        $"_{branchNameFormatted}_tree.json' - error: " + e,
-                                                        EventType.Error, 1001);
-                                                    Console.ForegroundColor = ConsoleColor.Red;
-                                                    Console.WriteLine(
-                                                        "Exception caught when trying to save file to disk: '" +
-                                                        outDirSaveToDisk + project.Name + "_" + repo.Name +
-                                                        $"_{branchNameFormatted}_tree.json' - error: " + e);
-                                                    Console.ResetColor();
-
-                                                    // Set backup status
-                                                    isBackupOk = false;
-                                                    isBackupOkAndUnZip = false;
-
-                                                    // Count errors
-                                                    Globals._errors++;
-                                                }
-
-                                                // If args is set to unzip files
-                                                if (Array.Exists(args, argument => argument == "--unzip"))
-                                                {
-                                                    // If need to unzip data from .zip and .json (files details is in here)
-                                                    Message(
-                                                        "Checking if folder exists before unzip: '" + outDirSaveToDisk +
-                                                        project.Name + "_" + repo.Name + "'", EventType.Information,
-                                                        1000);
-                                                    Console.WriteLine("Checking if folder exists before unzip: '" +
-                                                                      outDirSaveToDisk + project.Name + "_" +
-                                                                      repo.Name + "'");
-
-                                                    // Check if folder to unzip exists
-
-                                                    string localRepoDirectory = outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}";
-
-                                                    //if (Directory.Exists(outDir + project.Name + "_" + repo.Name))
-                                                    if (Directory.Exists(localRepoDirectory))
-                                                    {
-                                                        // Check if an old folder exists, then try to delete it
-                                                        try
-                                                        {
-                                                            // Do work
-                                                            Directory.Delete(localRepoDirectory, true);
-
-                                                            // Log
-                                                            Message(
-                                                                "Folder exists before unzip: '" + localRepoDirectory +
-                                                                "', deleting folder...", EventType.Information, 1000);
-                                                            Console.ForegroundColor = ConsoleColor.Yellow;
-                                                            Console.WriteLine("Folder exists before unzip: '" +
-                                                                              localRepoDirectory +
-                                                                              "', deleting folder...");
-                                                            Console.ResetColor();
-
-                                                            // Set backup status
-                                                            isBackupOkAndUnZip = true;
-                                                        }
-                                                        catch (UnauthorizedAccessException)
-                                                        {
-                                                            Message(
-                                                                "! Unable to delete folder under unzip: '" +
-                                                                localRepoDirectory +
-                                                                "'. Make sure the account you use to run this tool has delete rights to this location.",
-                                                                EventType.Error, 1001);
-                                                            Console.ForegroundColor = ConsoleColor.Red;
-                                                            Console.WriteLine("Unable to delete folder under unzip: '" +
-                                                                              localRepoDirectory +
-                                                                              "'. Make sure the account you use to run this tool has delete rights to this location.");
-                                                            Console.ResetColor();
-
-                                                            // Count errors
-                                                            Globals._errors++;
-                                                        }
-                                                        catch (Exception e)
-                                                        {
-                                                            // Error
-                                                            Message(
-                                                                "Exception caught when trying to delete folder when unzip: '" +
-                                                                localRepoDirectory + "' - error: " + e, EventType.Error,
-                                                                1001);
-                                                            Console.ForegroundColor = ConsoleColor.Red;
-                                                            Console.WriteLine(
-                                                                "Exception caught when trying to delete folder when unzip: '" +
-                                                                localRepoDirectory + "' - error: " + e);
-                                                            Console.ResetColor();
-
-                                                            // Set backup status
-                                                            isBackupOkAndUnZip = false;
-
-                                                            // Count errors
-                                                            Globals._errors++;
-                                                        }
-
-                                                        // Check if done delete folder
-                                                        if (!Directory.Exists(localRepoDirectory))
-                                                        {
-                                                            // Log
-                                                            Console.ForegroundColor = ConsoleColor.Green;
-                                                            Console.WriteLine($"Directory '" + localRepoDirectory +
-                                                                              "' is deleted successfully");
-                                                            Console.ResetColor();
-                                                            Message(
-                                                                "Directory '" + localRepoDirectory +
-                                                                "' is deleted successfully", EventType.Information,
-                                                                1000);
-
-                                                            // Set backup status
-                                                            isBackupOkAndUnZip = true;
-                                                        }
-                                                        else
-                                                        {
-                                                            // Log
-                                                            Console.ForegroundColor = ConsoleColor.Red;
-                                                            Console.WriteLine($"Directory '" + localRepoDirectory +
-                                                                              "' is not deleted successfully - see logs for more information");
-                                                            Console.ResetColor();
-                                                            Message(
-                                                                "Directory '" + localRepoDirectory +
-                                                                "' is not deleted successfully - see logs for more information",
-                                                                EventType.Error, 1001);
-
-                                                            // Set backup status
-                                                            isBackupOkAndUnZip = false;
-
-                                                            // Count errors
-                                                            Globals._errors++;
-                                                        }
-                                                    }
-                                                    else
-                                                    {
-                                                        // if not folder to unzip exists
-                                                        Console.ForegroundColor = ConsoleColor.Yellow;
-                                                        Console.WriteLine(
-                                                            $"Folder to unzip files from does not exists: '" +
-                                                            localRepoDirectory + "'...");
-                                                        Console.ResetColor();
-                                                        Message(
-                                                            "Folder to unzip files from does not exists: '" +
-                                                            localRepoDirectory + "'...", EventType.Warning, 1001);
-                                                    }
-
-                                                    // Do work to start over - create folder to files
-                                                    // Create folder when not exists
+                                                    // Save to disk - _blob.zip
                                                     try
                                                     {
-                                                        // Log
-                                                        Message(
-                                                            "Checking if folder exists before unzip: '" +
-                                                            localRepoDirectory +
-                                                            "' - The folder does not exist, creating folder: '" +
-                                                            localRepoDirectory + "'", EventType.Information, 1000);
-                                                        Console.ForegroundColor = ConsoleColor.Yellow;
-                                                        Console.WriteLine("Checking if folder exists before unzip: '" +
-                                                                          localRepoDirectory +
-                                                                          "' - The folder does not exist, creating folder: '" +
-                                                                          localRepoDirectory + "'");
-                                                        Console.ResetColor();
-
-                                                        // Do work
-                                                        Directory.CreateDirectory(localRepoDirectory);
+                                                        // Save file to disk
+                                                        Stream inputStream = clientBlob.DownloadStream(requestBlob);
+                                                        using (FileStream fs = new FileStream(outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip", FileMode.Create))
+                                                        {
+                                                            int bufferSize = 4096;
+                                                            byte[] buffer = new byte[bufferSize];
+                                                            int bytesRead;
+                                                            while ((bytesRead = inputStream.Read(buffer, 0, bufferSize)) > 0)
+                                                            {
+                                                                fs.Write(buffer, 0, bytesRead);
+                                                            }
+                                                        }
 
                                                         // Log
                                                         Message(
-                                                            "Checked if folder exists before unzip: '" +
-                                                            localRepoDirectory +
-                                                            "' - The folder does not exist, created folder: '" +
-                                                            localRepoDirectory + "'", EventType.Information, 1000);
-                                                        Console.ForegroundColor = ConsoleColor.Yellow;
-                                                        Console.WriteLine("Checked if folder exists before unzip: '" +
-                                                                          localRepoDirectory +
-                                                                          "' - The folder does not exist, created folder: '" +
-                                                                          localRepoDirectory + "'");
+                                                            "Saved file to disk: '" + outDirSaveToDisk + project.Name +
+                                                            "_" + repo.Name + $"_{branchNameFormatted}_blob.zip'",
+                                                            EventType.Information, 1000);
+                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                        Console.WriteLine("Saved file to disk: '" + outDirSaveToDisk +
+                                                                          project.Name + "_" + repo.Name +
+                                                                          $"_{branchNameFormatted}_blob.zip'");
                                                         Console.ResetColor();
 
-                                                        // Set backup status
-                                                        isBackupOkAndUnZip = true;
+                                                        // Count files there is downloaded
+                                                        Globals._totalBlobFilesIsBackup++;
+
+                                                        //Set backup status
+                                                        isBackupOk = true;
+                                                        isBackupOkAndUnZip = false;
                                                     }
                                                     catch (UnauthorizedAccessException)
                                                     {
                                                         Message(
-                                                            "Unable to create folder under unzipping: '" +
-                                                            localRepoDirectory +
-                                                            "'. Make sure the account you use to run this tool has write rights to this location.",
+                                                            "! Unable to write the backup file to disk: '" +
+                                                            outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                            $"_{branchNameFormatted}_blob.zip'. Make sure the account you use to run this tool has write rights to this location.",
                                                             EventType.Error, 1001);
                                                         Console.ForegroundColor = ConsoleColor.Red;
-                                                        Console.WriteLine("Unable to create folder under unzipping: '" +
-                                                                          localRepoDirectory +
-                                                                          "'. Make sure the account you use to run this tool has write rights to this location.");
+                                                        Console.WriteLine(
+                                                            "Unable to write the backup file to disk: '" +
+                                                            outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                            $"_{branchNameFormatted}_blob.zip'. Make sure the account you use to run this tool has write rights to this location.",
+                                                            EventType.Error, 1001);
                                                         Console.ResetColor();
 
                                                         // Count errors
@@ -861,51 +600,125 @@ namespace AzureDevOpsBackup
                                                     {
                                                         // Error
                                                         Message(
-                                                            "Exception caught when trying to creating folder: '" +
-                                                            localRepoDirectory + "' - error: " + e, EventType.Error,
-                                                            1001);
+                                                            "Exception caught when trying to save file to disk: '" +
+                                                            outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                            $"_{branchNameFormatted}_blob.zip' - error: " + e,
+                                                            EventType.Error, 1001);
                                                         Console.ForegroundColor = ConsoleColor.Red;
-                                                        Console.WriteLine("{0} Exception caught.", e);
+                                                        Console.WriteLine(
+                                                            "Exception caught when trying to save file to disk: '" +
+                                                            outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                            $"_{branchNameFormatted}_blob.zip' - error: " + e);
                                                         Console.ResetColor();
 
                                                         // Set backup status
+                                                        isBackupOk = false;
                                                         isBackupOkAndUnZip = false;
+
+                                                        // Count errors
                                                         Globals._errors++;
                                                     }
 
-                                                    // Get files from .zip folder to unzip
-                                                    //ZipArchive archive = ZipFile.OpenRead(outDir + project.Name + "_" + repo.Name + "_blob.zip");
-                                                    var archive = ZipFile.OpenRead(outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip");
-
-                                                    foreach (Item item in items.Value)
+                                                    //Save to disk - _tree.json
+                                                    try
                                                     {
-                                                        // Work on all files/folders
-                                                        if (item.IsFolder)
-                                                        {
-                                                            // If folder data
-                                                            Message(
-                                                                "Unzipping Git repository folder data: '" +
-                                                                localRepoDirectory + item.Path + "'...",
-                                                                EventType.Information, 1000);
-                                                            Console.ForegroundColor = ConsoleColor.Yellow;
-                                                            Console.WriteLine(
-                                                                "Unzipping Git repository folder data: '" +
-                                                                localRepoDirectory + item.Path + "'...");
-                                                            Console.ResetColor();
+                                                        // Save file to disk
+                                                        //File.WriteAllText(outDir + project.Name + "_" + repo.Name + "_tree.json", responseItems.Content);
+                                                        File.WriteAllText(outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_tree.json", responseItems.Content);
 
+                                                        // Log
+                                                        Message(
+                                                            "Saved file to disk: '" + outDirSaveToDisk + project.Name +
+                                                            "_" + repo.Name + $"_{branchNameFormatted}_tree.json'",
+                                                            EventType.Information, 1000);
+                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                        Console.WriteLine("Saved file to disk: '" + outDirSaveToDisk +
+                                                                          project.Name + "_" + repo.Name +
+                                                                          $"_{branchNameFormatted}_tree.json'");
+                                                        Console.ResetColor();
+
+                                                        // Count files there is downloaded
+                                                        Globals._totalTreeFilesIsBackup++;
+
+                                                        // Set backup status
+                                                        isBackupOk = true;
+                                                        isBackupOkAndUnZip = false;
+                                                    }
+                                                    catch (UnauthorizedAccessException)
+                                                    {
+                                                        Message(
+                                                            "! Unable to write the backup file to disk: '" +
+                                                            outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                            $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location.",
+                                                            EventType.Error, 1001);
+                                                        Console.ForegroundColor = ConsoleColor.Red;
+                                                        Console.WriteLine(
+                                                            "Unable to write the backup file to disk: '" +
+                                                            outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                            $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location.",
+                                                            EventType.Error, 1001);
+                                                        Console.ResetColor();
+
+                                                        // Count errors
+                                                        Globals._errors++;
+                                                    }
+                                                    catch (Exception e)
+                                                    {
+                                                        // Error
+                                                        Message(
+                                                            "Exception caught when trying to save file to disk: '" +
+                                                            outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                            $"_{branchNameFormatted}_tree.json' - error: " + e,
+                                                            EventType.Error, 1001);
+                                                        Console.ForegroundColor = ConsoleColor.Red;
+                                                        Console.WriteLine(
+                                                            "Exception caught when trying to save file to disk: '" +
+                                                            outDirSaveToDisk + project.Name + "_" + repo.Name +
+                                                            $"_{branchNameFormatted}_tree.json' - error: " + e);
+                                                        Console.ResetColor();
+
+                                                        // Set backup status
+                                                        isBackupOk = false;
+                                                        isBackupOkAndUnZip = false;
+
+                                                        // Count errors
+                                                        Globals._errors++;
+                                                    }
+
+                                                    // If args is set to unzip files
+                                                    if (Array.Exists(args, argument => argument == "--unzip"))
+                                                    {
+                                                        // If need to unzip data from .zip and .json (files details is in here)
+                                                        Message(
+                                                            "Checking if folder exists before unzip: '" + outDirSaveToDisk +
+                                                            project.Name + "_" + repo.Name + "'", EventType.Information,
+                                                            1000);
+                                                        Console.WriteLine("Checking if folder exists before unzip: '" +
+                                                                          outDirSaveToDisk + project.Name + "_" +
+                                                                          repo.Name + "'");
+
+                                                        // Check if folder to unzip exists
+
+                                                        string localRepoDirectory = outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}";
+
+                                                        //if (Directory.Exists(outDir + project.Name + "_" + repo.Name))
+                                                        if (Directory.Exists(localRepoDirectory))
+                                                        {
+                                                            // Check if an old folder exists, then try to delete it
                                                             try
                                                             {
                                                                 // Do work
-                                                                Directory.CreateDirectory(localRepoDirectory + item.Path);
+                                                                Directory.Delete(localRepoDirectory, true);
 
                                                                 // Log
-                                                                Console.ForegroundColor = ConsoleColor.Green;
-                                                                Console.WriteLine($"> Created folder: '" +
-                                                                    localRepoDirectory + item.Path + "'");
-                                                                Console.ResetColor();
                                                                 Message(
-                                                                    "> Created folder: '" + localRepoDirectory +
-                                                                    item.Path + "'", EventType.Information, 1000);
+                                                                    "Folder exists before unzip: '" + localRepoDirectory +
+                                                                    "', deleting folder...", EventType.Information, 1000);
+                                                                Console.ForegroundColor = ConsoleColor.Yellow;
+                                                                Console.WriteLine("Folder exists before unzip: '" +
+                                                                                  localRepoDirectory +
+                                                                                  "', deleting folder...");
+                                                                Console.ResetColor();
 
                                                                 // Set backup status
                                                                 isBackupOkAndUnZip = true;
@@ -913,15 +726,14 @@ namespace AzureDevOpsBackup
                                                             catch (UnauthorizedAccessException)
                                                             {
                                                                 Message(
-                                                                    "! Unable to create folder under unzipping: '" +
-                                                                    localRepoDirectory + item.Path +
-                                                                    "'. Make sure the account you use to run this tool has write rights to this location.",
+                                                                    "! Unable to delete folder under unzip: '" +
+                                                                    localRepoDirectory +
+                                                                    "'. Make sure the account you use to run this tool has delete rights to this location.",
                                                                     EventType.Error, 1001);
                                                                 Console.ForegroundColor = ConsoleColor.Red;
-                                                                Console.WriteLine(
-                                                                    "Unable to create folder under unzipping: '" +
-                                                                    localRepoDirectory + item.Path +
-                                                                    "'. Make sure the account you use to run this tool has write rights to this location.");
+                                                                Console.WriteLine("Unable to delete folder under unzip: '" +
+                                                                                  localRepoDirectory +
+                                                                                  "'. Make sure the account you use to run this tool has delete rights to this location.");
                                                                 Console.ResetColor();
 
                                                                 // Count errors
@@ -929,14 +741,51 @@ namespace AzureDevOpsBackup
                                                             }
                                                             catch (Exception e)
                                                             {
-                                                                // Log
+                                                                // Error
                                                                 Message(
-                                                                    "Exception caught when trying to create folder: '" +
-                                                                    localRepoDirectory + item.Path + "' - error: " + e,
-                                                                    EventType.Error, 1001);
+                                                                    "Exception caught when trying to delete folder when unzip: '" +
+                                                                    localRepoDirectory + "' - error: " + e, EventType.Error,
+                                                                    1001);
                                                                 Console.ForegroundColor = ConsoleColor.Red;
-                                                                Console.WriteLine("{0} Exception caught.", e);
+                                                                Console.WriteLine(
+                                                                    "Exception caught when trying to delete folder when unzip: '" +
+                                                                    localRepoDirectory + "' - error: " + e);
                                                                 Console.ResetColor();
+
+                                                                // Set backup status
+                                                                isBackupOkAndUnZip = false;
+
+                                                                // Count errors
+                                                                Globals._errors++;
+                                                            }
+
+                                                            // Check if done delete folder
+                                                            if (!Directory.Exists(localRepoDirectory))
+                                                            {
+                                                                // Log
+                                                                Console.ForegroundColor = ConsoleColor.Green;
+                                                                Console.WriteLine($"Directory '" + localRepoDirectory +
+                                                                                  "' is deleted successfully");
+                                                                Console.ResetColor();
+                                                                Message(
+                                                                    "Directory '" + localRepoDirectory +
+                                                                    "' is deleted successfully", EventType.Information,
+                                                                    1000);
+
+                                                                // Set backup status
+                                                                isBackupOkAndUnZip = true;
+                                                            }
+                                                            else
+                                                            {
+                                                                // Log
+                                                                Console.ForegroundColor = ConsoleColor.Red;
+                                                                Console.WriteLine($"Directory '" + localRepoDirectory +
+                                                                                  "' is not deleted successfully - see logs for more information");
+                                                                Console.ResetColor();
+                                                                Message(
+                                                                    "Directory '" + localRepoDirectory +
+                                                                    "' is not deleted successfully - see logs for more information",
+                                                                    EventType.Error, 1001);
 
                                                                 // Set backup status
                                                                 isBackupOkAndUnZip = false;
@@ -947,115 +796,278 @@ namespace AzureDevOpsBackup
                                                         }
                                                         else
                                                         {
-                                                            // If file data
-                                                            try
+                                                            // if not folder to unzip exists
+                                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                                            Console.WriteLine(
+                                                                $"Folder to unzip files from does not exists: '" +
+                                                                localRepoDirectory + "'...");
+                                                            Console.ResetColor();
+                                                            Message(
+                                                                "Folder to unzip files from does not exists: '" +
+                                                                localRepoDirectory + "'...", EventType.Warning, 1001);
+                                                        }
+
+                                                        // Do work to start over - create folder to files
+                                                        // Create folder when not exists
+                                                        try
+                                                        {
+                                                            // Log
+                                                            Message(
+                                                                "Checking if folder exists before unzip: '" +
+                                                                localRepoDirectory +
+                                                                "' - The folder does not exist, creating folder: '" +
+                                                                localRepoDirectory + "'", EventType.Information, 1000);
+                                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                                            Console.WriteLine("Checking if folder exists before unzip: '" +
+                                                                              localRepoDirectory +
+                                                                              "' - The folder does not exist, creating folder: '" +
+                                                                              localRepoDirectory + "'");
+                                                            Console.ResetColor();
+
+                                                            // Do work
+                                                            Directory.CreateDirectory(localRepoDirectory);
+
+                                                            // Log
+                                                            Message(
+                                                                "Checked if folder exists before unzip: '" +
+                                                                localRepoDirectory +
+                                                                "' - The folder does not exist, created folder: '" +
+                                                                localRepoDirectory + "'", EventType.Information, 1000);
+                                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                                            Console.WriteLine("Checked if folder exists before unzip: '" +
+                                                                              localRepoDirectory +
+                                                                              "' - The folder does not exist, created folder: '" +
+                                                                              localRepoDirectory + "'");
+                                                            Console.ResetColor();
+
+                                                            // Set backup status
+                                                            isBackupOkAndUnZip = true;
+                                                        }
+                                                        catch (UnauthorizedAccessException)
+                                                        {
+                                                            Message(
+                                                                "Unable to create folder under unzipping: '" +
+                                                                localRepoDirectory +
+                                                                "'. Make sure the account you use to run this tool has write rights to this location.",
+                                                                EventType.Error, 1001);
+                                                            Console.ForegroundColor = ConsoleColor.Red;
+                                                            Console.WriteLine("Unable to create folder under unzipping: '" +
+                                                                              localRepoDirectory +
+                                                                              "'. Make sure the account you use to run this tool has write rights to this location.");
+                                                            Console.ResetColor();
+
+                                                            // Count errors
+                                                            Globals._errors++;
+                                                        }
+                                                        catch (Exception e)
+                                                        {
+                                                            // Error
+                                                            Message(
+                                                                "Exception caught when trying to creating folder: '" +
+                                                                localRepoDirectory + "' - error: " + e, EventType.Error,
+                                                                1001);
+                                                            Console.ForegroundColor = ConsoleColor.Red;
+                                                            Console.WriteLine("{0} Exception caught.", e);
+                                                            Console.ResetColor();
+
+                                                            // Set backup status
+                                                            isBackupOkAndUnZip = false;
+                                                            Globals._errors++;
+                                                        }
+
+                                                        // Get files from .zip folder to unzip
+                                                        //ZipArchive archive = ZipFile.OpenRead(outDir + project.Name + "_" + repo.Name + "_blob.zip");
+                                                        var archive = ZipFile.OpenRead(outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip");
+
+                                                        foreach (Item item in items.Value)
+                                                        {
+                                                            // Work on all files/folders
+                                                            if (item.IsFolder)
                                                             {
-                                                                // Log
+                                                                // If folder data
+                                                                Message(
+                                                                    "Unzipping Git repository folder data: '" +
+                                                                    localRepoDirectory + item.Path + "'...",
+                                                                    EventType.Information, 1000);
                                                                 Console.ForegroundColor = ConsoleColor.Yellow;
                                                                 Console.WriteLine(
-                                                                    $"Unzipping Git repository file data on disk: '" +
-                                                                    localRepoDirectory + item.Path + "'");
+                                                                    "Unzipping Git repository folder data: '" +
+                                                                    localRepoDirectory + item.Path + "'...");
                                                                 Console.ResetColor();
-                                                                Message(
-                                                                    "Unzipping Git repository file data on disk: '" +
-                                                                    localRepoDirectory + item.Path + "'",
-                                                                    EventType.Information, 1000);
 
-                                                                //Try to save data to disk
-                                                                archive.GetEntry(item.ObjectId)
-                                                                    .ExtractToFile(
-                                                                        Path.GetFullPath(localRepoDirectory +
-                                                                            item.Path), true);
+                                                                try
+                                                                {
+                                                                    // Do work
+                                                                    Directory.CreateDirectory(localRepoDirectory + item.Path);
 
-                                                                // Log
-                                                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                                                Console.WriteLine(
-                                                                    $"Unzipped Git repository file data on disk: '" +
-                                                                    localRepoDirectory + item.Path + "'");
-                                                                Console.ResetColor();
-                                                                Message(
-                                                                    "Unzipped Git repository file data on disk: '" +
-                                                                    localRepoDirectory + item.Path + "'",
-                                                                    EventType.Information, 1000);
+                                                                    // Log
+                                                                    Console.ForegroundColor = ConsoleColor.Green;
+                                                                    Console.WriteLine($"> Created folder: '" +
+                                                                        localRepoDirectory + item.Path + "'");
+                                                                    Console.ResetColor();
+                                                                    Message(
+                                                                        "> Created folder: '" + localRepoDirectory +
+                                                                        item.Path + "'", EventType.Information, 1000);
 
-                                                                // Count
-                                                                Globals._totalFilesIsBackupUnZipped++;
+                                                                    // Set backup status
+                                                                    isBackupOkAndUnZip = true;
+                                                                }
+                                                                catch (UnauthorizedAccessException)
+                                                                {
+                                                                    Message(
+                                                                        "! Unable to create folder under unzipping: '" +
+                                                                        localRepoDirectory + item.Path +
+                                                                        "'. Make sure the account you use to run this tool has write rights to this location.",
+                                                                        EventType.Error, 1001);
+                                                                    Console.ForegroundColor = ConsoleColor.Red;
+                                                                    Console.WriteLine(
+                                                                        "Unable to create folder under unzipping: '" +
+                                                                        localRepoDirectory + item.Path +
+                                                                        "'. Make sure the account you use to run this tool has write rights to this location.");
+                                                                    Console.ResetColor();
 
-                                                                // Set backup status
-                                                                isBackupOkAndUnZip = true;
+                                                                    // Count errors
+                                                                    Globals._errors++;
+                                                                }
+                                                                catch (Exception e)
+                                                                {
+                                                                    // Log
+                                                                    Message(
+                                                                        "Exception caught when trying to create folder: '" +
+                                                                        localRepoDirectory + item.Path + "' - error: " + e,
+                                                                        EventType.Error, 1001);
+                                                                    Console.ForegroundColor = ConsoleColor.Red;
+                                                                    Console.WriteLine("{0} Exception caught.", e);
+                                                                    Console.ResetColor();
+
+                                                                    // Set backup status
+                                                                    isBackupOkAndUnZip = false;
+
+                                                                    // Count errors
+                                                                    Globals._errors++;
+                                                                }
                                                             }
-                                                            catch (UnauthorizedAccessException)
+                                                            else
                                                             {
-                                                                Message(
-                                                                    "! Unable to create file under unzipping: '" +
-                                                                    localRepoDirectory + item.Path +
-                                                                    "'. Make sure the account you use to run this tool has write rights to this location.",
-                                                                    EventType.Error, 1001);
-                                                                Console.ForegroundColor = ConsoleColor.Red;
-                                                                Console.WriteLine(
-                                                                    "Unable to create file under unzipping: '" +
-                                                                    localRepoDirectory + item.Path +
-                                                                    "'. Make sure the account you use to run this tool has write rights to this location.");
-                                                                Console.ResetColor();
+                                                                // If file data
+                                                                try
+                                                                {
+                                                                    // Log
+                                                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                                                    Console.WriteLine(
+                                                                        $"Unzipping Git repository file data on disk: '" +
+                                                                        localRepoDirectory + item.Path + "'");
+                                                                    Console.ResetColor();
+                                                                    Message(
+                                                                        "Unzipping Git repository file data on disk: '" +
+                                                                        localRepoDirectory + item.Path + "'",
+                                                                        EventType.Information, 1000);
 
-                                                                // Count errors
-                                                                Globals._errors++;
-                                                            }
-                                                            catch (Exception e)
-                                                            {
-                                                                // Error
-                                                                Message(
-                                                                    "Exception caught when trying to create data on disk: '" +
-                                                                    localRepoDirectory + item.Path + "' - error: " + e,
-                                                                    EventType.Error, 1001);
-                                                                Console.ForegroundColor = ConsoleColor.Red;
-                                                                Console.WriteLine(
-                                                                    "Exception caught when trying to create data on disk: '" +
-                                                                    localRepoDirectory + item.Path + "' - error: " + e);
+                                                                    //Try to save data to disk
+                                                                    archive.GetEntry(item.ObjectId)
+                                                                        .ExtractToFile(
+                                                                            Path.GetFullPath(localRepoDirectory +
+                                                                                item.Path), true);
 
-                                                                Console.ResetColor();
+                                                                    // Log
+                                                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                                                    Console.WriteLine(
+                                                                        $"Unzipped Git repository file data on disk: '" +
+                                                                        localRepoDirectory + item.Path + "'");
+                                                                    Console.ResetColor();
+                                                                    Message(
+                                                                        "Unzipped Git repository file data on disk: '" +
+                                                                        localRepoDirectory + item.Path + "'",
+                                                                        EventType.Information, 1000);
 
-                                                                // Set backup status
-                                                                isBackupOkAndUnZip = false;
+                                                                    // Count
+                                                                    Globals._totalFilesIsBackupUnZipped++;
 
-                                                                // Count errors
-                                                                Globals._errors++;
+                                                                    // Set backup status
+                                                                    isBackupOkAndUnZip = true;
+                                                                }
+                                                                catch (UnauthorizedAccessException)
+                                                                {
+                                                                    Message(
+                                                                        "! Unable to create file under unzipping: '" +
+                                                                        localRepoDirectory + item.Path +
+                                                                        "'. Make sure the account you use to run this tool has write rights to this location.",
+                                                                        EventType.Error, 1001);
+                                                                    Console.ForegroundColor = ConsoleColor.Red;
+                                                                    Console.WriteLine(
+                                                                        "Unable to create file under unzipping: '" +
+                                                                        localRepoDirectory + item.Path +
+                                                                        "'. Make sure the account you use to run this tool has write rights to this location.");
+                                                                    Console.ResetColor();
+
+                                                                    // Count errors
+                                                                    Globals._errors++;
+                                                                }
+                                                                catch (Exception e)
+                                                                {
+                                                                    // Error
+                                                                    Message(
+                                                                        "Exception caught when trying to create data on disk: '" +
+                                                                        localRepoDirectory + item.Path + "' - error: " + e,
+                                                                        EventType.Error, 1001);
+                                                                    Console.ForegroundColor = ConsoleColor.Red;
+                                                                    Console.WriteLine(
+                                                                        "Exception caught when trying to create data on disk: '" +
+                                                                        localRepoDirectory + item.Path + "' - error: " + e);
+
+                                                                    Console.ResetColor();
+
+                                                                    // Set backup status
+                                                                    isBackupOkAndUnZip = false;
+
+                                                                    // Count errors
+                                                                    Globals._errors++;
+                                                                }
                                                             }
                                                         }
+
+                                                        // When done unzip
+                                                        Message(
+                                                            "Unzipping Git repository: '" + localRepoDirectory +
+                                                            "' is now done", EventType.Information, 1000);
+                                                        Console.ForegroundColor = ConsoleColor.Green;
+                                                        Console.WriteLine("Unzipping Git repository: '" +
+                                                                          localRepoDirectory + "' is now done\n");
+                                                        Console.ResetColor();
+
+                                                        // When done release zip files from function
+                                                        archive.Dispose();
                                                     }
 
-                                                    // When done unzip
+                                                    // Set backup status - projects to backup
+                                                    noProjectsToBackup = false;
+                                                }
+                                                else
+                                                {
+                                                    // If there is nothing in the Git repo/project to backup
                                                     Message(
-                                                        "Unzipping Git repository: '" + localRepoDirectory +
-                                                        "' is now done", EventType.Information, 1000);
-                                                    Console.ForegroundColor = ConsoleColor.Green;
-                                                    Console.WriteLine("Unzipping Git repository: '" +
-                                                                      localRepoDirectory + "' is now done\n");
+                                                        "Number of items in project '" + project.Name + "' repository: '" +
+                                                        repo.Name + "' is 0, nothing to backup", EventType.Information,
+                                                        1000);
+                                                    Console.ForegroundColor = ConsoleColor.Yellow;
+                                                    Console.WriteLine("Number of items in project '" + project.Name +
+                                                                      "' repository: '" + repo.Name +
+                                                                      "' is 0, nothing to backup\n");
                                                     Console.ResetColor();
 
-                                                    // When done release zip files from function
-                                                    archive.Dispose();
+                                                    // Set backup status - no projects to backup
+                                                    noProjectsToBackup = true;
                                                 }
-
-                                                // Set backup status - projects to backup
-                                                noProjectsToBackup = false;
                                             }
-                                            else
-                                            {
-                                                // If there is nothing in the Git repo/project to backup
-                                                Message(
-                                                    "Number of items in project '" + project.Name + "' repository: '" +
-                                                    repo.Name + "' is 0, nothing to backup", EventType.Information,
-                                                    1000);
-                                                Console.ForegroundColor = ConsoleColor.Yellow;
-                                                Console.WriteLine("Number of items in project '" + project.Name +
-                                                                  "' repository: '" + repo.Name +
-                                                                  "' is 0, nothing to backup\n");
-                                                Console.ResetColor();
-
-                                                // Set backup status - no projects to backup
-                                                noProjectsToBackup = true;
-                                            }
+                                        }
+                                        catch (Exception ex)
+                                        {
+                                            Message($"Exception while processing repository '{repo.Name}': {ex.Message}.", EventType.Warning, 1001);
+                                            Console.ForegroundColor = ConsoleColor.Yellow;
+                                            Console.WriteLine($"Exception while processing repository '{repo.Name}': {ex.Message}.");
+                                            Console.ResetColor();
+                                            //continue;
+                                            throw;
                                         }
                                     }
                                 }
