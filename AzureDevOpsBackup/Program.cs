@@ -289,6 +289,7 @@ namespace AzureDevOpsBackup
                             Console.WriteLine("  ERROR: Unexpected error while reading token.bin");
                             Console.WriteLine("------------------------------------------------------------");
                             Console.WriteLine($"  Reason: {ex.Message}");
+                            Console.WriteLine();
                             Console.WriteLine("============================================================");
                             Console.WriteLine();
                             Console.ResetColor();
@@ -317,6 +318,26 @@ namespace AzureDevOpsBackup
                         Console.ForegroundColor = ConsoleColor.Red;
                         Console.WriteLine("✖ Azure DevOps API connectivity: FAILED");
                         Message($"Azure DevOps API connectivity: FAILED - {apiError}", EventType.Error, 1001);
+
+                        // After: if (!string.IsNullOrWhiteSpace(apiError)) { ... }
+                        if (!string.IsNullOrWhiteSpace(apiError) && apiError.Contains("Access Denied: The Personal Access Token used has expired."))
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine();
+                            Console.WriteLine("============================================================");
+                            Console.WriteLine("  ERROR: Your Azure DevOps Personal Access Token (PAT) has expired.");
+                            Console.WriteLine("------------------------------------------------------------");
+                            Console.WriteLine("  How to fix:");
+                            Console.WriteLine("    1. Create a new PAT in Azure DevOps.");
+                            Console.WriteLine("    2. Run this tool with: '--tokenfile <yourNewPAT>' to generate a new token.bin file.");
+                            Console.WriteLine("    3. Use: '--token token.bin' for future runs on this machine.\"");
+                            Console.WriteLine();
+                            Console.WriteLine("============================================================");
+                            Console.WriteLine();
+                            Console.ResetColor();
+                            return;
+                        }
+
                         if (!string.IsNullOrWhiteSpace(apiError))
                         {
                             Console.WriteLine("  Details: " + apiError);
