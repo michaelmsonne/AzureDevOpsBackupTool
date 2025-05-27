@@ -12,6 +12,7 @@ using AzureDevOpsBackup.Class;
 using System.Text.RegularExpressions;
 using static AzureDevOpsBackup.Class.FileLogger;
 using System.Threading.Tasks;
+using LibGit2Sharp;
 
 // ReSharper disable RedundantAssignment
 // ReSharper disable NotAccessedVariable
@@ -101,99 +102,7 @@ namespace AzureDevOpsBackup
                 await Task.Delay(delay);
                 delay *= 2; // Exponential backoff
             }
-        }
-
-        private static void BackupRepositoryWithGit(string repoUrl, string backupDir, string pat)
-        {
-            // Embed PAT in the URL for non-interactive authentication
-            // Example: https://pat:{PAT}@dev.azure.com/org/project/_git/repo
-            string safePat = Uri.EscapeDataString(pat);
-            string authenticatedUrl = repoUrl.Insert(8, $"pat:{safePat}@");
-
-            Console.ForegroundColor = ConsoleColor.Yellow;
-            Console.WriteLine($"[GIT] Starting git backup for repository: {repoUrl}");
-            Console.WriteLine($"[GIT] Target backup directory: {backupDir}\\");
-            Console.ResetColor();
-
-            var psi = new ProcessStartInfo
-            {
-                FileName = "git",
-                Arguments = $"clone --mirror \"{authenticatedUrl}\" \"{backupDir}\"",
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false,
-                CreateNoWindow = true
-            };
-
-            using (var process = Process.Start(psi))
-            {
-                string output = process.StandardOutput.ReadToEnd();
-                string error = process.StandardError.ReadToEnd();
-                process.WaitForExit();
-
-                // Output git stdout and stderr to the console
-                if (!string.IsNullOrWhiteSpace(output))
-                {
-                    Console.ForegroundColor = ConsoleColor.Gray;
-                    Console.WriteLine("[GIT OUTPUT]");
-                    Console.WriteLine(output);
-                    Console.ResetColor();
-                }
-                if (!string.IsNullOrWhiteSpace(error))
-                {
-                    // Lines that are known to be informational, not errors
-                    string[] infoPatterns = {
-                        "Cloning into", // Add more patterns as needed
-                        "remote:",      // Git progress lines
-                        "Receiving objects:",
-                        "Resolving deltas:"
-                    };
-
-                    // Split error output into lines and process each
-                    var errorLines = error.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries);
-                    foreach (var line in errorLines)
-                    {
-                        bool isInfo = infoPatterns.Any(p => line.Trim().StartsWith(p, StringComparison.OrdinalIgnoreCase));
-                        if (isInfo)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Yellow;
-                            Console.WriteLine("[GIT INFO] " + line);
-                            //Console.WriteLine(line);
-                            Console.ResetColor();
-                        }
-                        else
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("[GIT ERROR] " + line);
-                            //Console.WriteLine(line);
-                            Console.ResetColor();
-                        }
-                    }
-                }
-
-                if (process.ExitCode != 0)
-                {
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"[GIT] Failed to backup repository: '{repoUrl}'");
-                    Console.ResetColor();
-                    Message($"[GIT] Failed to backup repository: '{repoUrl}'\n{error}", EventType.Error, 1001);
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    Console.WriteLine($"[ACTION] Git backup failed for: '{repoUrl}'");
-                    Console.ResetColor();
-                }
-                else
-                {
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"[GIT] Successfully backed up repository: '{repoUrl}'");
-                    Console.ResetColor();
-                    Message($"[GIT] Successfully backed up repository: '{repoUrl}'", EventType.Information, 1000);
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine($"[GIT] Git backup completed for: '{repoUrl}'");
-                    Console.WriteLine($"[GIT] Backup stored at: '{backupDir}\\'");
-                    Console.ResetColor();
-                }
-            }
-        }
+        }       
 
         private static async Task Main(string[] args)
         {
@@ -717,15 +626,6 @@ namespace AzureDevOpsBackup
                                             Message("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...", EventType.Information, 1000);
                                             Console.WriteLine("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...");
 
-                                            if (!Requirements.IsGitInstalled())
-                                            {
-                                                Console.ForegroundColor = ConsoleColor.Red;
-                                                Console.WriteLine("ERROR: 'git' CLI is not installed or not found in PATH. Please install Git before running with --fullgitbackup.");
-                                                Message("'git' CLI is not installed or not found in PATH. Please install Git before running with --fullgitbackup.", EventType.Error, 1002);
-                                                Console.ResetColor();
-                                                Environment.Exit(1);
-                                            }
-
                                             // Log calling GIT CLI
                                             Message("Calling GIT CLI to backup repository: '" + repo.Name + "'...", EventType.Information, 1000);
                                             Console.WriteLine("Calling GIT CLI to backup repository: '" + repo.Name + "'...");
@@ -736,7 +636,7 @@ namespace AzureDevOpsBackup
                                             string repoUrl = $"https://dev.azure.com/{Globals._orgName}/{encodedProject}/_git/{encodedRepo}";
                                             string gitBackupPath = Path.Combine(outDirSaveToDisk, $"{project.Name}_{repo.Name}.git");
                                             string pat = handler.Decrypt(Convert.FromBase64String(encryptedTokenString));
-                                            BackupRepositoryWithGit(repoUrl, gitBackupPath, pat);
+                                            LocalBackupsTasks.BackupRepositoryWithGit(repoUrl, gitBackupPath, pat);
                                         }
 
                                         try
