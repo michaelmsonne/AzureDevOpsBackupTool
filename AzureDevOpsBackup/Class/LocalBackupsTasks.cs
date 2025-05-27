@@ -34,7 +34,7 @@ namespace AzureDevOpsBackup.Class
                         LocalFolderTasks.DeleteDirectory(dir);
 
                         // Count files
-                        Globals._totalBackupsIsDeleted++;
+                        ApplicationGlobals._totalBackupsIsDeleted++;
 
                         // Log
                         Message("> Deleted old backup folder: " + dir + ".", EventType.Information, 1000);
@@ -53,7 +53,7 @@ namespace AzureDevOpsBackup.Class
                         Console.ResetColor();
 
                         // Count errors
-                        Globals._errors++;
+                        ApplicationGlobals._errors++;
                     }
                     catch (Exception e)
                     {
@@ -64,7 +64,7 @@ namespace AzureDevOpsBackup.Class
                         Console.ResetColor();
 
                         // Add error to counter
-                        Globals._errors++;
+                        ApplicationGlobals._errors++;
                         Console.WriteLine(e);
                         throw;
                     }
@@ -101,7 +101,7 @@ namespace AzureDevOpsBackup.Class
                         LocalFolderTasks.DeleteDirectory(dir);
 
                         // Count files
-                        Globals._totalBackupsIsDeleted++;
+                        ApplicationGlobals._totalBackupsIsDeleted++;
 
                         // Log
                         Message("> Deleted old backup folder: " + dir, EventType.Information, 1000);
@@ -120,7 +120,7 @@ namespace AzureDevOpsBackup.Class
                         Console.ResetColor();
 
                         // Count errors
-                        Globals._errors++;
+                        ApplicationGlobals._errors++;
                     }
                     catch (Exception e)
                     {
@@ -131,7 +131,7 @@ namespace AzureDevOpsBackup.Class
                         Console.ResetColor();
 
                         // Add error to counter
-                        Globals._errors++;
+                        ApplicationGlobals._errors++;
                         Console.WriteLine(e);
                         throw;
                     }
@@ -163,7 +163,7 @@ namespace AzureDevOpsBackup.Class
             }
 
             // Save count
-            Globals._currentBackupsInBackupFolderCount = folderCount;
+            ApplicationGlobals._currentBackupsInBackupFolderCount = folderCount;
         }
 
         public static void BackupRepositoryWithGit(string repoUrl, string backupDir, string pat)

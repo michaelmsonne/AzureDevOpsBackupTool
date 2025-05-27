@@ -7,7 +7,7 @@ namespace AzureDevOpsBackup.Class
         public static void DisplayGuide()
         {
             Console.WriteLine("Usage:");
-            Console.WriteLine($"\t{Globals._currentExeFileName} --token <token> --org <organization> --backup <folder> --server <smtpserver> ");
+            Console.WriteLine($"\t{ApplicationGlobals._currentExeFileName} --token <token> --org <organization> --backup <folder> --server <smtpserver> ");
             Console.WriteLine("\t--port <25> --from <fromemail> --to <toemail> ");
             Console.WriteLine();
             Console.WriteLine("Description:");
@@ -62,21 +62,21 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\t--info or /about:    Showing information about the tool");
             Console.WriteLine();
             Console.WriteLine("Examples:");
-            Console.WriteLine($"\t{Globals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
+            Console.WriteLine($"\t{ApplicationGlobals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
             Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local\n");
-            Console.WriteLine($"\t{Globals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
+            Console.WriteLine($"\t{ApplicationGlobals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
             Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip\n");
-            Console.WriteLine($"\t{Globals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
+            Console.WriteLine($"\t{ApplicationGlobals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
             Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --cleanup\n");
-            Console.WriteLine($"\t{Globals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
+            Console.WriteLine($"\t{ApplicationGlobals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
             Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --daystokeepbackup 50\n");
-            Console.WriteLine($"\t{Globals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
+            Console.WriteLine($"\t{ApplicationGlobals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
             Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --simpelreport\n");
-            Console.WriteLine($"\t{Globals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
+            Console.WriteLine($"\t{ApplicationGlobals._currentExeFileName} --token XXX... --org OrgName --backup C:\\Backup --server smtp.domain.local");
             Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --simpelreport --priority high\n");
-            Console.WriteLine($"\t{Globals._currentExeFileName} --token token.bin --org OrgName --backup C:\\Backup --server smtp.domain.local");
+            Console.WriteLine($"\t{ApplicationGlobals._currentExeFileName} --token token.bin --org OrgName --backup C:\\Backup --server smtp.domain.local");
             Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local --unzip --simpelreport --priority low\n");
-            Console.WriteLine($"\t{Globals._currentExeFileName} --token token.bin --org OrgName --backup C:\\Backup --server smtp.domain.local");
+            Console.WriteLine($"\t{ApplicationGlobals._currentExeFileName} --token token.bin --org OrgName --backup C:\\Backup --server smtp.domain.local");
             Console.WriteLine("\t--port 25 --from from@domain.local --to reports@domain.local,admin@domain.local --unzip --noattatchlog");
             Console.WriteLine();
             Console.WriteLine("Output:");

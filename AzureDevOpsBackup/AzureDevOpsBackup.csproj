@@ -131,7 +131,7 @@
     <Compile Include="Class\CommandLineParser.cs" />
     <Compile Include="Class\LocalFolderTasks.cs" />
     <Compile Include="Class\ConsoleHelper.cs" />
-    <Compile Include="Class\Globals.cs" />
+    <Compile Include="Class\ApplicationGlobals.cs" />
     <Compile Include="Class\ArgumentOptions.cs" />
     <Compile Include="Class\ReportSender.cs" />
     <Compile Include="Class\FileLogger.cs" />

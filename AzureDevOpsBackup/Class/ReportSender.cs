@@ -45,8 +45,8 @@ namespace AzureDevOpsBackup.Class
             // Get leftover files is needed (if had error(s))
             if (checkForLeftoverFilesAfterCleanup)
             {
-                letOverJsonFiles = Globals._numJson;
-                letOverZipFiles = Globals._numZip;
+                letOverJsonFiles = ApplicationGlobals._numJson;
+                letOverZipFiles = ApplicationGlobals._numZip;
             }
 
             // If args is set to old mail report layout
@@ -54,13 +54,13 @@ namespace AzureDevOpsBackup.Class
             {
                 // Make email body data
                 mailBody =
-                    $"<hr><h2>Your {Globals.AppName} of organization '{Globals._orgName}' is: {emailStatusMessage}</h2><hr><p><h3>Details:</h3><p>" +
+                    $"<hr><h2>Your {ApplicationGlobals.AppName} of organization '{ApplicationGlobals._orgName}' is: {emailStatusMessage}</h2><hr><p><h3>Details:</h3><p>" +
                     $"<p>Processed Git project(s) in Azure DevOps (total): <b>{repoCount}</b><br>" +
                     $"Processed Git repos in project(s) a backup is made of from Azure DevOps (all branches): <b>{repoItemsCount}</b><p>" +
                     $"Processed files to backup from Git repos (total unzipped if specified): <b>{totalFilesIsBackupUnZipped}</b><br>" +
                     $"Processed files to backup from Git repos (blob files (.zip files)) (all branches): <b>{totalBlobFilesIsBackup}</b><br>" +
                     $"Processed files to backup from Git repos (tree files (.json files)) (all branches): <b>{totalTreeFilesIsBackup}</b><p>" +
-                    $"See the attached logfile for the backup(s) today: <b>'{Globals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log'</b>.<p>" +
+                    $"See the attached logfile for the backup(s) today: <b>'{ApplicationGlobals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log'</b>.<p>" +
                     $"Total Run Time is: \"{elapsedTime}\"<br>" +
                     $"Backup start Time: \"{startTime}\"<br>" +
                     $"Backup end Time: \"{endTime}\"<br>" +
@@ -73,13 +73,13 @@ namespace AzureDevOpsBackup.Class
                     $"Old backups deleted in backup folder: <b>{totalBackupsIsDeleted}</b><br>" +
                     listrepocountelements + "<br>" +
                     listitemscountelements + "</p><hr>" +
-                    $"<h3>From Your {Globals.AppName} tool!<o:p></o:p></h3>" + Globals._copyrightData + ", v." + Globals._vData;
+                    $"<h3>From Your {ApplicationGlobals.AppName} tool!<o:p></o:p></h3>" + ApplicationGlobals._copyrightData + ", v." + ApplicationGlobals._vData;
             }
             else
             {
                 // Make email body data
                 mailBody =
-                $"<hr/><h2>Your {Globals.AppName} of organization '{Globals._orgName}' is: {emailStatusMessage}</h2><hr />" +
+                $"<hr/><h2>Your {ApplicationGlobals.AppName} of organization '{ApplicationGlobals._orgName}' is: {emailStatusMessage}</h2><hr />" +
                 $"<br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\">" +
                 $"<tbody><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 33%; height: 18px;\"><strong>Backup task(s):</strong></td>" +
@@ -125,18 +125,18 @@ namespace AzureDevOpsBackup.Class
                 $"<td style=\"width: 22%; height: 18px;\"><b>{daysToKeep}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{isDaysToKeepNotDefaultStatusText}</td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Number of current backups in backup folder:</td>" +
-                $"<td style=\"width: 22%; height: 18px;\"><b>{Globals._currentBackupsInBackupFolderCount}</b></td>" +
+                $"<td style=\"width: 22%; height: 18px;\"><b>{ApplicationGlobals._currentBackupsInBackupFolderCount}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">Multiple backups can be created at the same day, so there can be more backups then days set to keep</td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Old backup(s) deleted in backup folder:</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{totalBackupsIsDeletedStatusText}</td></tr></table>" +
-                $"<p>See the attached logfile for the backup(s) today: <b>'{Globals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log'</b>.<o:p></o:p></p>" +
+                $"<p>See the attached logfile for the backup(s) today: <b>'{ApplicationGlobals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log'</b>.<o:p></o:p></p>" +
                 $"<p>Total Run Time is: \"{elapsedTime}\"<br>" +
                 $"Backup start Time: \"{startTime}\"<br>" +
                 $"Backup end Time: \"{endTime}\"</p><hr/>" +
                 listrepocountelements + "<br>" +
                 listitemscountelements + "</p><br><hr>" +
-                $"<h3>From Your {Globals.AppName} tool!<o:p></o:p></h3>" + Globals._copyrightData + ", v." + Globals._vData;
+                $"<h3>From Your {ApplicationGlobals.AppName} tool!<o:p></o:p></h3>" + ApplicationGlobals._copyrightData + ", v." + ApplicationGlobals._vData;
             }
 
             // Create mail
@@ -151,7 +151,7 @@ namespace AzureDevOpsBackup.Class
             }
 
             // Set email subject
-            message.Subject = "[" + emailStatusMessage + $"] - {Globals.AppName} status - (" + totalBlobFilesIsBackup +
+            message.Subject = "[" + emailStatusMessage + $"] - {ApplicationGlobals.AppName} status - (" + totalBlobFilesIsBackup +
                               " Git projects backed up), " + errors + " issues(s) - (backups to keep (days): " + daysToKeep +
                               ", backup(s) deleted: " + totalBackupsIsDeleted + ")";
             
@@ -161,7 +161,7 @@ namespace AzureDevOpsBackup.Class
             message.IsBodyHtml = true;
 
             // Set email priority level based on command-line argument
-            message.Priority = Globals.EmailPriority;
+            message.Priority = ApplicationGlobals.EmailPriority;
             message.DeliveryNotificationOptions = DeliveryNotificationOptions.None;
             message.BodyTransferEncoding = TransferEncoding.QuotedPrintable;
 
@@ -199,7 +199,7 @@ namespace AzureDevOpsBackup.Class
 
                     // Get filename to find
                     var filePaths = Directory.GetFiles(Files.LogFilePath,
-                        $"{Globals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + "*.*");
+                        $"{ApplicationGlobals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + "*.*");
 
                     // Get the files that their extension are .log or .txt
                     var files = filePaths.Where(filePath =>
@@ -208,7 +208,7 @@ namespace AzureDevOpsBackup.Class
                     // Loop through the files enumeration and attach each file in the mail.
                     foreach (var file in files)
                     {
-                        Globals._fileAttachedIneMailReport = file;
+                        ApplicationGlobals._fileAttachedIneMailReport = file;
 
                         // Log
                         Message("Found logfile for today:", EventType.Information, 1000);
@@ -217,7 +217,7 @@ namespace AzureDevOpsBackup.Class
                         Console.ResetColor();
 
                         // Full file name
-                        var fileName = Globals._fileAttachedIneMailReport;
+                        var fileName = ApplicationGlobals._fileAttachedIneMailReport;
                         var fi = new FileInfo(fileName);
 
                         // Get File Name
@@ -293,9 +293,9 @@ namespace AzureDevOpsBackup.Class
                     // TODO logfile is not locked from here - you can add logs to logfile again from here!
 
                     // Log
-                    Message("Email notification is send to '" + emailTo + "' at '" + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + "' with priority " + Globals.EmailPriority + "!", EventType.Information, 1000);
+                    Message("Email notification is send to '" + emailTo + "' at '" + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + "' with priority " + ApplicationGlobals.EmailPriority + "!", EventType.Information, 1000);
                     Console.ForegroundColor = ConsoleColor.Green;
-                    Console.WriteLine("Email notification is send to '" + emailTo + "' at '" + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + "' with priority " + Globals.EmailPriority + "!");
+                    Console.WriteLine("Email notification is send to '" + emailTo + "' at '" + DateTime.Now.ToString("dd-MM-yyyy (HH-mm)") + "' with priority " + ApplicationGlobals.EmailPriority + "!");
                     Console.ResetColor();
                 }
                 catch (Exception ex)

@@ -2,7 +2,7 @@
 
 namespace AzureDevOpsBackup.Class
 {
-    public static class Globals
+    public static class ApplicationGlobals
     {
         public static string _currentExeFileName; // The name of the current executable file
         public static int _errors; // The number of errors that have occurred
