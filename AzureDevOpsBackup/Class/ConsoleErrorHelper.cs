@@ -2,8 +2,15 @@
 
 namespace AzureDevOpsBackup.Class
 {
+    /// <summary>
+    /// Helper class for displaying error messages in the console with red color formatting.
+    /// </summary>
     public static class ConsoleErrorHelper
     {
+        /// <summary>
+        /// Displays an error message indicating that the Azure DevOps PAT has expired,
+        /// along with instructions for resolving the issue.
+        /// </summary>
         public static void ShowExpiredPatError()
         {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -21,6 +28,11 @@ namespace AzureDevOpsBackup.Class
             Console.ResetColor();
         }
 
+        /// <summary>
+        /// Displays an error message when token decryption fails,
+        /// including the provided reason and possible causes and solutions.
+        /// </summary>
+        /// <param name="message">The specific error message or reason for decryption failure.</param>
         public static void ShowTokenDecryptError(string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
@@ -45,6 +57,10 @@ namespace AzureDevOpsBackup.Class
             Console.ResetColor();
         }
 
+        /// <summary>
+        /// Displays an error message for unexpected errors encountered while reading the token.bin file.
+        /// </summary>
+        /// <param name="message">The specific error message or reason for the read failure.</param>
         public static void ShowTokenReadError(string message)
         {
             Console.ForegroundColor = ConsoleColor.Red;
