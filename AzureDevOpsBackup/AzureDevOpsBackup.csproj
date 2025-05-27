@@ -137,7 +137,7 @@
     <Compile Include="Class\FileLogger.cs" />
     <Compile Include="Class\Files.cs" />
     <Compile Include="Class\ReportSenderOptions.cs" />
-    <Compile Include="Class\Requirements.cs" />
+    <Compile Include="Class\ApplicationRequirements.cs" />
     <Compile Include="Class\SecureArgumentHandler.cs" />
     <Compile Include="Class\SecureArgumentHandlerToken.cs" />
     <Compile Include="Program.cs" />

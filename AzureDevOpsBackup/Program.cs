@@ -123,7 +123,7 @@ namespace AzureDevOpsBackup
             bool isOutputFolderContainFiles = false;
 
             // Check requirements for tool to work
-            Requirements.SystemCheck();
+            ApplicationRequirements.SystemCheck();
 
             // Get key to use for encryption and decryption
             var tokenEncryptionKey = SecureArgumentHandlerToken.GetComputerId();
