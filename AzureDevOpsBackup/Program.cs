@@ -271,12 +271,10 @@ namespace AzureDevOpsBackup
                             Console.WriteLine();
                             Console.WriteLine("  How to fix:");
                             Console.WriteLine("    1. Delete the old token.bin file.");
-                            Console.WriteLine("    2. Run this tool with:");
-                            Console.WriteLine("         --tokenfile <yourPAT>");
-                            Console.WriteLine("       on this machine to generate a new token.bin.");
-                            Console.WriteLine("    3. Use:");
-                            Console.WriteLine("         --token token.bin");
-                            Console.WriteLine("       for future runs on this machine.");
+                            Console.WriteLine("    2. Run this tool with '--tokenfile <yourPAT>' on this machine to generate a new token.bin.");
+                            Console.WriteLine("       file on this machine to generate a new token.bin.");
+                            Console.WriteLine("    3. Use: '--token token.bin' for future runs on this machine.");
+                            Console.WriteLine();
                             Console.WriteLine("============================================================");
                             Console.WriteLine();
                             Console.ResetColor();
