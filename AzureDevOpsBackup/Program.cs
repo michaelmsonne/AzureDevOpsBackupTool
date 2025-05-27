@@ -236,18 +236,70 @@ namespace AzureDevOpsBackup
 
                     bool allOk = true;
 
-                    // 1. Check Azure DevOps API connectivity
+                    // Set the API version to use for Azure DevOps API calls
+                    string apiVersion = Globals.APIversion;
+
+                    // Variable to hold API error message
+                    string apiError;
+
+                    // Check Azure DevOps API connectivity
                     int orgIndex = Array.IndexOf(args, "--org");
                     int tokenIndex = Array.IndexOf(args, "--token");
                     string org = (orgIndex != -1 && args.Length > orgIndex + 1) ? args[orgIndex + 1] : null;
                     string token = (tokenIndex != -1 && args.Length > tokenIndex + 1) ? args[tokenIndex + 1] : null;
+
+                    // Check if token is a file and if valid token file for current machine
                     if (token == "token.bin")
                     {
-                        token = SecureArgumentHandlerToken.DecryptFromFile(tokenEncryptionKey);
+                        try
+                        {
+                            token = SecureArgumentHandlerToken.DecryptFromFile(tokenEncryptionKey);
+                        }
+                        catch (System.Security.Cryptography.CryptographicException ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine();
+                            Console.WriteLine("============================================================");
+                            Console.WriteLine("  ERROR: Failed to decrypt token from 'token.bin'");
+                            Console.WriteLine("------------------------------------------------------------");
+                            Console.WriteLine($"  Reason: {ex.Message}");
+                            Console.WriteLine();
+                            Console.WriteLine("  Possible causes:");
+                            Console.WriteLine("    • The token.bin file was not created on this machine.");
+                            Console.WriteLine("    • The token.bin file is corrupted or incomplete.");
+                            Console.WriteLine("    • The encryption key (hardware ID) does not match.");
+                            Console.WriteLine();
+                            Console.WriteLine("  How to fix:");
+                            Console.WriteLine("    1. Delete the old token.bin file.");
+                            Console.WriteLine("    2. Run this tool with:");
+                            Console.WriteLine("         --tokenfile <yourPAT>");
+                            Console.WriteLine("       on this machine to generate a new token.bin.");
+                            Console.WriteLine("    3. Use:");
+                            Console.WriteLine("         --token token.bin");
+                            Console.WriteLine("       for future runs on this machine.");
+                            Console.WriteLine("============================================================");
+                            Console.WriteLine();
+                            Console.ResetColor();
+                            Message("ERROR: Failed to decrypt token.bin: " + ex.Message, EventType.Error, 1001);
+                            Environment.Exit(1);
+                        }
+                        catch (Exception ex)
+                        {
+                            Console.ForegroundColor = ConsoleColor.Red;
+                            Console.WriteLine();
+                            Console.WriteLine("============================================================");
+                            Console.WriteLine("  ERROR: Unexpected error while reading token.bin");
+                            Console.WriteLine("------------------------------------------------------------");
+                            Console.WriteLine($"  Reason: {ex.Message}");
+                            Console.WriteLine("============================================================");
+                            Console.WriteLine();
+                            Console.ResetColor();
+                            Message("ERROR: Unexpected error while reading token.bin: " + ex.Message, EventType.Error, 1001);
+                            Environment.Exit(1);
+                        }
                     }
-                    string apiVersion = Globals.APIversion;
 
-                    string apiError;
+                    // Check if org and token are provided
                     if (string.IsNullOrWhiteSpace(org) || string.IsNullOrWhiteSpace(token))
                     {
                         apiError = "Missing or empty --org or --token argument.";
@@ -275,7 +327,7 @@ namespace AzureDevOpsBackup
                         allOk = false;
                     }
 
-                    // 2. Check backup folder write access
+                    // Check backup folder write access
                     int backupIndex = Array.IndexOf(args, "--backup");
                     string backupFolder = (backupIndex != -1 && args.Length > backupIndex + 1) ? args[backupIndex + 1] : null;
                     string folderError;
