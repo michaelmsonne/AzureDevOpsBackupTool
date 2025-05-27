@@ -169,10 +169,10 @@ namespace AzureDevOpsBackup.Class
         public static void BackupRepositoryWithGit(string repoUrl, string backupDir, string pat)
         {
             // Log the start of the backup process
-            Console.WriteLine($"[GIT] Starting git backup for repository: {repoUrl}");
-            Console.WriteLine($"[GIT] Target backup directory: {backupDir}\\");
-            Message($"[GIT] Starting git backup for repository: {repoUrl}", EventType.Information, 1000);
-            Message($"[GIT] Target backup directory: {backupDir}\\", EventType.Information, 1000);
+            Console.WriteLine($"[GIT] Starting git backup for repository: '{repoUrl}'");
+            Console.WriteLine($"[GIT] Target backup directory: '{backupDir}\\'");
+            Message($"[GIT] Starting git backup for repository: '{repoUrl}'", EventType.Information, 1000);
+            Message($"[GIT] Target backup directory: '{backupDir}\\'", EventType.Information, 1000);
 
             var cloneOptions = new CloneOptions();
 

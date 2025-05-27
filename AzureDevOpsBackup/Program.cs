@@ -8,10 +8,10 @@ using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Net;
+using System.Threading.Tasks;
 using AzureDevOpsBackup.Class;
 using System.Text.RegularExpressions;
 using static AzureDevOpsBackup.Class.FileLogger;
-using System.Threading.Tasks;
 
 // ReSharper disable RedundantAssignment
 // ReSharper disable NotAccessedVariable
@@ -622,12 +622,12 @@ namespace AzureDevOpsBackup
                                         if (doFullGitBackup)
                                         {
                                             // Log set to use GIT CLI also
-                                            Message("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...", EventType.Information, 1000);
-                                            Console.WriteLine("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...");
+                                            Message("Set to perform Git backup of the repository: '" + repo.Name + "'...", EventType.Information, 1000);
+                                            Console.WriteLine("Set to perform Git backup of the repository: '" + repo.Name + "'...");
 
                                             // Log calling GIT CLI
-                                            Message("Calling GIT CLI to backup repository: '" + repo.Name + "'...", EventType.Information, 1000);
-                                            Console.WriteLine("Calling GIT CLI to backup repository: '" + repo.Name + "'...");
+                                            Message("Calling Git to backup repository: '" + repo.Name + "'...", EventType.Information, 1000);
+                                            Console.WriteLine("Calling Git to backup repository: '" + repo.Name + "'...");
 
                                             // Construct the HTTPS clone URL for Azure DevOps
                                             string encodedProject = Uri.EscapeDataString(project.Name);
@@ -635,7 +635,15 @@ namespace AzureDevOpsBackup
                                             string repoUrl = $"https://dev.azure.com/{Globals._orgName}/{encodedProject}/_git/{encodedRepo}";
                                             string gitBackupPath = Path.Combine(outDirSaveToDisk, $"{project.Name}_{repo.Name}.git");
                                             string pat = handler.Decrypt(Convert.FromBase64String(encryptedTokenString));
+
+                                            // Perform the backup using the LocalBackupsTasks class
                                             LocalBackupsTasks.BackupRepositoryWithGit(repoUrl, gitBackupPath, pat);
+                                        }
+                                        else
+                                        {
+                                            // Log set to use GIT CLI also
+                                            Message("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...", EventType.Information, 1000);
+                                            Console.WriteLine("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...");
                                         }
 
                                         try
@@ -820,13 +828,13 @@ namespace AzureDevOpsBackup
                                                         Message(
                                                             "! Unable to write the backup file to disk: '" +
                                                             outDirSaveToDisk + project.Name + "_" + repo.Name +
-                                                            $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location.",
+                                                            $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location. Error:" + e,
                                                             EventType.Error, 1001);
                                                         Console.ForegroundColor = ConsoleColor.Red;
                                                         Console.WriteLine(
                                                             "Unable to write the backup file to disk: '" +
                                                             outDirSaveToDisk + project.Name + "_" + repo.Name +
-                                                            $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location.",
+                                                            $"_{branchNameFormatted}_tree.json'. Make sure the account you use to run this tool has write rights to this location. Error:" + e,
                                                             EventType.Error, 1001);
                                                         Console.ResetColor();
 
