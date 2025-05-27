@@ -17,6 +17,11 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\tlocal backup of all projects and repositories is needed. These might include Corporate Policies,");
             Console.WriteLine("\tDisaster Recovery and Business Continuity Plans.");
             Console.WriteLine();
+            Console.WriteLine("\tRegulatory Compliance: Some industries require regular backups for compliance purposes.");
+            Console.WriteLine("\tAccidental Deletion: Backups help recover data lost due to accidental deletion or corruption.");
+            Console.WriteLine("\tMigration: Local backups can assist in migrating projects to other platforms.");
+            Console.WriteLine("\tAudit Trail: Backups provide a historical record for auditing and tracking changes.");
+            Console.WriteLine();
             Console.WriteLine("Parameter List:");
             Console.WriteLine("  Mandatory:");
             Console.WriteLine("\t--token <token>:     Token to access the API in Azure DevOps (raw token data)");
@@ -25,8 +30,10 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\t     --oldurl:       Specify this option if you are using the old organization URL format");
             Console.WriteLine(
                 "\t\t\t     (https://organization.visualstudio.com) if you have not updated your organization URL");
-            Console.WriteLine("\t\t\t     to the new format (https://dev.azure.com/{organization})");
+            Console.WriteLine("\t\t\t     to the new format (https://dev.azure.com/{organization}) (Add argument to set $true)");
             Console.WriteLine("\t--backup:            Folder where to store the backup(s) - folder with timestamp will be created");
+            Console.WriteLine("\t\t\t     and this is a 'snapshot' if only useing the REST API (for a full ´Git backup' add");
+            Console.WriteLine("\t\t\t     '--fullgitbackup' also)");
             Console.WriteLine("\t--server:            IP address or DNS name of the SMTP server");
             Console.WriteLine("\t--nossl:             No SSL for the mail server");
             Console.WriteLine("\t--port:              The port for the SMTP server");
@@ -48,8 +55,8 @@ namespace AzureDevOpsBackup.Class
             Console.WriteLine("\t  low:               Set the email report priority to 'low'");
             Console.WriteLine("\t--healthcheck:       Option to test connectivity to Azure DevOps REST API and backup folder write access");
             Console.WriteLine("\t\t\t     (optional)");
-            Console.WriteLine("\t--fullgitbackup:     Also perform a full git clone --mirror backup of each repository (with all history)");
-            Console.WriteLine("\t\t\t     in 'xx.git' folder (optional) (Git need to be installed on host)");
+            Console.WriteLine("\t--fullgitbackup:     Also perform a full git clone --mirror backup of each repository (with all history,");
+            Console.WriteLine("\t\t\t     branches, git history etc.) in a '<project>.git' folder (optional)");
             Console.WriteLine();
             Console.WriteLine("\t--help, /h or /?:    Showing this help text for the tool");
             Console.WriteLine("\t--info or /about:    Showing information about the tool");
