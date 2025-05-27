@@ -352,7 +352,15 @@ namespace AzureDevOpsBackup
                     }
 
                     Console.ResetColor();
+                    if (!allOk)
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                    }
                     Console.WriteLine("\nHealth check " + (allOk ? "PASSED" : "FAILED") + "\n");
+                    if (!allOk)
+                    {
+                        Console.ResetColor();
+                    }
                     Message("Health check " + (allOk ? "PASSED" : "FAILED"), EventType.Information, 1000);
 
                     Environment.Exit(allOk ? 0 : 1);
