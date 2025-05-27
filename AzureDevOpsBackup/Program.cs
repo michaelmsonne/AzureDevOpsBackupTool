@@ -100,7 +100,7 @@ namespace AzureDevOpsBackup
                     if (response.Headers != null)
                     {
                         var retryAfter = response.Headers.FirstOrDefault(h => h.Name.Equals("Retry-After", StringComparison.OrdinalIgnoreCase));
-                        if (retryAfter != null && int.TryParse(retryAfter.Value?.ToString(), out int retrySeconds))
+                        if (retryAfter != null && int.TryParse(retryAfter.Value, out int retrySeconds))
                         {
                             delay = retrySeconds * 1000;
                         }
