@@ -2,7 +2,7 @@
 
 namespace AzureDevOpsBackup.Class
 {
-    internal class DisplayHelpToConsole
+    internal class ConsoleHelper
     {
         public static void DisplayGuide()
         {

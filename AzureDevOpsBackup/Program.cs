@@ -165,7 +165,7 @@ namespace AzureDevOpsBackup
                     Console.ResetColor();
 
                     // Show help to console
-                    DisplayHelpToConsole.DisplayGuide();
+                    ConsoleHelper.DisplayGuide();
 
                     // Log
                     Message($"Showed help to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
@@ -181,7 +181,7 @@ namespace AzureDevOpsBackup
                 if (args.Contains("--help") || args.Contains("/h") || args.Contains("/?"))
                 {
                     // Show help to console
-                    DisplayHelpToConsole.DisplayGuide();
+                    ConsoleHelper.DisplayGuide();
 
                     // Log
                     Message($"Showed help to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
@@ -197,7 +197,7 @@ namespace AzureDevOpsBackup
                 if (args.Contains("/info") || args.Contains("/about"))
                 {
                     // Show information about application to console
-                    DisplayHelpToConsole.DisplayInfo();
+                    ConsoleHelper.DisplayInfo();
 
                     // Log
                     Message($"Showed information about application to Console - Exciting {Globals.AppName}, v." + Globals._vData + " by " + Globals._companyName + "!", EventType.Information, 1000);
