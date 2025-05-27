@@ -76,32 +76,64 @@ namespace AzureDevOpsBackup
         {
             int retries = 0;
             int delay = initialDelayMs;
+
             while (true)
             {
-                var response = await client.ExecuteAsync(request);
-                if (response.StatusCode != (HttpStatusCode)429) // 429 = Too Many Requests
-                    return response;
-
-                // Optionally, check for "Retry-After" header
-                if (response.Headers != null)
+                try
                 {
-                    var retryAfter = response.Headers.FirstOrDefault(h => h.Name.Equals("Retry-After", StringComparison.OrdinalIgnoreCase));
-                    if (retryAfter != null && int.TryParse(retryAfter.Value, out int retrySeconds))
+                    var response = await client.ExecuteAsync(request);
+
+                    // Success or not a rate limit error
+                    if (response.StatusCode != (HttpStatusCode)429)
                     {
-                        delay = retrySeconds * 1000;
+                        // Unauthorized handling
+                        if (response.StatusCode == HttpStatusCode.Unauthorized)
+                        {
+                            ConsoleErrorHelper.ShowExpiredPatError();
+                            Message("ERROR: The provided Azure DevOps PAT is expired or invalid.", EventType.Error, 1001);
+                            Environment.Exit(1);
+                        }
+                        return response;
+                    }
+
+                    // Optionally, check for "Retry-After" header
+                    if (response.Headers != null)
+                    {
+                        var retryAfter = response.Headers.FirstOrDefault(h => h.Name.Equals("Retry-After", StringComparison.OrdinalIgnoreCase));
+                        if (retryAfter != null && int.TryParse(retryAfter.Value?.ToString(), out int retrySeconds))
+                        {
+                            delay = retrySeconds * 1000;
+                        }
+                    }
+
+                    if (++retries > maxRetries)
+                        return response;
+
+                    Console.ForegroundColor = ConsoleColor.Yellow;
+                    Console.WriteLine($"Rate limit hit (429). Retrying in {delay / 1000.0:F1} seconds... (Attempt {retries}/{maxRetries})");
+                    Console.ResetColor();
+                    await Task.Delay(delay);
+                    delay *= 2; // Exponential backoff
+                }
+                catch (System.Net.Http.HttpRequestException ex)
+                {
+                    if (ex.Message.Contains("Unauthorized"))
+                    {
+                        ConsoleErrorHelper.ShowExpiredPatError();
+                        Message("ERROR: Unauthorized - The provided Azure DevOps PAT is expired or invalid.", EventType.Error, 1001);
+                        Environment.Exit(1);
+                    }
+                    else
+                    {
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("ERROR: Network or API error occurred: " + ex.Message);
+                        Console.ResetColor();
+                        Message("ERROR: Network or API error occurred: " + ex.Message, EventType.Error, 1001);
+                        Environment.Exit(1);
                     }
                 }
-
-                if (++retries > maxRetries)
-                    return response;
-
-                Console.ForegroundColor = ConsoleColor.Yellow;
-                Console.WriteLine($"Rate limit hit (429). Retrying in {delay / 1000.0:F1} seconds... (Attempt {retries}/{maxRetries})");
-                Console.ResetColor();
-                await Task.Delay(delay);
-                delay *= 2; // Exponential backoff
             }
-        }       
+        }
 
         private static async Task Main(string[] args)
         {
@@ -582,11 +614,10 @@ namespace AzureDevOpsBackup
 
                         // Connect to Azure DevOps organization
                         checkConnectionToAzureDevOpsGet.AddHeader("Authorization", auth);
-                        //var responseCheckConnectionToAzureDevOpsGet = await checkConnectionToAzureDevOps.GetAsync(checkConnectionToAzureDevOpsGet);
 
                         try
                         {
-                            var responseCheckConnectionToAzureDevOpsGet = await checkConnectionToAzureDevOps.GetAsync(checkConnectionToAzureDevOpsGet);
+                            var responseCheckConnectionToAzureDevOpsGet = await ExecuteWithRetryAsync(checkConnectionToAzureDevOps, checkConnectionToAzureDevOpsGet);
 
                             if (responseCheckConnectionToAzureDevOpsGet.StatusCode == HttpStatusCode.OK)
                             {
