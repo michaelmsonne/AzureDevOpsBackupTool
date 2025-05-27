@@ -153,6 +153,7 @@ Note we are also saving the original JSON item list we got from the repository c
 - --priority <priority> <high/low>: Specify the email priority for notifications (e.g., high, normal, low). Default (normal) if not set.
 - --noattatchlog: Use this option to not attatch the log file to the email report.
 - --healthcheck: Use this to check if the Azure DevOps API is reachable and the token is valid and the backup folder have write access.
+- --fullgitbackup: Use this option to create a full Git clone of the repository too on top of a zip file or unzipped (snapshot).
 
 **General**:
 - --help, /h or /?: Show the help menu

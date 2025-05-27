@@ -4,11 +4,19 @@ AzureDevOpsBackup:
 
 ### Added
 - Added an option to test the connection to the Azure DevOps REST API and folder write access with argument: '**--healthcheck**' - this will test the connection to the Azure DevOps REST API and backup folder write test and show the result.
-- Added support for a new argument to create a 'real' Git clone of the repository with argument: '**--fullgitbackup**' useing LibGit2Sharp - this will create a real Git clone of the repository instead of just a zip file or unzipped, so you can use the Git clone for further development or other purposes (optional)
+- Added support for a new argument to create a 'real' Git clone of the repository with argument: '**--fullgitbackup**' useing **LibGit2Sharp** - this will create a real Git clone of the repository instead of just a zip file or unzipped, so you can use the Git clone for further development or other purposes (optional)
 
 ### Fixed
 - Fixed a bug in the backup tool, where the tool would crash if a repository was not found/disabled in the Azure DevOps organization. The tool now skips the repository and continues with the next one.
 - Added graceful handling of API rate limits: The tool now gracefully handles API rate limits by implementing exponential backoff and retry logic. This ensures that the backup process continues smoothly even when the API rate limit is reached.
+
+### Changed
+- Optimized the code for better performance and readability.
+- Backup performance improved: Reduced average backup time from 2:26 to around 1:55 per run (approx. 21% faster) based on my DevOps´s content.
+
+    **Note**: The performance improvement may vary based on the size and number of repositories in your Azure DevOps organization.
+
+- 
 
 ## [1.1.2.1] - 07-11-2024
 

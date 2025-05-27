@@ -366,12 +366,8 @@ namespace AzureDevOpsBackup
                             baseUrl = "https://dev.azure.com/" + args[Array.IndexOf(args, "--org") + 1] + "/";
                         }
 
-
-
+                        // Check if --fullgitbackup argument is present
                         bool doFullGitBackup = args.Contains("--fullgitbackup");
-
-
-
 
                         // Create a new instance of the SecureArgumentHandler class to handle the encryption and decryption of the token
                         SecureArgumentHandler handler = new SecureArgumentHandler();
@@ -423,6 +419,9 @@ namespace AzureDevOpsBackup
                         // URL parse to API access done
                         Message("Base URL is for Organization is: '" + baseUrl + "'", EventType.Information, 1000);
                         Console.WriteLine("Base URL is for Organization is: '" + baseUrl + "'");
+
+                        // Create a new instance of the AzureDevOpsApiClient class to handle API requests
+                        var apiClient = new AzureDevOpsApiClient(baseUrl, handler.Decrypt(Convert.FromBase64String(encryptedTokenString)));
                         
                         // Get output folder to backup (not with date stamp for backup folder name)
                         Globals._backupFolder = args[Array.IndexOf(args, "--backup") + 1] + "\\";
@@ -547,14 +546,7 @@ namespace AzureDevOpsBackup
                         Console.WriteLine("Getting information about Git projects...");
 
                         // Get Git projects from REST API - projects
-                        var clientProjects = new RestClient(baseUrl + "_apis/projects?" + Globals.APIversion);
-                        var requestProjects = new RestRequest { Method = Method.Get };
-
-                        // Add authorization header to request
-                        requestProjects.AddHeader("Authorization", auth);
-
-                        //var responseProjects = await clientProjects.GetAsync(requestProjects);
-                        var responseProjects = await ExecuteWithRetryAsync(clientProjects, requestProjects);
+                        var responseProjects = await apiClient.GetProjectsAsync(Globals.APIversion);
 
                         if (responseProjects.Content != null)
                         {
@@ -580,10 +572,7 @@ namespace AzureDevOpsBackup
                                         "Getting information about Git project: '" + project.Name + "'...");
 
                                     // Get repos in projects
-                                    var clientRepos = new RestClient(baseUrl + project.Name + "/_apis/git/repositories?" + Globals.APIversion);
-                                    var requestRepos = new RestRequest { Method = Method.Get };
-                                    requestRepos.AddHeader("Authorization", auth);
-                                    var responseRepos = await clientRepos.GetAsync(requestRepos);
+                                    var responseRepos = await apiClient.GetReposAsync(project.Name, Globals.APIversion);
                                     var repos = JsonConvert.DeserializeObject<Repos>(responseRepos.Content);
 
                                     // Get info about repos in projects
@@ -630,10 +619,7 @@ namespace AzureDevOpsBackup
                                         try
                                         {
                                             // Branches
-                                            var branches = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/refs?" + Globals.APIversion);
-                                            var requestBranches = new RestRequest { Method = Method.Get };
-                                            requestBranches.AddHeader("Authorization", auth);
-                                            var responseBranches = await branches.GetAsync(requestBranches);
+                                            var responseBranches = await apiClient.GetBranchesAsync(repo.Id, Globals.APIversion);
 
                                             // Check for disabled or inaccessible repository
                                             if (responseBranches.StatusCode != HttpStatusCode.OK)
@@ -658,14 +644,12 @@ namespace AzureDevOpsBackup
                                                 var branchNameFormatted = regex.Replace(branchName, "-");
 
                                                 // Get data to find in specific branch
-                                                var clientItems = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/items?recursionlevel=full&" + Globals.APIversion + "&versionDescriptor.versionType=Branch&versionDescriptor.version=" + branchName);
-                                                var requestItems = new RestRequest { Method = Method.Get };
 
                                                 // List name for projects to list for email report list
                                                 repocountelements.Add(repo.Name + $" ('{branchName}' branch)");
 
-                                                requestItems.AddHeader("Authorization", auth);
-                                                var responseItems = await clientItems.GetAsync(requestItems);
+                                                var responseItems = await apiClient.GetItemsAsync(repo.Id, branchName, Globals.APIversion);
+
                                                 Items items = JsonConvert.DeserializeObject<Items>(responseItems.Content);
 
                                                 // Get info about repos in projects, files
@@ -687,9 +671,6 @@ namespace AzureDevOpsBackup
                                                     // Count files
                                                     Globals._repoItemsCount++;
 
-                                                    var clientBlob = new RestClient(baseUrl + "_apis/git/repositories/" + repo.Id + "/blobs?" + Globals.APIversion);
-                                                    var requestBlob = new RestRequest { Method = Method.Post };
-
                                                     // List data about repos in projects
                                                     repoitemscountelements.Add(repo.Name + $" ('{branchName}' branch)");
 
@@ -701,15 +682,13 @@ namespace AzureDevOpsBackup
                                                                       repo.Name + "' from API...");
 
                                                     // Get the files from repo to storage
-                                                    requestBlob.AddJsonBody(items.Value.Where(itm => itm.GitObjectType == "blob").Select(itm => itm.ObjectId).ToList());
-                                                    requestBlob.AddHeader("Authorization", auth);
-                                                    requestBlob.AddHeader("Accept", "application/zip");
-
                                                     // Save to disk - _blob.zip
                                                     try
                                                     {
                                                         // Save file to disk
-                                                        Stream inputStream = clientBlob.DownloadStream(requestBlob);
+                                                        var objectIds = items.Value.Where(itm => itm.GitObjectType == "blob").Select(itm => itm.ObjectId).ToList();
+                                                        Stream inputStream = apiClient.DownloadBlobs(repo.Id, objectIds, Globals.APIversion);
+
                                                         using (FileStream fs = new FileStream(outDirSaveToDisk + project.Name + "_" + repo.Name + $"_{branchNameFormatted}_blob.zip", FileMode.Create))
                                                         {
                                                             int bufferSize = 4096;
