@@ -11,12 +11,10 @@ AzureDevOpsBackup:
 - Added graceful handling of API rate limits: The tool now gracefully handles API rate limits by implementing exponential backoff and retry logic. This ensures that the backup process continues smoothly even when the API rate limit is reached.
 
 ### Changed
-- Optimized the code for better performance and readability.
+- In general, the code has been optimized for better performance and readability and code moved to classes for better structure and maintainability.
 - Backup performance improved: Reduced average backup time from 2:26 to around 1:55 per run (approx. 21% faster) based on my DevOps´s content.
 
     **Note**: The performance improvement may vary based on the size and number of repositories in your Azure DevOps organization.
-
-- 
 
 ## [1.1.2.1] - 07-11-2024
 
