@@ -5,9 +5,9 @@ namespace AzureDevOpsBackup.Class
 {
     public class CommandLineParser
     {
-        public static Options Parse(string[] args)
+        public static ArgumentOptions Parse(string[] args)
         {
-            Options options = null;
+            ArgumentOptions options = null;
 
             var parser = new Parser(settings =>
             {
@@ -15,7 +15,7 @@ namespace AzureDevOpsBackup.Class
                 settings.HelpWriter = null;
             });
 
-            var result = parser.ParseArguments<Options>(args)
+            var result = parser.ParseArguments<ArgumentOptions>(args)
                 .WithParsed(parsedOptions =>
                 {
                     options = parsedOptions;
