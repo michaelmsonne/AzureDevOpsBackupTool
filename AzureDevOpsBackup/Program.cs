@@ -950,7 +950,7 @@ namespace AzureDevOpsBackup
                                                             Console.ResetColor();
                                                             Message(
                                                                 "Folder to unzip files from does not exists: '" +
-                                                                localRepoDirectory + "'...", EventType.Warning, 1001);
+                                                                localRepoDirectory + "'...", EventType.Information, 1001);
                                                         }
 
                                                         // Do work to start over - create folder to files
