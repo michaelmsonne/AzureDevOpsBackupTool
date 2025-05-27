@@ -12,7 +12,6 @@ using AzureDevOpsBackup.Class;
 using System.Text.RegularExpressions;
 using static AzureDevOpsBackup.Class.FileLogger;
 using System.Threading.Tasks;
-using LibGit2Sharp;
 
 // ReSharper disable RedundantAssignment
 // ReSharper disable NotAccessedVariable
