@@ -118,7 +118,7 @@ namespace AzureDevOpsBackup.Class
                 $"<td style=\"width: 21%; height: 18px;\">Backup folder:</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><strong><b>\"{outDir}\"</b></b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">{isOutputFolderContainFilesStatusText}</td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 21%; height: 18px;\">Backup server:</td>" +
+                $"<td style=\"width: 21%; height: 18px;\">Backup host:</td>" +
                 $"<td style=\"width: 22%; height: 18px;\"><b>{Environment.MachineName}</b></td>" +
                 $"<td style=\"width: 33.3333%; height: 18px;\">  </td></tr><tr style=\"height: 18px;\">" +
                 $"<td style=\"width: 21%; height: 18px;\">Old backup(s) set to keep in backup folder (days):</td>" +
