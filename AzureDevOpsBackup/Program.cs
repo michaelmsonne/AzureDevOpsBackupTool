@@ -319,22 +319,10 @@ namespace AzureDevOpsBackup
                         Console.WriteLine("✖ Azure DevOps API connectivity: FAILED");
                         Message($"Azure DevOps API connectivity: FAILED - {apiError}", EventType.Error, 1001);
 
-                        // After: if (!string.IsNullOrWhiteSpace(apiError)) { ... }
+                        // For expired PAT error
                         if (!string.IsNullOrWhiteSpace(apiError) && apiError.Contains("Access Denied: The Personal Access Token used has expired."))
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine();
-                            Console.WriteLine("============================================================");
-                            Console.WriteLine("  ERROR: Your Azure DevOps Personal Access Token (PAT) has expired.");
-                            Console.WriteLine("------------------------------------------------------------");
-                            Console.WriteLine("  How to fix:");
-                            Console.WriteLine("    1. Create a new PAT in Azure DevOps.");
-                            Console.WriteLine("    2. Run this tool with: '--tokenfile <yourNewPAT>' to generate a new token.bin file.");
-                            Console.WriteLine("    3. Use: '--token token.bin' for future runs on this machine.\"");
-                            Console.WriteLine();
-                            Console.WriteLine("============================================================");
-                            Console.WriteLine();
-                            Console.ResetColor();
+                            ConsoleErrorHelper.ShowExpiredPatError();
                             return;
                         }
 
@@ -343,6 +331,7 @@ namespace AzureDevOpsBackup
                             Console.WriteLine("  Details: " + apiError);
                             Message("Details: " + apiError, EventType.Error, 1001);
                         }
+
                         allOk = false;
                     }
 
@@ -458,11 +447,26 @@ namespace AzureDevOpsBackup
                         if (token == "token.bin")
                         {
                             // Read the token information from the -tokentofile
-                            token = SecureArgumentHandlerToken.DecryptFromFile(tokenEncryptionKey);
+                            try
+                            {
 #if DEBUG
-                            //Console.WriteLine($"Decrypted string for token = {token}");
-                            //Console.ReadKey();
+                                //Console.WriteLine($"Decrypted string for token = {token}");
+                                //Console.ReadKey();
 #endif
+                                token = SecureArgumentHandlerToken.DecryptFromFile(tokenEncryptionKey);
+                            }
+                            catch (System.Security.Cryptography.CryptographicException ex)
+                            {
+                                ConsoleErrorHelper.ShowTokenDecryptError(ex.Message);
+                                Message("ERROR: Failed to decrypt token.bin: " + ex.Message, EventType.Error, 1001);
+                                Environment.Exit(1);
+                            }
+                            catch (Exception ex)
+                            {
+                                ConsoleErrorHelper.ShowTokenReadError(ex.Message);
+                                Message("ERROR: Unexpected error while reading token.bin: " + ex.Message, EventType.Error, 1001);
+                                Environment.Exit(1);
+                            }
                         }
 
                         // Encrypt the value
@@ -578,43 +582,61 @@ namespace AzureDevOpsBackup
 
                         // Connect to Azure DevOps organization
                         checkConnectionToAzureDevOpsGet.AddHeader("Authorization", auth);
-                        var responseCheckConnectionToAzureDevOpsGet = await checkConnectionToAzureDevOps.GetAsync(checkConnectionToAzureDevOpsGet);
+                        //var responseCheckConnectionToAzureDevOpsGet = await checkConnectionToAzureDevOps.GetAsync(checkConnectionToAzureDevOpsGet);
 
-                        // Check if connection is okay to Azure DevOps organization via REST API - if not exit
-                        if (responseCheckConnectionToAzureDevOpsGet.StatusCode == HttpStatusCode.OK)
+                        try
                         {
-                            // Log - connection is okay
-                            Message("Connected successfully to Azure DevOps organization '" + Globals._orgName + "'...", EventType.Information, 1000);
-                            Console.WriteLine("Connected successfully to Azure DevOps organization '" + Globals._orgName + "'...");
+                            var responseCheckConnectionToAzureDevOpsGet = await checkConnectionToAzureDevOps.GetAsync(checkConnectionToAzureDevOpsGet);
+
+                            if (responseCheckConnectionToAzureDevOpsGet.StatusCode == HttpStatusCode.OK)
+                            {
+                                // Log - connection is okay
+                                Message("Connected successfully to Azure DevOps organization '" + Globals._orgName + "'...", EventType.Information, 1000);
+                                Console.WriteLine("Connected successfully to Azure DevOps organization '" + Globals._orgName + "'...");
+                            }
+                            else if (responseCheckConnectionToAzureDevOpsGet.StatusCode == HttpStatusCode.Unauthorized)
+                            {
+                                ConsoleErrorHelper.ShowExpiredPatError();
+                                Message("ERROR: The provided Azure DevOps PAT is expired or invalid.", EventType.Error, 1001);
+                                Environment.Exit(1);
+                            }
+                            else
+                            {
+                                // Log - connection is not okay
+                                // Handle error cases
+                                Console.WriteLine("Failed to connected successfully to the Azure DevOps organization '" + Globals._orgName + "' via REST API");
+                                Console.WriteLine("Response Status: " + responseCheckConnectionToAzureDevOpsGet.StatusCode);
+                                Console.WriteLine("Response Content: " + responseCheckConnectionToAzureDevOpsGet.Content);
+
+                                // Log
+                                Message("Failed to connected successfully to the Azure DevOps organization '" + Globals._orgName + "' via REST API", EventType.Error, 1001);
+                                Message("Response Status: " + responseCheckConnectionToAzureDevOpsGet.StatusCode, EventType.Error, 1001);
+                                Message("Response Content: " + responseCheckConnectionToAzureDevOpsGet.Content, EventType.Error, 1001);
+
+                                // Exit
+                                Message("Exiting...", EventType.Information, 1000);
+                                Console.WriteLine("Exiting...");
+
+                                // End application
+                                Environment.Exit(1);
+                            }
                         }
-                        else if (responseCheckConnectionToAzureDevOpsGet.StatusCode == HttpStatusCode.Unauthorized)
+                        catch (System.Net.Http.HttpRequestException ex)
                         {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine("ERROR: The provided Azure DevOps PAT is expired or invalid.");
-                            Message("ERROR: The provided Azure DevOps PAT is expired or invalid.", EventType.Error, 1001);
-                            Console.ResetColor();
-
-                            Environment.Exit(1);
-                        }
-                        else
-                        {
-                            // Log - connection is not okay
-                            // Handle error cases
-                            Console.WriteLine("Failed to connected successfully to the Azure DevOps organization '" + Globals._orgName + "' via REST API");
-                            Console.WriteLine("Response Status: " + responseCheckConnectionToAzureDevOpsGet.StatusCode);
-                            Console.WriteLine("Response Content: " + responseCheckConnectionToAzureDevOpsGet.Content);
-
-                            // Log
-                            Message("Failed to connected successfully to the Azure DevOps organization '" + Globals._orgName + "' via REST API", EventType.Error, 1001);
-                            Message("Response Status: " + responseCheckConnectionToAzureDevOpsGet.StatusCode, EventType.Error, 1001);
-                            Message("Response Content: " + responseCheckConnectionToAzureDevOpsGet.Content, EventType.Error, 1001);
-
-                            // Exit
-                            Message("Exiting...", EventType.Information, 1000);
-                            Console.WriteLine("Exiting...");
-
-                            // End application
-                            Environment.Exit(1);
+                            if (ex.Message.Contains("Unauthorized"))
+                            {
+                                ConsoleErrorHelper.ShowExpiredPatError();
+                                Message("ERROR: Unauthorized - The provided Azure DevOps PAT is expired or invalid.", EventType.Error, 1001);
+                                Environment.Exit(1);
+                            }
+                            else
+                            {
+                                Console.ForegroundColor = ConsoleColor.Red;
+                                Console.WriteLine("ERROR: Network or API error occurred: " + ex.Message);
+                                Console.ResetColor();
+                                Message("ERROR: Network or API error occurred: " + ex.Message, EventType.Error, 1001);
+                                Environment.Exit(1);
+                            }
                         }
 
                         // Save log entry

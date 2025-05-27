@@ -124,6 +124,7 @@
     <Compile Include="Class\ApplicationStatus.cs" />
     <Compile Include="Class\ApplicationInfo.cs" />
     <Compile Include="Class\AzureDevOpsApiClient.cs" />
+    <Compile Include="Class\ConsoleErrorHelper.cs" />
     <Compile Include="Class\HealthChecker.cs" />
     <Compile Include="Class\LocalBackupsTasks.cs" />
     <Compile Include="Class\LocalLogCleanup.cs" />
