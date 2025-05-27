@@ -237,86 +237,67 @@ namespace AzureDevOpsBackup
                     bool allOk = true;
 
                     // 1. Check Azure DevOps API connectivity
-                    try
+                    int orgIndex = Array.IndexOf(args, "--org");
+                    int tokenIndex = Array.IndexOf(args, "--token");
+                    string org = (orgIndex != -1 && args.Length > orgIndex + 1) ? args[orgIndex + 1] : null;
+                    string token = (tokenIndex != -1 && args.Length > tokenIndex + 1) ? args[tokenIndex + 1] : null;
+                    if (token == "token.bin")
                     {
-                        // Check if --org and --token arguments are provided
-                        int orgIndex = Array.IndexOf(args, "--org");
-                        if (orgIndex == -1 || args.Length <= orgIndex + 1 || string.IsNullOrWhiteSpace(args[orgIndex + 1]))
-                            throw new Exception("Missing or empty --org argument.");
-
-                        string org = args[orgIndex + 1];
-                        int tokenIndex = Array.IndexOf(args, "--token");
-                        if (tokenIndex == -1 || args.Length <= tokenIndex + 1 || string.IsNullOrWhiteSpace(args[tokenIndex + 1]))
-                            throw new Exception("Missing or empty --token argument.");
-
-                        // Construct the URL and authentication header
-                        string token = args[tokenIndex + 1];
-                        string baseUrl = "https://dev.azure.com/" + org + "/";
-                        if (token == "token.bin")
-                        {
-                            token = SecureArgumentHandlerToken.DecryptFromFile(tokenEncryptionKey);
-                        }
-                        // Encrypt the value
-                        string auth = "Basic " + Convert.ToBase64String(Encoding.ASCII.GetBytes($":{token}"));
-                        var client = new RestClient(baseUrl + $"_apis/projects?{Globals.APIversion}");
-                        var request = new RestRequest { Method = Method.Get };
-                        request.AddHeader("Authorization", auth);
-
-                        // Execute the request
-                        var response = client.Execute(request);
-
-                        // Check the response status code
-                        if (response.StatusCode == HttpStatusCode.OK)
-                        {
-                            Console.ForegroundColor = ConsoleColor.Green;
-                            Console.WriteLine("✔ Azure DevOps API connectivity: OK");
-                            Message("Azure DevOps API connectivity: OK", EventType.Information, 1000);
-                        }
-                        else
-                        {
-                            Console.ForegroundColor = ConsoleColor.Red;
-                            Console.WriteLine($"✖ Azure DevOps API connectivity: FAILED ({response.StatusCode})");
-                            Message($"Azure DevOps API connectivity: FAILED ({response.StatusCode})", EventType.Error, 1001);
-                            if (!string.IsNullOrWhiteSpace(response.Content))
-                            {
-                                Console.WriteLine("  Details: " + response.Content);
-                                Message($"Details: " + response.Content, EventType.Error, 1001);
-                            }
-                                
-                            allOk = false;
-                        }
+                        token = SecureArgumentHandlerToken.DecryptFromFile(tokenEncryptionKey);
                     }
-                    catch (Exception ex)
+                    string apiVersion = Globals.APIversion;
+
+                    string apiError;
+                    if (string.IsNullOrWhiteSpace(org) || string.IsNullOrWhiteSpace(token))
+                    {
+                        apiError = "Missing or empty --org or --token argument.";
+                        allOk = false;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("✖ Azure DevOps API connectivity: ERROR - " + apiError);
+                        Message($"Azure DevOps API connectivity: ERROR - {apiError}", EventType.Error, 1001);
+                    }
+                    else if (HealthChecker.CheckAzureDevOpsApi(org, token, apiVersion, out apiError))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        Console.WriteLine("✔ Azure DevOps API connectivity: OK");
+                        Message("Azure DevOps API connectivity: OK", EventType.Information, 1000);
+                    }
+                    else
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("✖ Azure DevOps API connectivity: ERROR - " + ex.Message);
-                        Message($"Azure DevOps API connectivity: ERROR - " + ex.Message, EventType.Error, 1001);
+                        Console.WriteLine("✖ Azure DevOps API connectivity: FAILED");
+                        Message($"Azure DevOps API connectivity: FAILED - {apiError}", EventType.Error, 1001);
+                        if (!string.IsNullOrWhiteSpace(apiError))
+                        {
+                            Console.WriteLine("  Details: " + apiError);
+                            Message("Details: " + apiError, EventType.Error, 1001);
+                        }
                         allOk = false;
                     }
 
                     // 2. Check backup folder write access
-                    try
+                    int backupIndex = Array.IndexOf(args, "--backup");
+                    string backupFolder = (backupIndex != -1 && args.Length > backupIndex + 1) ? args[backupIndex + 1] : null;
+                    string folderError;
+                    if (string.IsNullOrWhiteSpace(backupFolder))
                     {
-                        int backupIndex = Array.IndexOf(args, "--backup");
-                        if (backupIndex == -1 || args.Length <= backupIndex + 1 || string.IsNullOrWhiteSpace(args[backupIndex + 1]))
-                            throw new Exception("Missing or empty --backup argument.");
-
-                        string backupFolder = args[backupIndex + 1];
-                        if (!Directory.Exists(backupFolder))
-                            Directory.CreateDirectory(backupFolder);
-
-                        string testFile = Path.Combine(backupFolder, "healthcheck_test.txt");
-                        File.WriteAllText(testFile, "test");
-                        File.Delete(testFile);
+                        folderError = "Missing or empty --backup argument.";
+                        allOk = false;
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        Console.WriteLine("✖ Backup folder write access: FAILED - " + folderError);
+                        Message($"Backup folder write access: FAILED - {folderError}", EventType.Error, 1001);
+                    }
+                    else if (HealthChecker.CheckBackupFolderWriteAccess(backupFolder, out folderError))
+                    {
                         Console.ForegroundColor = ConsoleColor.Green;
                         Console.WriteLine("✔ Backup folder write access: OK");
                         Message("Backup folder write access: OK", EventType.Information, 1000);
                     }
-                    catch (Exception ex)
+                    else
                     {
                         Console.ForegroundColor = ConsoleColor.Red;
-                        Console.WriteLine("✖ Backup folder write access: FAILED - " + ex.Message);
-                        Message($"Backup folder write access: FAILED - " + ex.Message, EventType.Error, 1001);
+                        Console.WriteLine("✖ Backup folder write access: FAILED - " + folderError);
+                        Message($"Backup folder write access: FAILED - {folderError}", EventType.Error, 1001);
                         allOk = false;
                     }
 
@@ -618,32 +599,32 @@ namespace AzureDevOpsBackup
                                         Console.WriteLine("Getting information about Git repository in project: '" +
                                                           repo.Name + "'...");
 
-                                        // Set if using REST API or GIT CLI
+                                        // Set if using REST API or GIT
                                         if (doFullGitBackup)
                                         {
-                                            // Log set to use GIT CLI also
+                                            // Log set to use GIT also
                                             Message("Set to perform Git backup of the repository: '" + repo.Name + "'...", EventType.Information, 1000);
                                             Console.WriteLine("Set to perform Git backup of the repository: '" + repo.Name + "'...");
 
-                                            // Log calling GIT CLI
+                                            // Log calling GIT
                                             Message("Calling Git to backup repository: '" + repo.Name + "'...", EventType.Information, 1000);
                                             Console.WriteLine("Calling Git to backup repository: '" + repo.Name + "'...");
 
                                             // Construct the HTTPS clone URL for Azure DevOps
-                                            string encodedProject = Uri.EscapeDataString(project.Name);
-                                            string encodedRepo = Uri.EscapeDataString(repo.Name);
-                                            string repoUrl = $"https://dev.azure.com/{Globals._orgName}/{encodedProject}/_git/{encodedRepo}";
-                                            string gitBackupPath = Path.Combine(outDirSaveToDisk, $"{project.Name}_{repo.Name}.git");
-                                            string pat = handler.Decrypt(Convert.FromBase64String(encryptedTokenString));
+                                            var encodedProject = Uri.EscapeDataString(project.Name);
+                                            var encodedRepo = Uri.EscapeDataString(repo.Name);
+                                            var repoUrl = $"https://dev.azure.com/{Globals._orgName}/{encodedProject}/_git/{encodedRepo}";
+                                            var gitBackupPath = Path.Combine(outDirSaveToDisk, $"{project.Name}_{repo.Name}.git");
+                                            var pat = handler.Decrypt(Convert.FromBase64String(encryptedTokenString));
 
                                             // Perform the backup using the LocalBackupsTasks class
                                             LocalBackupsTasks.BackupRepositoryWithGit(repoUrl, gitBackupPath, pat);
                                         }
                                         else
                                         {
-                                            // Log set to use GIT CLI also
-                                            Message("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...", EventType.Information, 1000);
-                                            Console.WriteLine("Set to use GIT CLI also for backup of repository: '" + repo.Name + "'...");
+                                            // Log set to use GIT also
+                                            Message("Set NOT to use Git backup mode of repository: '" + repo.Name + "'...", EventType.Information, 1000);
+                                            Console.WriteLine("Set NOT to use Git backup mode of repository: '" + repo.Name + "'...");
                                         }
 
                                         try
