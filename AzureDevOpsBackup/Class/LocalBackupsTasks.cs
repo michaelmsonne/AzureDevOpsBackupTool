@@ -1,4 +1,5 @@
-﻿using System;
+﻿using LibGit2Sharp;
+using System;
 using System.IO;
 using static AzureDevOpsBackup.Class.FileLogger;
 
@@ -33,7 +34,7 @@ namespace AzureDevOpsBackup.Class
                         LocalFolderTasks.DeleteDirectory(dir);
 
                         // Count files
-                        Globals._totalBackupsIsDeleted++;
+                        ApplicationGlobals._totalBackupsIsDeleted++;
 
                         // Log
                         Message("> Deleted old backup folder: " + dir + ".", EventType.Information, 1000);
@@ -52,7 +53,7 @@ namespace AzureDevOpsBackup.Class
                         Console.ResetColor();
 
                         // Count errors
-                        Globals._errors++;
+                        ApplicationGlobals._errors++;
                     }
                     catch (Exception e)
                     {
@@ -63,7 +64,7 @@ namespace AzureDevOpsBackup.Class
                         Console.ResetColor();
 
                         // Add error to counter
-                        Globals._errors++;
+                        ApplicationGlobals._errors++;
                         Console.WriteLine(e);
                         throw;
                     }
@@ -100,7 +101,7 @@ namespace AzureDevOpsBackup.Class
                         LocalFolderTasks.DeleteDirectory(dir);
 
                         // Count files
-                        Globals._totalBackupsIsDeleted++;
+                        ApplicationGlobals._totalBackupsIsDeleted++;
 
                         // Log
                         Message("> Deleted old backup folder: " + dir, EventType.Information, 1000);
@@ -119,7 +120,7 @@ namespace AzureDevOpsBackup.Class
                         Console.ResetColor();
 
                         // Count errors
-                        Globals._errors++;
+                        ApplicationGlobals._errors++;
                     }
                     catch (Exception e)
                     {
@@ -130,7 +131,7 @@ namespace AzureDevOpsBackup.Class
                         Console.ResetColor();
 
                         // Add error to counter
-                        Globals._errors++;
+                        ApplicationGlobals._errors++;
                         Console.WriteLine(e);
                         throw;
                     }
@@ -162,7 +163,52 @@ namespace AzureDevOpsBackup.Class
             }
 
             // Save count
-            Globals._currentBackupsInBackupFolderCount = folderCount;
+            ApplicationGlobals._currentBackupsInBackupFolderCount = folderCount;
+        }
+
+        public static void BackupRepositoryWithGit(string repoUrl, string backupDir, string pat)
+        {
+            // Log the start of the backup process
+            Console.WriteLine($"[GIT] Starting git backup for repository: '{repoUrl}'");
+            Console.WriteLine($"[GIT] Target backup directory: '{backupDir}\\'");
+            Message($"[GIT] Starting git backup for repository: '{repoUrl}'", EventType.Information, 1000);
+            Message($"[GIT] Target backup directory: '{backupDir}\\'", EventType.Information, 1000);
+
+            var cloneOptions = new CloneOptions();
+
+            // Configure the existing FetchOptions
+            cloneOptions.FetchOptions.CredentialsProvider = (url, user, cred) =>
+                new UsernamePasswordCredentials
+                {
+                    Username = "pat", // Use "pat" for Azure DevOps
+                    Password = pat
+                };
+
+            try
+            {
+                // Ensure the backup directory exists
+                if (!Directory.Exists(backupDir))
+                {
+                    Directory.CreateDirectory(backupDir);
+                }
+
+                // Clone the repository
+                Repository.Clone(repoUrl, backupDir, cloneOptions);
+
+                // Log success
+                Console.WriteLine($"[GIT] Successfully backed up repository: '{repoUrl}'");
+                Console.WriteLine($"[GIT] Backup stored at: '{backupDir}\\'");
+                Message($"[GIT] Successfully backed up repository: '{repoUrl}'", EventType.Information, 1000);
+                Message($"[GIT] Backup stored at: '{backupDir}\\'", EventType.Information, 1000);
+            }
+            catch (Exception ex)
+            {
+                // Log the error
+                Console.WriteLine($"[GIT] Failed to backup repository: '{repoUrl}'");
+                Console.WriteLine($"[GIT ERROR] {ex.Message}");
+                Message($"[GIT] Failed to backup repository: '{repoUrl}'", EventType.Error, 1001);
+                Message($"[GIT ERROR] {ex.Message}", EventType.Error, 1001);
+            }
         }
     }
 }

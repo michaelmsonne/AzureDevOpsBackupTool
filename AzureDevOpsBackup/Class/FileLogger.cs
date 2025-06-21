@@ -27,7 +27,7 @@ namespace AzureDevOpsBackup.Class
         // Get logfile path
         public static string GetLogPath(string df)
         {
-            return Files.LogFilePath + @"\" + Globals.AppName + " Log " + df + ".log";
+            return Files.LogFilePath + @"\" + ApplicationGlobals.AppName + " Log " + df + ".log";
         }
 
         // Get datetime
@@ -167,9 +167,9 @@ namespace AzureDevOpsBackup.Class
                 if (type != EventType.Error && WriteOnlyErrorsToEventLog)
                     return;
                 var eventLog = new EventLog("");
-                if (!EventLog.SourceExists(Globals.AppName))
-                    EventLog.CreateEventSource(Globals.AppName, "Application");
-                eventLog.Source = Globals.AppName;
+                if (!EventLog.SourceExists(ApplicationGlobals.AppName))
+                    EventLog.CreateEventSource(ApplicationGlobals.AppName, "Application");
+                eventLog.Source = ApplicationGlobals.AppName;
                 eventLog.EnableRaisingEvents = true;
                 var type1 = EventLogEntryType.Error;
                 switch (type)

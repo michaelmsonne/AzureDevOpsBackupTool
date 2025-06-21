@@ -71,17 +71,17 @@ namespace AzureDevOpsBackup.Class
             }
 
             // Check for letovers if any
-            if (Globals._checkForLeftoverFilesAfterCleanup)
+            if (ApplicationGlobals._checkForLeftoverFilesAfterCleanup)
             {
                 int numZip = di.GetFiles("*.zip").Length;
                 int numJson = di.GetFiles("*.json").Length;
 
-                Globals._numJson = numJson;
-                Globals._numZip = numZip;
+                ApplicationGlobals._numJson = numJson;
+                ApplicationGlobals._numZip = numZip;
             }
 
             // Delete downloaded files after unzip
-            Globals._deletedFilesAfterUnzip = true;
+            ApplicationGlobals._deletedFilesAfterUnzip = true;
         }
 
         public static void DeleteFileAndWait(string filepath, string outDir, int timeout = 30000)
@@ -103,7 +103,7 @@ namespace AzureDevOpsBackup.Class
                     File.Delete(filepath);
 
                     // Count files
-                    Globals._totalFilesIsDeletedAfterUnZipped++;
+                    ApplicationGlobals._totalFilesIsDeletedAfterUnZipped++;
 
                     // Log
                     Message("Deleted downloaded file: '" + filepath + "' in backup folder: '" + outDir + "'", EventType.Information, 1000);
@@ -119,7 +119,7 @@ namespace AzureDevOpsBackup.Class
                     Console.ResetColor();
 
                     // Count errors
-                    Globals._errors++;
+                    ApplicationGlobals._errors++;
                 }
                 catch (Exception e)
                 {
@@ -134,10 +134,10 @@ namespace AzureDevOpsBackup.Class
                     Console.ResetColor();
 
                     // Add error to counter
-                    Globals._errors++;
+                    ApplicationGlobals._errors++;
 
                     // Check for letovers when error
-                    Globals._checkForLeftoverFilesAfterCleanup = true;
+                    ApplicationGlobals._checkForLeftoverFilesAfterCleanup = true;
                 }
 
                 // Wait for work

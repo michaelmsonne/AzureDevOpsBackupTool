@@ -37,8 +37,8 @@ namespace AzureDevOpsBackup.Class
                         Console.ResetColor();
 
                         // Set status
-                        Globals._oldLogfilesToDelete = true;
-                        Globals._oldLogFilesToDeleteCount++;
+                        ApplicationGlobals._oldLogfilesToDelete = true;
+                        ApplicationGlobals._oldLogFilesToDeleteCount++;
                     }
                     catch (UnauthorizedAccessException)
                     {
@@ -48,7 +48,7 @@ namespace AzureDevOpsBackup.Class
                         Console.ResetColor();
 
                         // Count errors
-                        Globals._errors++;
+                        ApplicationGlobals._errors++;
                     }
                     catch (Exception ex)
                     {
@@ -59,18 +59,18 @@ namespace AzureDevOpsBackup.Class
                         Console.ResetColor();
 
                         // Count errors
-                        Globals._errors++;
+                        ApplicationGlobals._errors++;
                     }
                 }
             }
 
             // Check if there is old log files to delete
-            if (Globals._oldLogfilesToDelete)
+            if (ApplicationGlobals._oldLogfilesToDelete)
             {
                 // Log
-                Message($"There was '{Globals._oldLogFilesToDeleteCount}' old log files to delete (-30 days)", EventType.Information, 1000);
+                Message($"There was '{ApplicationGlobals._oldLogFilesToDeleteCount}' old log files to delete (-30 days)", EventType.Information, 1000);
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine($"There was '{Globals._oldLogFilesToDeleteCount}' old log files to delete (-30 days)");
+                Console.WriteLine($"There was '{ApplicationGlobals._oldLogFilesToDeleteCount}' old log files to delete (-30 days)");
                 Console.ResetColor();
             }
             else

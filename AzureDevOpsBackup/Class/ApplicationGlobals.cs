@@ -2,7 +2,7 @@
 
 namespace AzureDevOpsBackup.Class
 {
-    public static class Globals
+    public static class ApplicationGlobals
     {
         public static string _currentExeFileName; // The name of the current executable file
         public static int _errors; // The number of errors that have occurred
@@ -48,5 +48,6 @@ namespace AzureDevOpsBackup.Class
         public static int _repoCount; // The number of repositories in the organization
         public static string _emailStatusMessage; // The status message of the email
         public static bool _noAttatchLog; // TODO
+        public static bool _doFullGitBackup; // Whether to do a full git backup or not
     }
 }

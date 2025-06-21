@@ -2,7 +2,7 @@
 
 namespace AzureDevOpsBackup.Class
 {
-    public class Options
+    public class ArgumentOptions
     {
         [Option('t', "token", HelpText = "Token to access the API in Azure DevOps (raw token data) or token.bin")]
         public string Token { get; set; }

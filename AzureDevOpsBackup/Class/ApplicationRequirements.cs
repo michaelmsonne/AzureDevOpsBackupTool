@@ -1,8 +1,9 @@
 ﻿using System;
+using System.Diagnostics;
 
 namespace AzureDevOpsBackup.Class
 {
-    internal class Requirements
+    internal class ApplicationRequirements
     {
         public static void SystemCheck()
         {
