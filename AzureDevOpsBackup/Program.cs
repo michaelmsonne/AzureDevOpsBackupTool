@@ -740,6 +740,9 @@ namespace AzureDevOpsBackup
 
                                             // Perform the backup using the LocalBackupsTasks class
                                             LocalBackupsTasks.BackupRepositoryWithGit(repoUrl, gitBackupPath, pat);
+
+                                            // Set backup status for report (to set using GIT also)
+                                            ApplicationGlobals._doFullGitBackup = true;
                                         }
                                         else
                                         {
@@ -2009,7 +2012,7 @@ namespace AzureDevOpsBackup
                                 ApplicationGlobals._totalFilesIsDeletedAfterUnZippedStatusText, ApplicationGlobals._letOverZipFilesStatusText, ApplicationGlobals._letOverJsonFilesStatusText,
                                 ApplicationGlobals._totalBackupsIsDeletedStatusText, useSimpleMailReportLayout, noAttatchLog, ApplicationGlobals._isOutputFolderContainFilesStatusText,
                                 ApplicationGlobals._isDaysToKeepNotDefaultStatusText, ApplicationGlobals._startTime, ApplicationGlobals._endTime,
-                                ApplicationGlobals._deletedFilesAfterUnzip, ApplicationGlobals._checkForLeftoverFilesAfterCleanup);
+                                ApplicationGlobals._deletedFilesAfterUnzip, ApplicationGlobals._checkForLeftoverFilesAfterCleanup, ApplicationGlobals._doFullGitBackup);
                             #endregion Status mail data collecting
                         }
 

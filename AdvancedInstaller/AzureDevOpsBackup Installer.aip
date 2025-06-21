@@ -3,11 +3,11 @@
   <COMPONENT cid="caphyon.advinst.msicomp.MsiPropsComponent">
     <ROW Property="AI_BITMAP_DISPLAY_MODE" Value="0"/>
     <ROW Property="AI_PREDEF_LCONDS_PROPS" Value="AI_DETECTED_DOTNET_VERSION"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackup.exe_1" Value="..\AzureDevOpsBackup\bin\Debug"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1" Value="..\AzureDevOpsBackupUnzipTool\bin\Debug"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackup.exe_1" Value="..\AzureDevOpsBackup\bin\Release"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1" Value="..\AzureDevOpsBackupUnzipTool\bin\Release"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_CommandLine.dll_1" Value="..\AzureDevOpsBackup\packages\CommandLineParser.2.9.1\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_LibGit2Sharp.dll" Value="..\AzureDevOpsBackup\packages\LibGit2Sharp.0.31.0\lib\net472"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_LibGit2Sharp.dll.config" Value="..\AzureDevOpsBackup\bin\Debug"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_LibGit2Sharp.dll.config" Value="..\AzureDevOpsBackup\bin\Release"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Value="..\AzureDevOpsBackup\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll_1" Value="..\AzureDevOpsBackup\packages\Newtonsoft.Json.13.0.3\lib\net45"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_RestSharp.dll" Value="..\AzureDevOpsBackup\packages\RestSharp.112.1.0\lib\net48"/>
@@ -19,18 +19,18 @@
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Json.dll_1" Value="..\AzureDevOpsBackup\packages\System.Text.Json.8.0.5\lib\net462"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Threading.Tasks.Extensions.dll_1" Value="..\AzureDevOpsBackup\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.ValueTuple.dll_1" Value="..\AzureDevOpsBackup\packages\System.ValueTuple.4.5.0\lib\net47"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_git23f4182d.dll" Value="..\AzureDevOpsBackup\bin\Debug\lib\win32\x86"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_git23f4182d.dll_1" Value="..\AzureDevOpsBackup\bin\Debug\lib\win32\x64"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_git23f4182d.dll_2" Value="..\AzureDevOpsBackup\bin\Debug\lib\win32\arm64"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.dylib" Value="..\AzureDevOpsBackup\bin\Debug\lib\osx-arm64"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.dylib_1" Value="..\AzureDevOpsBackup\bin\Debug\lib\osx-x64"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so" Value="..\AzureDevOpsBackup\bin\Debug\lib\linux-arm64"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so_1" Value="..\AzureDevOpsBackup\bin\Debug\lib\linux-arm"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so_2" Value="..\AzureDevOpsBackup\bin\Debug\lib\linux-musl-arm64"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so_3" Value="..\AzureDevOpsBackup\bin\Debug\lib\linux-musl-arm"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so_4" Value="..\AzureDevOpsBackup\bin\Debug\lib\linux-musl-x64"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so_5" Value="..\AzureDevOpsBackup\bin\Debug\lib\linux-ppc64le"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so_6" Value="..\AzureDevOpsBackup\bin\Debug\lib\linux-x64"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_git23f4182d.dll" Value="..\AzureDevOpsBackup\bin\Release\lib\win32\x86"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_git23f4182d.dll_1" Value="..\AzureDevOpsBackup\bin\Release\lib\win32\x64"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_git23f4182d.dll_2" Value="..\AzureDevOpsBackup\bin\Release\lib\win32\arm64"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.dylib" Value="..\AzureDevOpsBackup\bin\Release\lib\osx-arm64"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.dylib_1" Value="..\AzureDevOpsBackup\bin\Release\lib\osx-x64"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so" Value="..\AzureDevOpsBackup\bin\Release\lib\linux-arm64"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so_1" Value="..\AzureDevOpsBackup\bin\Release\lib\linux-arm"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so_2" Value="..\AzureDevOpsBackup\bin\Release\lib\linux-musl-arm64"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so_3" Value="..\AzureDevOpsBackup\bin\Release\lib\linux-musl-arm"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so_4" Value="..\AzureDevOpsBackup\bin\Release\lib\linux-musl-x64"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so_5" Value="..\AzureDevOpsBackup\bin\Release\lib\linux-ppc64le"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_libgit23f4182d.so_6" Value="..\AzureDevOpsBackup\bin\Release\lib\linux-x64"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe_1" Value="AzureDevOpsBackup.exe"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackupUnzipTool.exe_1" Value="AzureDevOpsBackupUnzipTool.exe"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_CommandLine.dll_1" Value="CommandLine.dll"/>
@@ -69,7 +69,7 @@
     <ROW Property="ProductCode" Value="1033:{AC9929FD-4693-47B7-830B-AE484BD4C29B} " Type="16"/>
     <ROW Property="ProductLanguage" Value="1033"/>
     <ROW Property="ProductName" Value="Azure DevOps Backup"/>
-    <ROW Property="ProductVersion" Value="1.1.2.2" Options="24"/>
+    <ROW Property="ProductVersion" Value="1.2.0.0" Options="24"/>
     <ROW Property="SecureCustomProperties" Value="OLDPRODUCTS;AI_NEWERPRODUCTFOUND"/>
     <ROW Property="UpgradeCode" Value="{B5566068-564D-4227-A015-483DA03A0F0E}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>

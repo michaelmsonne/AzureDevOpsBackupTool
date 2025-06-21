@@ -18,7 +18,7 @@ namespace AzureDevOpsBackup.Class
             string totalFilesIsBackupUnZippedStatusText, string totalBlobFilesIsBackupStatusText, string totalTreeFilesIsBackupStatusText,
             string totalFilesIsDeletedAfterUnZippedStatusText, string letOverZipFilesStatusText, string letOverJsonFilesStatusText, string totalBackupsIsDeletedStatusText,
             bool useSimpleMailReportLayout, bool noAttatchLog, string isOutputFolderContainFilesStatusText, string isDaysToKeepNotDefaultStatusText, string startTime, string endTime, bool deletedFilesAfterUnzip,
-            bool checkForLeftoverFilesAfterCleanup)
+            bool checkForLeftoverFilesAfterCleanup, bool doFullGitBackup)
         {
             var serverPortStr = serverPort;
             string mailBody;
@@ -50,9 +50,18 @@ namespace AzureDevOpsBackup.Class
             }
 
             // If args is set to old mail report layout
+            // Build the Git backup message if needed
+            string gitBackupMsg = "";
+            if (doFullGitBackup)
+            {
+                gitBackupMsg = useSimpleMailReportLayout
+                    ? "<p><b>Full Git backup (--fullgitbackup) was ENABLED for this run.</b></p>"
+                    : "<br><p style=\"color:green;\"><b>Full Git backup (--fullgitbackup) was ENABLED for this run.</b></p>";
+            }
+
+            // If args is set to old mail report layout
             if (useSimpleMailReportLayout)
             {
-                // Make email body data
                 mailBody =
                     $"<hr><h2>Your {ApplicationGlobals.AppName} of organization '{ApplicationGlobals._orgName}' is: {emailStatusMessage}</h2><hr><p><h3>Details:</h3><p>" +
                     $"<p>Processed Git project(s) in Azure DevOps (total): <b>{repoCount}</b><br>" +
@@ -72,71 +81,72 @@ namespace AzureDevOpsBackup.Class
                     $"Old backups set to keep in backup folder (days): <b>{daysToKeep}</b><br>" +
                     $"Old backups deleted in backup folder: <b>{totalBackupsIsDeleted}</b><br>" +
                     listrepocountelements + "<br>" +
-                    listitemscountelements + "</p><hr>" +
+                    listitemscountelements +
+                    gitBackupMsg + "</p><hr>" +
                     $"<h3>From Your {ApplicationGlobals.AppName} tool!<o:p></o:p></h3>" + ApplicationGlobals._copyrightData + ", v." + ApplicationGlobals._vData;
             }
             else
             {
-                // Make email body data
                 mailBody =
-                $"<hr/><h2>Your {ApplicationGlobals.AppName} of organization '{ApplicationGlobals._orgName}' is: {emailStatusMessage}</h2><hr />" +
-                $"<br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\">" +
-                $"<tbody><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 33%; height: 18px;\"><strong>Backup task(s):</strong></td>" +
-                $"<td style=\"width: 10%; height: 18px;\"><strong>File(s):</strong></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\"><strong>Status:</strong></td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 33%; height: 18px;\">Processed Git project(s) in Azure DevOps (total):</td>" +
-                $"<td style=\"width: 10%; height: 18px;\"><b>{repoCount}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{repoCountStatusText}</td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 33%; height: 18px;\">Processed Git repos in project(s) a backup is made of from Azure DevOps (all branches):</td>" +
-                $"<td style=\"width: 10%; height: 18px;\"><b>{repoItemsCount}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{repoItemsCountStatusText}</td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 33%; height: 18px;\">Processed files to backup from Git repos (total unzipped if specified):</td>" +
-                $"<td style=\"width: 10%; height: 18px;\"><b>{totalFilesIsBackupUnZipped}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{totalFilesIsBackupUnZippedStatusText}</td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 33%; height: 18px;\">Processed files to backup from Git repos (blob files (.zip files)) (all branches):</td>" +
-                $"<td style=\"width: 10%; height: 18px;\"><b>{totalBlobFilesIsBackup}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{totalBlobFilesIsBackupStatusText}</td></tr><tr>" +
-                $"<td style=\"width: 33%;\">Processed files to backup from Git repos (tree files (.json files)) (all branches):</td>" +
-                $"<td style=\"width: 10%;\"><b>{totalTreeFilesIsBackup}</b></td>" +
-                $"<td style=\"width: 33.3333%;\">{totalTreeFilesIsBackupStatusText}</td></tr></tbody></table><br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\"><tbody><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 33%; height: 18px;\"><strong>Download cleanup (if specified):</strong></td>" +
-                $"<td style=\"width: 10%; height: 18px;\"><strong>File(s):</strong></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\"><strong>Status:</strong></td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 33%; height: 18px;\">Deleted original downloaded .zip and .json files in backup folder:</td>" +
-                $"<td style=\"width: 10%; height: 18px;\"><b>{totalFilesIsDeletedAfterUnZipped}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{totalFilesIsDeletedAfterUnZippedStatusText}</td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 33%; height: 18px;\">Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete):</td>" +
-                $"<td style=\"width: 10%; height: 18px;\"><b>{letOverZipFiles}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{letOverZipFilesStatusText}</td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 33%; height: 18px;\">Leftovers for original downloaded .json files in backup folder (error(s) when try to delete):</td>" +
-                $"<td style=\"width: 10%; height: 18px;\"><b>{letOverJsonFiles}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{letOverJsonFilesStatusText}</td></tr></tbody></table><br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\"><tr>" +
-                $"<td style=\"width: 21%; height: 18px;\"><strong>Backup:</strong></td>" +
-                $"<td style=\"width: 22%; height: 18px;\"><strong>Info:</strong></td>" +
-                $"<td style=\"width: 33%; height: 18px;\"><strong>Status:</strong></td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 21%; height: 18px;\">Backup folder:</td>" +
-                $"<td style=\"width: 22%; height: 18px;\"><strong><b>\"{outDir}\"</b></b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{isOutputFolderContainFilesStatusText}</td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 21%; height: 18px;\">Backup host:</td>" +
-                $"<td style=\"width: 22%; height: 18px;\"><b>{Environment.MachineName}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">  </td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 21%; height: 18px;\">Old backup(s) set to keep in backup folder (days):</td>" +
-                $"<td style=\"width: 22%; height: 18px;\"><b>{daysToKeep}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{isDaysToKeepNotDefaultStatusText}</td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 21%; height: 18px;\">Number of current backups in backup folder:</td>" +
-                $"<td style=\"width: 22%; height: 18px;\"><b>{ApplicationGlobals._currentBackupsInBackupFolderCount}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">Multiple backups can be created at the same day, so there can be more backups then days set to keep</td></tr><tr style=\"height: 18px;\">" +
-                $"<td style=\"width: 21%; height: 18px;\">Old backup(s) deleted in backup folder:</td>" +
-                $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td>" +
-                $"<td style=\"width: 33.3333%; height: 18px;\">{totalBackupsIsDeletedStatusText}</td></tr></table>" +
-                $"<p>See the attached logfile for the backup(s) today: <b>'{ApplicationGlobals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log'</b>.<o:p></o:p></p>" +
-                $"<p>Total Run Time is: \"{elapsedTime}\"<br>" +
-                $"Backup start Time: \"{startTime}\"<br>" +
-                $"Backup end Time: \"{endTime}\"</p><hr/>" +
-                listrepocountelements + "<br>" +
-                listitemscountelements + "</p><br><hr>" +
-                $"<h3>From Your {ApplicationGlobals.AppName} tool!<o:p></o:p></h3>" + ApplicationGlobals._copyrightData + ", v." + ApplicationGlobals._vData;
+                    $"<hr/><h2>Your {ApplicationGlobals.AppName} of organization '{ApplicationGlobals._orgName}' is: {emailStatusMessage}</h2><hr />" +
+                    $"<br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\">" +
+                    $"<tbody><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 33%; height: 18px;\"><strong>Backup task(s):</strong></td>" +
+                    $"<td style=\"width: 10%; height: 18px;\"><strong>File(s):</strong></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\"><strong>Status:</strong></td></tr><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 33%; height: 18px;\">Processed Git project(s) in Azure DevOps (total):</td>" +
+                    $"<td style=\"width: 10%; height: 18px;\"><b>{repoCount}</b></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\">{repoCountStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 33%; height: 18px;\">Processed Git repos in project(s) a backup is made of from Azure DevOps (all branches):</td>" +
+                    $"<td style=\"width: 10%; height: 18px;\"><b>{repoItemsCount}</b></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\">{repoItemsCountStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 33%; height: 18px;\">Processed files to backup from Git repos (total unzipped if specified):</td>" +
+                    $"<td style=\"width: 10%; height: 18px;\"><b>{totalFilesIsBackupUnZipped}</b></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\">{totalFilesIsBackupUnZippedStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 33%; height: 18px;\">Processed files to backup from Git repos (blob files (.zip files)) (all branches):</td>" +
+                    $"<td style=\"width: 10%; height: 18px;\"><b>{totalBlobFilesIsBackup}</b></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\">{totalBlobFilesIsBackupStatusText}</td></tr><tr>" +
+                    $"<td style=\"width: 33%;\">Processed files to backup from Git repos (tree files (.json files)) (all branches):</td>" +
+                    $"<td style=\"width: 10%;\"><b>{totalTreeFilesIsBackup}</b></td>" +
+                    $"<td style=\"width: 33.3333%;\">{totalTreeFilesIsBackupStatusText}</td></tr></tbody></table><br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\"><tbody><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 33%; height: 18px;\"><strong>Download cleanup (if specified):</strong></td>" +
+                    $"<td style=\"width: 10%; height: 18px;\"><strong>File(s):</strong></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\"><strong>Status:</strong></td></tr><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 33%; height: 18px;\">Deleted original downloaded .zip and .json files in backup folder:</td>" +
+                    $"<td style=\"width: 10%; height: 18px;\"><b>{totalFilesIsDeletedAfterUnZipped}</b></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\">{totalFilesIsDeletedAfterUnZippedStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 33%; height: 18px;\">Leftovers for original downloaded .zip files in backup folder (error(s) when try to delete):</td>" +
+                    $"<td style=\"width: 10%; height: 18px;\"><b>{letOverZipFiles}</b></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\">{letOverZipFilesStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 33%; height: 18px;\">Leftovers for original downloaded .json files in backup folder (error(s) when try to delete):</td>" +
+                    $"<td style=\"width: 10%; height: 18px;\"><b>{letOverJsonFiles}</b></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\">{letOverJsonFilesStatusText}</td></tr></tbody></table><br><table style=\"border-collapse: collapse; width: 100%; height: 108px;\" border=\"1\"><tr>" +
+                    $"<td style=\"width: 21%; height: 18px;\"><strong>Backup:</strong></td>" +
+                    $"<td style=\"width: 22%; height: 18px;\"><strong>Info:</strong></td>" +
+                    $"<td style=\"width: 33%; height: 18px;\"><strong>Status:</strong></td></tr><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 21%; height: 18px;\">Backup folder:</td>" +
+                    $"<td style=\"width: 22%; height: 18px;\"><strong><b>\"{outDir}\"</b></b></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\">{isOutputFolderContainFilesStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 21%; height: 18px;\">Backup host:</td>" +
+                    $"<td style=\"width: 22%; height: 18px;\"><b>{Environment.MachineName}</b></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\">  </td></tr><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 21%; height: 18px;\">Old backup(s) set to keep in backup folder (days):</td>" +
+                    $"<td style=\"width: 22%; height: 18px;\"><b>{daysToKeep}</b></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\">{isDaysToKeepNotDefaultStatusText}</td></tr><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 21%; height: 18px;\">Number of current backups in backup folder:</td>" +
+                    $"<td style=\"width: 22%; height: 18px;\"><b>{ApplicationGlobals._currentBackupsInBackupFolderCount}</b></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\">Multiple backups can be created at the same day, so there can be more backups then days set to keep</td></tr><tr style=\"height: 18px;\">" +
+                    $"<td style=\"width: 21%; height: 18px;\">Old backup(s) deleted in backup folder:</td>" +
+                    $"<td style=\"width: 22%; height: 18px;\"><b>{totalBackupsIsDeleted}</b></td>" +
+                    $"<td style=\"width: 33.3333%; height: 18px;\">{totalBackupsIsDeletedStatusText}</td></tr></table>" +
+                    $"<p>See the attached logfile for the backup(s) today: <b>'{ApplicationGlobals.AppName} Log " + DateTime.Today.ToString("dd-MM-yyyy") + ".log'</b>.<o:p></o:p></p>" +
+                    $"<p>Total Run Time is: \"{elapsedTime}\"<br>" +
+                    $"Backup start Time: \"{startTime}\"<br>" +
+                    $"Backup end Time: \"{endTime}\"</p><hr/>" +
+                    listrepocountelements + "<br>" +
+                    listitemscountelements + "</p>" +
+                    gitBackupMsg + "<br><hr>" +
+                    $"<h3>From Your {ApplicationGlobals.AppName} tool!<o:p></o:p></h3>" + ApplicationGlobals._copyrightData + ", v." + ApplicationGlobals._vData;
             }
 
             // Create mail
