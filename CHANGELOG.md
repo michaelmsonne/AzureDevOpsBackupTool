@@ -1,4 +1,4 @@
-## [1.2.0.0] - xx-xx-2025
+## [1.2.0.0] - 21-06-2025
 
 AzureDevOpsBackup:
 
@@ -15,6 +15,18 @@ AzureDevOpsBackup:
 - Backup performance improved: Reduced average backup time from 2:26 to around 1:55 per run (approx. 21% faster) based on my DevOps´s content.
 
     **Note**: The performance improvement may vary based on the size and number of repositories in your Azure DevOps organization.
+
+- Updated NuGet dependencies to latest stable versions:
+  - System.Text.Json 9.0.6 (was 8.0.5)
+  - System.ValueTuple 4.6.1 (was 4.5.0)
+  - Microsoft.Bcl.AsyncInterfaces 9.0.6 (was 8.0.0)
+  - System.Threading.Tasks.Extensions 4.6.3 (was 4.5.4)
+  - System.Text.Encodings.Web 9.0.6 (was 8.0.0)
+  - System.Memory 4.6.3 (was 4.5.5)
+  - System.Runtime.CompilerServices.Unsafe 6.1.2 (was 6.0.0)
+  - System.Numerics.Vectors 4.6.1 (was 4.5.0)
+  - System.Buffers 4.6.1 (was 4.5.1)
+  - Added System.IO.Pipelines 9.0.6
 
 ## [1.1.2.1] - 07-11-2024
 

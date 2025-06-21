@@ -8,17 +8,18 @@
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_CommandLine.dll_1" Value="..\AzureDevOpsBackup\packages\CommandLineParser.2.9.1\lib\net461"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_LibGit2Sharp.dll" Value="..\AzureDevOpsBackup\packages\LibGit2Sharp.0.31.0\lib\net472"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_LibGit2Sharp.dll.config" Value="..\AzureDevOpsBackup\bin\Release"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Value="..\AzureDevOpsBackup\packages\Microsoft.Bcl.AsyncInterfaces.8.0.0\lib\net462"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_Microsoft.Bcl.AsyncInterfaces.dll_1" Value="..\AzureDevOpsBackup\packages\Microsoft.Bcl.AsyncInterfaces.9.0.6\lib\net462"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll_1" Value="..\AzureDevOpsBackup\packages\Newtonsoft.Json.13.0.3\lib\net45"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_RestSharp.dll" Value="..\AzureDevOpsBackup\packages\RestSharp.112.1.0\lib\net48"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Buffers.dll_1" Value="..\AzureDevOpsBackup\packages\System.Buffers.4.5.1\lib\net461"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Memory.dll_1" Value="..\AzureDevOpsBackup\packages\System.Memory.4.5.5\lib\net461"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Numerics.Vectors.dll_1" Value="..\AzureDevOpsBackup\packages\System.Numerics.Vectors.4.5.0\lib\net46"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Runtime.CompilerServices.Unsafe.dll" Value="..\AzureDevOpsBackup\packages\System.Runtime.CompilerServices.Unsafe.6.0.0\lib\net461"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Encodings.Web.dll_1" Value="..\AzureDevOpsBackup\packages\System.Text.Encodings.Web.8.0.0\lib\net462"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Json.dll_1" Value="..\AzureDevOpsBackup\packages\System.Text.Json.8.0.5\lib\net462"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Threading.Tasks.Extensions.dll_1" Value="..\AzureDevOpsBackup\packages\System.Threading.Tasks.Extensions.4.5.4\lib\net461"/>
-    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.ValueTuple.dll_1" Value="..\AzureDevOpsBackup\packages\System.ValueTuple.4.5.0\lib\net47"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Buffers.dll_1" Value="..\AzureDevOpsBackup\packages\System.Buffers.4.6.1\lib\net462"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.IO.Pipelines.dll" Value="..\AzureDevOpsBackup\packages\System.IO.Pipelines.9.0.6\lib\net462"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Memory.dll_1" Value="..\AzureDevOpsBackup\packages\System.Memory.4.6.3\lib\net462"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Numerics.Vectors.dll_1" Value="..\AzureDevOpsBackup\packages\System.Numerics.Vectors.4.6.1\lib\net462"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Runtime.CompilerServices.Unsafe.dll" Value="..\AzureDevOpsBackup\packages\System.Runtime.CompilerServices.Unsafe.6.1.2\lib\net462"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Encodings.Web.dll_1" Value="..\AzureDevOpsBackup\packages\System.Text.Encodings.Web.9.0.6\lib\net462"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Text.Json.dll_1" Value="..\AzureDevOpsBackup\packages\System.Text.Json.9.0.6\lib\net462"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.Threading.Tasks.Extensions.dll_1" Value="..\AzureDevOpsBackup\packages\System.Threading.Tasks.Extensions.4.6.3\lib\net462"/>
+    <ROW Property="AI_PROPPATH_DIR_PERBUILD_System.ValueTuple.dll_1" Value="..\..\..\..\..\..\..\Program Files\Microsoft Visual Studio\2022\Enterprise\Common7\IDE\PublicAssemblies"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_git23f4182d.dll" Value="..\AzureDevOpsBackup\bin\Release\lib\win32\x86"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_git23f4182d.dll_1" Value="..\AzureDevOpsBackup\bin\Release\lib\win32\x64"/>
     <ROW Property="AI_PROPPATH_DIR_PERBUILD_git23f4182d.dll_2" Value="..\AzureDevOpsBackup\bin\Release\lib\win32\arm64"/>
@@ -40,6 +41,7 @@
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1" Value="Newtonsoft.Json.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll" Value="RestSharp.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Buffers.dll_1" Value="System.Buffers.dll"/>
+    <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.IO.Pipelines.dll" Value="System.IO.Pipelines.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Memory.dll_1" Value="System.Memory.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Numerics.Vectors.dll_1" Value="System.Numerics.Vectors.dll"/>
     <ROW Property="AI_PROPPATH_FILENAME_PERBUILD_System.Runtime.CompilerServices.Unsafe.dll" Value="System.Runtime.CompilerServices.Unsafe.dll"/>
@@ -164,6 +166,7 @@
     <ROW File="libgit23f4182d.dylib" Component_="AzureDevOpsBackup_ContentOutput_lib_osxarm64" FileName="LIBGIT~2.DYL|[|AI_PROPPATH_FILENAME_PERBUILD_libgit23f4182d.dylib]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_libgit23f4182d.dylib&gt;" SelfReg="false"/>
     <ROW File="libgit23f4182d.dylib_1" Component_="AzureDevOpsBackup_ContentOutput_lib_osxx64" FileName="LIBGIT~2.DYL|[|AI_PROPPATH_FILENAME_PERBUILD_libgit23f4182d.dylib_1]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_libgit23f4182d.dylib_1&gt;" SelfReg="false"/>
     <ROW File="LibGit2Sharp.dll.config" Component_="AzureDevOpsBackup_ContentOutput" FileName="LIBGIT~2.CON|[|AI_PROPPATH_FILENAME_PERBUILD_LibGit2Sharp.dll.config]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_LibGit2Sharp.dll.config&gt;" SelfReg="false"/>
+    <ROW File="System.IO.Pipelines.dll" Component_="AzureDevOpsBackup_ContentOutput" FileName="SYSTE~10.DLL|[|AI_PROPPATH_FILENAME_PERBUILD_System.IO.Pipelines.dll]" Attributes="0" SourcePath="&lt;AI_APPPATH_PERBUILD_System.IO.Pipelines.dll&gt;" SelfReg="false"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.AppPathsComponent">
     <ROW Name="AI_APPPATH_PERBUILD_AzureDevOpsBackup.exe_1" Path="[|AI_PROPPATH_DIR_PERBUILD_AzureDevOpsBackup.exe_1]\[|AI_PROPPATH_FILENAME_PERBUILD_AzureDevOpsBackup.exe_1]" Type="2" Content="0"/>
@@ -175,6 +178,7 @@
     <ROW Name="AI_APPPATH_PERBUILD_Newtonsoft.Json.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_Newtonsoft.Json.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_Newtonsoft.Json.dll_1]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_RestSharp.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_RestSharp.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_RestSharp.dll]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_System.Buffers.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Buffers.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Buffers.dll_1]" Type="2" Content="0"/>
+    <ROW Name="AI_APPPATH_PERBUILD_System.IO.Pipelines.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_System.IO.Pipelines.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_System.IO.Pipelines.dll]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_System.Memory.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Memory.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Memory.dll_1]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_System.Numerics.Vectors.dll_1" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Numerics.Vectors.dll_1]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Numerics.Vectors.dll_1]" Type="2" Content="0"/>
     <ROW Name="AI_APPPATH_PERBUILD_System.Runtime.CompilerServices.Unsafe.dll" Path="[|AI_PROPPATH_DIR_PERBUILD_System.Runtime.CompilerServices.Unsafe.dll]\[|AI_PROPPATH_FILENAME_PERBUILD_System.Runtime.CompilerServices.Unsafe.dll]" Type="2" Content="0"/>
@@ -445,5 +449,6 @@
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="ContentOutput" OutputFile="libgit23f4182d.dylib"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="ContentOutput" OutputFile="libgit23f4182d.dylib_1"/>
     <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="ContentOutput" OutputFile="LibGit2Sharp.dll.config"/>
+    <ROW ProjectId="{4795920a-5c87-48a0-9fcf-4641d68e9cb6}" ProjectName="AzureDevOpsBackup" OutputGroup="References" OutputFile="System.IO.Pipelines.dll"/>
   </COMPONENT>
 </DOCUMENT>
